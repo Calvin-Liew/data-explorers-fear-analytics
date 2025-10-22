@@ -45,7 +45,9 @@
   "keyToString": {
     "JavaScript 调试.index.html.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/fanke/OneDrive - University of Toronto/桌面/data-explorers-fear-analytics",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -163,11 +165,23 @@
       <workItem from="1761071107995" duration="733000" />
       <workItem from="1761095179963" duration="13992000" />
       <workItem from="1761157492935" duration="15000" />
-      <workItem from="1761157518236" duration="335000" />
+      <workItem from="1761157518236" duration="852000" />
+      <workItem from="1761158388679" duration="181000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
