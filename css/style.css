@@ -813,3 +813,195 @@ footer {
 .blood-pulse {
   animation: bloodPulse 2s ease-in-out infinite;
 }
+body {
+  background: radial-gradient(ellipse at center, #080808 0%, #030303 100%);
+  color: #f0f0f0;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* 心跳线容器 */
+#heartbeat-container {
+  position: fixed;
+  left: 220px;
+  top: 140px;
+  width: 200px;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* 雾气层 */
+.fog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../assets/fog.png") repeat;
+  opacity: 0.05;
+  animation: fogmove 40s linear infinite;
+  z-index: 1;
+}
+@keyframes fogmove {
+  from { background-position: 0 0; }
+  to { background-position: 1000px 0; }
+}
+
+/* 每个 section 带半透明面板 */
+.viz-section {
+  position: relative;
+  background: rgba(10, 10, 15, 0.65);
+  margin: 100px auto;
+  padding: 60px 60px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+  z-index: 2;
+}
+
+/* 标题血色扫光 */
+.section-title {
+  color: #ff1a3c;
+  text-shadow: 0 0 10px rgba(255, 0, 50, 0.6);
+  position: relative;
+}
+.section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff1a3c, transparent);
+  animation: underline 2s ease forwards;
+}
+@keyframes underline {
+  to { width: 180px; }
+}
+
+/* 控件按钮 */
+.spooky-button {
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid #ff1a3c;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.spooky-button:hover {
+  background: #ff1a3c;
+  box-shadow: 0 0 10px #ff1a3c;
+}
+
+/* 下方墓地 / 图表容器过渡 */
+.visualization-large {
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 10px;
+}
+
+/* Intro section 动画 */
+#intro {
+  background: url("../assets/horror_bg.webp") center/cover no-repeat;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+#intro h1 {
+  color: #ff1a3c;
+  font-size: 60px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 25px rgba(255, 0, 50, 0.6);
+}
+#intro .subtitle {
+  color: #ccc;
+  font-size: 20px;
+  max-width: 600px;
+  margin: 20px auto;
+}
+.scroll-indicator {
+  margin-top: 30px;
+  color: #aaa;
+}
+.scroll-indicator .arrow-down {
+  width: 24px;
+  height: 24px;
+  border-left: 3px solid #ff1a3c;
+  border-bottom: 3px solid #ff1a3c;
+  transform: rotate(-45deg);
+  margin: 10px auto;
+  animation: bounce 1.5s infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0) rotate(-45deg); }
+  50% { transform: translateY(6px) rotate(-45deg); }
+}
+#heartbeat-container{
+  position: fixed;
+  top: 0;
+  left: 0;                 /* 具体数值由 JS 自动计算，无需手改 */
+  width: 340px;            /* ← 和 JS 的 PANEL_WIDTH 一致 */
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1000;
+}
+#heartbeat-svg{
+  width: 100%;
+  height: 100%;
+  overflow: visible !important;
+  display: block;
+}
+#intro{
+  position: relative;
+  overflow: visible;               /* 关键：允许画框溢出到下一段 */
+  z-index: 1;                      /* 背景层级 */
+}
+
+/* 让文字永远遮在画框上面（你说“放在文字后面”） */
+#intro .intro-content{
+  position: relative;
+  z-index: 5;                      /* 文字层级更高，压住画框 */
+}
+
+/* 画框：居中、在文字后、但在下一段图表之前 */
+.hero-painting{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width:clamp(620px, 24vw, 448px);;   /* 更大上限 */
+  bottom: -400px;                   /* 再往下 */
+  z-index: 4;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 32px rgba(255,20,30,.32));
+  animation: frameSway 9s ease-in-out infinite alternate;
+}
+
+
+/* 轻微摆动（可按需删掉/调弱） */
+@keyframes frameSway{
+  from{ transform: translateX(-50%) rotate(-0.4deg); }
+  to  { transform: translateX(-50%) rotate( 0.4deg); }
+}
+
+/* 为确保在某些主题层级里画框能压住第一张图，给第一段一个较低层级 */
+#section-signals{
+  position: relative;
+  z-index: 2;     /* 低于画框(4)，这样血滴会“压住”第一张图 */
+}
+
+/* 小屏幕隐藏或减少探出，避免挤占 */
+@media (max-width: 960px){
+  .hero-painting{
+    bottom: -80px;
+    width: clamp(200px, 38vw, 360px);
+  }
+}
+@media (max-width: 680px){
+  .hero-painting{ display: none; } /* 极小屏可直接隐藏 */
+}

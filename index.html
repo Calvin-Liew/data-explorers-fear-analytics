@@ -13,8 +13,14 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    
-    <section id="intro">
+  <div id="heartbeat-container">
+    <svg id="heartbeat-svg"></svg>
+  </div>
+
+  <!-- 背景薄雾 -->
+  <div class="fog"></div>
+
+  <section id="intro">
       <div class="intro-content">
         <h1 class="title">The Anatomy of Fear</h1>
         <p class="subtitle">
@@ -25,12 +31,13 @@
           <div class="arrow-down"></div>
         </div>
       </div>
+    <img class="hero-painting" src="image/painting.png" alt="painting">
     </section>
 
     
     <main id="viz-container">
-      
-      <section class="viz-section" id="section-signals">
+
+      <section class="viz-section" id="section-signals" data-pulse-anchor="signals">
         <div class="section-header">
           <h2 class="section-title">The Blood Flow of Horror</h2>
           <p class="section-description">
@@ -58,7 +65,7 @@
         </div>
       </section>
 
-      <section class="viz-section" id="section-fear-journey">
+      <section class="viz-section" id="section-fear-journey" data-pulse-anchor="journey">
         <div class="section-header">
           <h2 class="section-title">Heartbeat of Terror Monitor</h2>
           <p class="section-description">
@@ -80,7 +87,7 @@
         </div>
       </section>
 
-      <section class="viz-section" id="section-peaks">
+      <section class="viz-section" id="section-peaks" data-pulse-anchor="peaks">
         <div class="section-header">
           <h2 class="section-title">The Cemetery of Terror</h2>
           <p class="section-description">
@@ -103,7 +110,7 @@
         </div>
       </section>
 
-      <section class="viz-section" id="section-effectiveness">
+      <section class="viz-section" id="section-effectiveness" data-pulse-anchor="effectiveness">
         <div class="section-header">
           <h2 class="section-title">The Power of Horror Signals</h2>
           <p class="section-description">
@@ -153,5 +160,6 @@
     <script src="js/spikesViz.js"></script>
     <script src="js/effectivenessViz.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/heartbeat.js"></script>
   </body>
 </html>
