@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Anatomy of Fear: How Horror Films Terrify Us</title>
+
+    
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+
+    
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    
+    <section id="intro">
+      <div class="intro-content">
+        <h1 class="title">The Anatomy of Fear</h1>
+        <p class="subtitle">
+          Unveiling the Dark Patterns Behind Horror's Most Terrifying Moments
+        </p>
+        <div class="scroll-indicator">
+          <span>Explore the Terror Below</span>
+          <div class="arrow-down"></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <main id="viz-container">
+      
+      <section class="viz-section" id="section-signals">
+        <div class="section-header">
+          <h2 class="section-title">The Blood Flow of Horror</h2>
+          <p class="section-description">
+            Watch blood-red streams of terror flow from THE VOID, THE VIOLENCE,
+            THE SCREAM into their horrifying manifestations. Each pulse carries
+            the essence of fear. Adjust the threshold to witness only the most
+            potent streams.
+            <em style="color: #ff0000">The blood never lies...</em>
+          </p>
+        </div>
+        <div class="viz-wrapper">
+          <div id="viz-sankey" class="visualization-large"></div>
+        </div>
+        <div class="viz-controls">
+          <label for="threshold-slider">Signal Threshold:</label>
+          <input
+            type="range"
+            id="threshold-slider"
+            min="100"
+            max="1000"
+            value="400"
+            step="50"
+          />
+          <span id="threshold-value">400</span>
+        </div>
+      </section>
+
+      <section class="viz-section" id="section-fear-journey">
+        <div class="section-header">
+          <h2 class="section-title">Heartbeat of Terror Monitor</h2>
+          <p class="section-description">
+            VITAL SIGNS MONITORING - Select a patient file to observe their fear
+            response on our medical-grade terror scanner. Watch the EKG flatline
+            and spike as horror courses through their veins. Critical events
+            marked with skull indicators.
+            <em style="color: #39ff14">Patient survival not guaranteed...</em>
+          </p>
+        </div>
+        <div class="viz-wrapper">
+          <div class="film-selector">
+            <label for="film-select">Choose Your Nightmare:</label>
+            <select id="film-select" class="spooky-select">
+              <option value="">Loading films...</option>
+            </select>
+          </div>
+          <div id="viz-fear-build" class="visualization-large"></div>
+        </div>
+      </section>
+
+      <section class="viz-section" id="section-peaks">
+        <div class="section-header">
+          <h2 class="section-title">The Cemetery of Terror</h2>
+          <p class="section-description">
+            Enter the graveyard where every tombstone marks a moment of pure
+            terror. Each headstone rises from the earth at the exact instant
+            fear struck. Warning signs flicker where tension builds. Watch
+            ghosts float and crows fly across this landscape of dread.
+            <em style="color: #8b0000">RIP to all who dared to watch...</em>
+          </p>
+        </div>
+        <div class="viz-wrapper">
+          <div id="viz-spikes" class="visualization-large"></div>
+        </div>
+        <div class="viz-controls">
+          <button id="toggle-fear" class="spooky-button active">Fear</button>
+          <button id="toggle-tension" class="spooky-button active">
+            Tension
+          </button>
+          <button id="reset-zoom" class="spooky-button">Reset View</button>
+        </div>
+      </section>
+
+      <section class="viz-section" id="section-effectiveness">
+        <div class="section-header">
+          <h2 class="section-title">The Power of Horror Signals</h2>
+          <p class="section-description">
+            Which words trigger the most fear and tension? Each bubble
+            represents a horror signal—size shows frequency, color shows
+            intensity. Click to explore their impact. Hover to see detailed
+            statistics about how each word affects the audience.
+          </p>
+        </div>
+        <div class="viz-wrapper">
+          <div class="viz-controls" style="margin-bottom: 20px">
+            <label for="sort-select">Sort By:</label>
+            <select id="sort-select" class="spooky-select">
+              <option value="impact">Overall Horror Impact</option>
+              <option value="fear">Fear Generation</option>
+              <option value="tension">Tension Creation</option>
+              <option value="frequency">Frequency of Occurrence</option>
+            </select>
+          </div>
+          <div id="viz-effectiveness" class="visualization-large"></div>
+        </div>
+      </section>
+    </main>
+
+    
+    <footer>
+      <div class="footer-content">
+        <h3>About This Project</h3>
+        <p>
+          Analysis of 129 horror film screenplays using AI-powered scene
+          analysis to extract emotional intensity, horror vocabulary, and
+          narrative patterns.
+        </p>
+        <p class="team">
+          Team: Calvin Liew, Yichen Fan, Yansong Zhu, Olivia Doerrstein, Mehmet
+          Gunenc, Fanke Qin
+        </p>
+        <p class="course">
+          CSC316 - Data Visualization | University of Toronto
+        </p>
+      </div>
+    </footer>
+
+    
+    <script src="js/sankeyViz.js"></script>
+    <script src="js/fearBuildViz.js"></script>
+    <script src="js/spikesViz.js"></script>
+    <script src="js/effectivenessViz.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
