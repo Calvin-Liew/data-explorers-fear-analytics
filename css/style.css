@@ -813,3 +813,166 @@ footer {
 .blood-pulse {
   animation: bloodPulse 2s ease-in-out infinite;
 }
+
+
+/* === NEW: Radar + Drip styles (append-only) === */
+#section-balance .controls,
+#section-drips .controls { margin: 8px 0 12px; display: flex; gap: 8px; align-items: center; }
+
+#viz-radar svg { max-width: 100%; }
+.radar-label { font-size: 12px; fill: var(--ink-70, #444); }
+.radar-title { font-size: 14px; font-weight: 700; fill: var(--ink-80, #222); }
+
+#viz-drip svg { max-width: 100%; }
+.drip-label { font-size: 11px; fill: #3a0c0c; }
+.section-note { font-size: 12px; opacity: 0.8; margin-top: 6px; }
+
+/* === Dark horror dropdowns (radar + others) === */
+#section-balance .controls label,
+#section-drips .controls label {
+    color: #f2f2f2;
+    font-weight: 600;
+    letter-spacing: .3px;
+}
+
+#radar-film-select,
+#drip-sort,
+#sort-select,
+#film-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background:
+            linear-gradient(180deg, #1a0b0b 0%, #0f0606 100%);
+    color: #f6eaea;
+    border: 1px solid rgba(214, 26, 26, 0.55);
+    border-radius: 10px;
+    padding: 10px 40px 10px 12px;
+    font-size: 14px;
+    line-height: 1.15;
+    outline: none;
+    box-shadow:
+            0 0 0 1px rgba(178, 24, 24, 0.25) inset,
+            0 6px 18px rgba(0, 0, 0, 0.35);
+    transition: box-shadow .2s ease, transform .05s ease, border-color .2s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+/* neon-ish focus + hover */
+#radar-film-select:hover,
+#drip-sort:hover,
+#sort-select:hover,
+#film-select:hover {
+    border-color: rgba(214, 26, 26, 0.9);
+    box-shadow:
+            0 0 0 1px rgba(214, 26, 26, 0.6) inset,
+            0 0 12px rgba(214, 26, 26, 0.25);
+}
+
+#radar-film-select:focus,
+#drip-sort:focus,
+#sort-select:focus,
+#film-select:focus {
+    border-color: #ff2a2a;
+    box-shadow:
+            0 0 0 2px rgba(255, 42, 42, 0.9) inset,
+            0 0 18px rgba(255, 42, 42, 0.25),
+            0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+/* custom arrow */
+#radar-film-select,
+#drip-sort,
+#sort-select,
+#film-select {
+    background-image:
+            linear-gradient(180deg, rgba(214,26,26,0.0), rgba(214,26,26,0.0)),
+            url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 9l5 5 5-5' stroke='%23F25B5B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat;
+    background-position: right 12px center, right 12px center;
+    background-size: 18px 18px;
+}
+
+/* disabled option look (if any) */
+#radar-film-select:disabled,
+#drip-sort:disabled,
+#sort-select:disabled,
+#film-select:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+/* container spacing alignment */
+#section-balance .controls,
+#section-drips .controls {
+    gap: 10px;
+    align-items: center;
+}
+
+@media (max-width: 600px) {
+    #radar-film-select,
+    #drip-sort,
+    #sort-select,
+    #film-select { width: 100%; }
+}
+
+/* center the two new viz sections like the others */
+#section-balance .viz,
+#section-drips .viz {
+    max-width: 1100px;   /* match your other sections’ visual width */
+    margin: 0 auto;      /* center the container */
+    display: block;
+}
+
+/* also center the SVGs inside */
+#viz-radar svg,
+#viz-drip svg {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+}
+/* Center full layout for the two new sections (header, text, controls, viz, notes) */
+#section-balance,
+#section-drips {
+    max-width: 1100px;     /* match other sections */
+    margin: 0 auto;        /* center the whole section */
+    padding: 0 16px;       /* small side padding like others */
+    display: grid;
+    justify-items: center; /* center all direct children horizontally */
+    row-gap: 10px;
+    text-align: center;
+}
+
+/* Center and cap widths of inner blocks */
+#section-balance .section-header,
+#section-drips .section-header,
+#section-balance .controls,
+#section-drips .controls,
+#section-balance .viz,
+#section-drips .viz,
+#section-balance .section-note,
+#section-drips .section-note {
+    width: 100%;
+    max-width: 900px;      /* tweak if you want wider text blocks */
+    margin: 0 auto;
+}
+
+/* Center the controls inline */
+#section-balance .controls,
+#section-drips .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Ensure SVGs themselves are centered & responsive */
+#viz-radar svg,
+#viz-drip svg {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+

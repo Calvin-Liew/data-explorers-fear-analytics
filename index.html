@@ -126,6 +126,37 @@
           <div id="viz-effectiveness" class="visualization-large"></div>
         </div>
       </section>
+        <!-- NEW: Balance Radar (spider-web vibe) -->
+        <section id="section-balance" class="section">
+            <div class="section-header">
+                <h2>Signal-Balance by Film</h2>
+                <p class="section-subtitle">How evenly do films use different signal families?</p>
+            </div>
+            <div class="controls">
+                <label for="radar-film-select">Film:</label>
+                <select id="radar-film-select"></select>
+            </div>
+            <div id="viz-radar" class="viz"></div>
+            <p class="section-note">We group raw signals into 6 families (Audio, Visual, Pace, Threat, Setting, Psyche) and show balance (0–1) per film.</p>
+        </section>
+
+        <!-- NEW: Dripping Impact Strip (dripping-blood vibe) -->
+        <section id="section-drips" class="section">
+            <div class="section-header">
+                <h2>Signal Impact Strip</h2>
+                <p class="section-subtitle">Ranked signals with a dripping strip where “drip depth” ∝ impact.</p>
+            </div>
+            <div class="controls">
+                <label for="drip-sort">Sort by:</label>
+                <select id="drip-sort">
+                    <option value="impact">Impact (desc)</option>
+                    <option value="name">Name (A–Z)</option>
+                </select>
+            </div>
+            <div id="viz-drip" class="viz"></div>
+            <p class="section-note">Different look, different question: not frequency, not bubbles — a ranked “impact strip” with stylized drips.</p>
+        </section>
+
     </main>
 
     
@@ -152,6 +183,9 @@
     <script src="js/fearBuildViz.js"></script>
     <script src="js/spikesViz.js"></script>
     <script src="js/effectivenessViz.js"></script>
+    <script src="js/radarBalanceViz.js"></script>
+    <script src="js/dripImpactViz.js"></script>
+
     <script src="js/main.js"></script>
   </body>
 </html>
