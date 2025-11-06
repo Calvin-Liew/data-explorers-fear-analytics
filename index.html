@@ -78,6 +78,29 @@
           </div>
           <div id="viz-fear-build" class="visualization-large"></div>
         </div>
+        <!-- 💓 心跳控制面板 -->
+        <div class="viz-controls heartbeat-controls" style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.5); border: 2px solid #39ff14; border-radius: 5px;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <button id="toggle-heartbeat" class="spooky-button heartbeat-btn">
+              🔊 Start Heartbeat Sound
+            </button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <label for="volume-slider" style="color: #39ff14; font-family: 'Special Elite', monospace;">Volume:</label>
+              <input
+                type="range"
+                id="volume-slider"
+                min="0"
+                max="100"
+                value="30"
+                style="width: 120px; accent-color: #39ff14;"
+              />
+              <span id="volume-value" style="color: #39ff14; font-family: 'Special Elite', monospace; min-width: 40px;">30%</span>
+            </div>
+            <span id="heartbeat-status" style="color: #39ff14; font-family: 'Special Elite', monospace; font-size: 14px;">
+              💓 Status: <span id="status-text">Inactive</span>
+            </span>
+          </div>
+        </div>
       </section>
 
       <section class="viz-section" id="section-peaks">
@@ -148,6 +171,7 @@
     </footer>
 
     
+    <script src="js/heartbeat.js"></script>
     <script src="js/sankeyViz.js"></script>
     <script src="js/fearBuildViz.js"></script>
     <script src="js/spikesViz.js"></script>

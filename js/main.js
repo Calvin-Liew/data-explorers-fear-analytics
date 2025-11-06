@@ -16,15 +16,18 @@
     console.log("  - createFearBuildViz:", typeof createFearBuildViz);
     console.log("  - createSpikesViz:", typeof createSpikesViz);
     console.log("  - createEffectivenessViz:", typeof createEffectivenessViz);
+    console.log("  - HeartbeatSound:", typeof HeartbeatSound);
 
     setTimeout(() => {
       console.log("🔍 Re-checking after delay:");
       console.log("  - createEffectivenessViz:", typeof createEffectivenessViz);
+      console.log("  - HeartbeatSound:", typeof HeartbeatSound);
 
       loadAllData()
         .then((data) => {
           state.data = data;
           initializeVisualizations(data);
+          setupHeartbeatControls();
           console.log("✅ Initialization complete!");
         })
         .catch((error) => {
@@ -171,6 +174,74 @@
     } else {
       console.error("❌ createEffectivenessViz not found!");
     }
+  }
+
+  /**
+   * 💓 设置心跳音效控制
+   */
+  function setupHeartbeatControls() {
+    console.log("💓 Setting up heartbeat controls...");
+
+    const toggleBtn = document.getElementById("toggle-heartbeat");
+    const volumeSlider = document.getElementById("volume-slider");
+    const volumeValue = document.getElementById("volume-value");
+    const statusText = document.getElementById("status-text");
+    const filmSelect = document.getElementById("film-select");
+
+    if (!toggleBtn || !volumeSlider || !volumeValue || !statusText) {
+      console.error("❌ Heartbeat control elements not found!");
+      return;
+    }
+
+    const fearBuildViz = state.visualizations.fearBuild;
+    if (!fearBuildViz || !fearBuildViz.heartbeat) {
+      console.error("❌ Fear Build visualization not ready!");
+      return;
+    }
+
+    // 切换心跳音效
+    toggleBtn.addEventListener("click", function () {
+      if (fearBuildViz.heartbeat.isPlaying()) {
+        // 停止心跳
+        fearBuildViz.heartbeat.stop();
+        toggleBtn.textContent = "🔊 Start Heartbeat Sound";
+        toggleBtn.classList.remove("active");
+        statusText.textContent = "Inactive";
+        statusText.style.color = "#999";
+        console.log("💔 Heartbeat stopped");
+      } else {
+        // 开始心跳
+        const currentFilm = filmSelect.value;
+        if (!currentFilm) {
+          alert("⚠️ Please select a patient file first!");
+          return;
+        }
+
+        fearBuildViz.heartbeat.start();
+        toggleBtn.textContent = "🔇 Stop Heartbeat Sound";
+        toggleBtn.classList.add("active");
+        statusText.textContent = "Active";
+        statusText.style.color = "#39ff14";
+        console.log("💓 Heartbeat started");
+      }
+    });
+
+    // 音量控制
+    volumeSlider.addEventListener("input", function () {
+      const volume = this.value / 100;
+      volumeValue.textContent = `${this.value}%`;
+      fearBuildViz.heartbeat.setVolume(volume);
+      console.log(`🔊 Volume: ${this.value}%`);
+    });
+
+    // 当选择新电影时，如果心跳正在播放，自动更新BPM
+    filmSelect.addEventListener("change", function () {
+      if (this.value && fearBuildViz.heartbeat.isPlaying()) {
+        console.log("🎬 Film changed, heartbeat will adjust BPM automatically");
+      }
+    });
+
+    console.log("✅ Heartbeat controls setup complete!");
   }
 
   function showError(message) {
