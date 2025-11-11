@@ -25,6 +25,7 @@
         .then((data) => {
           state.data = data;
           initializeVisualizations(data);
+
           console.log("✅ Initialization complete!");
         })
         .catch((error) => {
@@ -32,6 +33,15 @@
           showError("Failed to load data. Please refresh the page.");
         });
     }, 100);
+      // Hero question bubbles: scroll to section
+      document.querySelectorAll('.blood-bubble[data-target]').forEach(btn => {
+          btn.addEventListener('click', () => {
+              const target = btn.getAttribute('data-target');
+              const el = document.querySelector(target);
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+      });
+
   }
 
   async function loadAllData() {
