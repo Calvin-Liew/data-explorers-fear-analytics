@@ -5,31 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Anatomy of Fear: How Horror Films Terrify Us</title>
 
-    
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
 
-    
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-
     <section id="intro">
       <div class="intro-content">
-          <div class="hero-questions" aria-label="Quick questions">
-              <button class="blood-bubble" data-target="#section-signals">
-                  Which source feeds the scariest outcomes?
-              </button>
-              <button class="blood-bubble" data-target="#section-fear-journey">
-                  How does fear build during a film?
-              </button>
-              <button class="blood-bubble" data-target="#section-peaks">
-                  Where do terror spikes hit?
-              </button>
-              <button class="blood-bubble" data-target="#section-effectiveness">
-                  Which signal hits hardest?
-              </button>
-          </div>
+        <div class="hero-questions" aria-label="Quick questions">
+          <button class="blood-bubble" data-target="#section-signals">
+            Which source feeds the scariest outcomes?
+          </button>
+          <button class="blood-bubble" data-target="#section-fear-journey">
+            How does fear build during a film?
+          </button>
+          <button class="blood-bubble" data-target="#section-peaks">
+            Where do terror spikes hit?
+          </button>
+          <button class="blood-bubble" data-target="#section-effectiveness">
+            Which signal hits hardest?
+          </button>
+        </div>
         <h1 class="title">The Anatomy of Fear</h1>
         <p class="subtitle">
           Unveiling the Dark Patterns Behind Horror's Most Terrifying Moments
@@ -41,145 +38,529 @@
       </div>
     </section>
 
-    
-    <main id="viz-container">
-      
-      <section class="viz-section" id="section-signals">
-        <div class="section-header">
-          <h2 class="section-title">The Blood Flow of Horror</h2>
-          <p class="section-description">
-            Watch blood-red streams of terror flow from THE VOID, THE VIOLENCE,
-            THE SCREAM into their horrifying manifestations. Each pulse carries
-            the essence of fear. Adjust the threshold to witness only the most
-            potent streams.
-            <em style="color: #ff0000">The blood never lies...</em>
+    <section id="project-snapshot" class="snapshot-section">
+      <div class="snapshot-inner">
+        <div class="snapshot-header">
+          <h3 class="section-chapter">Prologue — Opening the Case File</h3>
+          <h2 class="section-title">Project Snapshot</h2>
+          <p>
+            Before diving into the visuals, here’s what the dataset looks like.
+            Every scene went through a scripted GPT-4o-mini review (with GPT-4o
+            fallbacks), prompting the model to extract structured stats, tag
+            horror signals, and score emotions—turning raw screenplays into
+            quantifiable dread.
           </p>
         </div>
-        <div class="viz-wrapper">
-          <div id="viz-sankey" class="visualization-large"></div>
+        <div class="snapshot-grid">
+          <div class="snapshot-card">
+            <span class="stat-number">129</span>
+            <span class="stat-label">Screenplays</span>
+            <p>
+              IMSDb horror collection, deduplicated and QC’d before analysis.
+            </p>
+          </div>
+          <div class="snapshot-card">
+            <span class="stat-number">9,760</span>
+            <span class="stat-label">Scenes Parsed</span>
+            <p>
+              Scene splitter enforces headings, minimum length, and content
+              type.
+            </p>
+          </div>
+          <div class="snapshot-card">
+            <span class="stat-number">11,204</span>
+            <span class="stat-label">Signals Detected</span>
+            <p>
+              Across a 207-term horror lexicon spanning atmosphere, threat,
+              psyche.
+            </p>
+          </div>
+          <div class="snapshot-card">
+            <span class="stat-number">207</span>
+            <span class="stat-label">Lexicon Entries</span>
+            <p>
+              Organized into ambience, threat, sensory shock, and psyche signal
+              families.
+            </p>
+          </div>
         </div>
-        <div class="viz-controls">
-          <label for="threshold-slider">Signal Threshold:</label>
-          <input
-            type="range"
-            id="threshold-slider"
-            min="100"
-            max="1000"
-            value="400"
-            step="50"
-          />
-          <span id="threshold-value">400</span>
+        <div class="dataset-overview">
+          <h3>What Is a Signal?</h3>
+          <p>
+            A signal is any recurring lexical cue that our models associate with
+            a spike in fear or tension. Examples include ambience terms like
+            <em>night, silence, fog</em>, visceral triggers like
+            <em>blood, scream, knife</em>, supernatural hints such as
+            <em>ghost</em> or <em>possessed</em>, and psychological cues like
+            <em>dread</em> or <em>trapped</em>.
+          </p>
+          <h3>How We Split Scenes</h3>
+          <p>
+            Heuristics scan for scene headings (INT, EXT, SCENE numbers,
+            CONTINUED cues), cap chunks at 1,200 words, and stitch continuations
+            together so the AI reads complete beats while discarding fragments
+            without meaningful dialogue or action.
+          </p>
+          <div class="scene-header-sample">
+            <div class="sample-label">Screenplay header example</div>
+            <pre><code>INT. ABANDONED ASYLUM - NIGHT
+
+Rows of locked doors stretch into darkness. A distant SCREAM echoes.
+
+SARA
+(whispering)
+Did you hear that?
+
+MARK
+It came from the third ward. We should go back.
+
+CONTINUED:
+
+INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
+</code></pre>
+          </div>
+          <h3>Prompting the AI</h3>
+          <p>
+            Each chunk is handed to GPT-4o-mini with a strict JSON contract; if
+            validation fails we escalate to GPT-4o. The prompt locks the model
+            to horror-specific terminology, emotion scoring guidelines, and a
+            thirty five word summary limit.
+          </p>
+          <pre class="prompt-snippet"><code>{
+  "system": "You are a horror screenplay annotator. Reply with valid JSON only.",
+  "user": {
+    "film": "HALLOWEEN (1978)",
+    "chunk_index": 12,
+    "instructions": [
+      "Extract characters speaking in this chunk.",
+      "Count horror lexicon hits per family.",
+      "Score fear, tension, sentiment on 0 to 1 scales.",
+      "Summarize the scene in no more than 35 words."
+    ],
+    "scene_text": "&lt;raw screenplay excerpt&gt;"
+  }
+}</code></pre>
+          <p class="prompt-note">
+            Our pipeline rejects malformed JSON, retries with adjusted sampling,
+            and merges the validated payload into the master scene table.
+          </p>
+          <div class="scene-json-sample">
+            <div class="sample-label">AI output excerpt</div>
+            <pre><code>{
+  "scene_heading": "INT. ABANDONED ASYLUM - NIGHT",
+  "location": "Abandoned asylum",
+  "time_of_day": "Night",
+  "characters": ["Sara", "Mark"],
+  "dialogue_stats": { "lines": 4, "words": 26, "question_rate": 0.50 },
+  "action_stats": { "words": 18, "stage_directions": 1 },
+  "horror_signals": {
+    "setting": { "night": 1, "dark": 1 },
+    "audio": { "scream": 1 },
+    "psyche": { "fear": 1 }
+  },
+  "fear_score": 0.62,
+  "tension_score": 0.58,
+  "sentiment": -0.44,
+  "summary": "Sara and Mark hear a scream in the dark asylum and debate retreating before pressing onward."
+}</code></pre>
+          </div>
+          <h3>What Each Scene Carries</h3>
+          <ul>
+            <li>Counts for every signal and its parent family.</li>
+            <li>Fear, tension, and sentiment scores on a 0 to 1 scale.</li>
+            <li>
+              Dialogue vs. action stats: word totals, question/exclamation
+              rates, stage directions.
+            </li>
+            <li>
+              Structured metadata: scene heading, location, time of day, and
+              speaking characters.
+            </li>
+          </ul>
+          <h3>Prompting the AI</h3>
+          <p>
+            Each chunk is handed to GPT-4o-mini with a strict JSON contract; if
+            validation fails we escalate to GPT-4o. The prompt locks the model
+            to horror-specific terminology, emotion scoring guidelines, and a
+            thirty five word summary limit.
+          </p>
+          <pre class="prompt-snippet"><code>{
+  "system": "You are a horror screenplay annotator. Reply with valid JSON only.",
+  "user": {
+    "film": "HALLOWEEN (1978)",
+    "chunk_index": 12,
+    "instructions": [
+      "Extract characters speaking in this chunk.",
+      "Count horror lexicon hits per family.",
+      "Score fear, tension, sentiment on 0 to 1 scales.",
+      "Summarize the scene in no more than 35 words."
+    ],
+    "scene_text": "&lt;raw screenplay excerpt&gt;"
+  }
+}</code></pre>
+          <p class="prompt-note">
+            Our pipeline rejects malformed JSON, retries with adjusted sampling,
+            and merges the validated payload into the master scene table.
+          </p>
+          <h3>Reading the Emotional Metrics</h3>
+          <p>
+            <strong>Fear</strong> scores capture sudden shocks and explicit
+            dread cues, while <strong>tension</strong> measures the slow
+            tightening of suspense. <strong>Sentiment</strong>
+            covers overall emotional valence, letting us spot scenes that are
+            menacing yet hopeful or bleak and oppressive. Each metric is
+            normalized so spikes and lulls are comparable across films.
+          </p>
+          <h3>Beyond the Signals</h3>
+          <p>
+            We log scene index, runtime percentile, dialogue-to-action ratios,
+            and stage-direction density. These columns reveal pacing
+            fingerprints, character involvement, and how much visual description
+            versus spoken word drives the fear response—context you can keep in
+            mind as you explore the charts below.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <main id="viz-container">
+      <section class="viz-section" id="section-signals">
+        <div class="section-header">
+          <h3 class="section-chapter">Scene 1 — Signal Intake</h3>
+          <h2 class="section-title">The Blood Flow of Horror</h2>
+          <p class="section-description">
+            This Sankey channels the top horror signals from our effectiveness
+            dataset (viz3). Link thickness shows how often each term appears,
+            while node glow reflects the combined fear and tension it induces.
+            Nudge the threshold to focus on only the heaviest streams and watch
+            the arterial horror reveal itself.
+          </p>
+        </div>
+        <div class="section-content">
+          <div class="viz-wrapper">
+            <div id="viz-sankey" class="visualization-large"></div>
+            <div class="viz-controls">
+              <label for="threshold-slider">Signal Threshold:</label>
+              <input
+                type="range"
+                id="threshold-slider"
+                min="100"
+                max="1000"
+                value="400"
+                step="50"
+              />
+              <span id="threshold-value">400</span>
+            </div>
+          </div>
+          <aside class="insight-panel blood-theme">
+            <h3>Read the Flow</h3>
+            <p>
+              This Sankey taps the
+              <code>viz3_horror_effectiveness.csv</code> table. We feed each
+              signal into one of four thematic “arteries” and scale the links by
+              total occurrences. Slide the threshold to reveal how common cues
+              like <strong>night</strong> (3,694 sightings) give way to rarer,
+              high-impact signals such as <strong>scream</strong> with an
+              overall horror score of <strong>0.691</strong>.
+            </p>
+            <p>
+              Node intensity reflects the blended fear and tension impact that
+              we computed per signal. Bright nodes mean scripts consistently
+              pair that cue with spikes in audience response, illuminating which
+              ingredients drive the genre’s most visceral moments.
+            </p>
+          </aside>
         </div>
       </section>
 
       <section class="viz-section" id="section-fear-journey">
         <div class="section-header">
+          <h3 class="section-chapter">Scene 2 — Vital Signs Rising</h3>
           <h2 class="section-title">Heartbeat of Terror Monitor</h2>
           <p class="section-description">
-            VITAL SIGNS MONITORING - Select a patient file to observe their fear
-            response on our medical-grade terror scanner. Watch the EKG flatline
-            and spike as horror courses through their veins. Critical events
-            marked with skull indicators.
-            <em style="color: #39ff14">Patient survival not guaranteed...</em>
+            Choose a film to plot its fear score across the runtime using the
+            journey table (viz2). The x-axis tracks scene progression, the neon
+            line shows fear intensity on a 0 to 1 scale, and skull markers tag
+            any moment breaking the 0.70 threshold. The BPM readout converts the
+            average fear into a pulse so you can feel the dread build in real
+            time.
           </p>
         </div>
-        <div class="viz-wrapper">
-          <div class="film-selector">
-            <label for="film-select">Choose Your Nightmare:</label>
-            <select id="film-select" class="spooky-select">
-              <option value="">Loading films...</option>
-            </select>
+        <div class="section-content">
+          <div class="viz-wrapper">
+            <div class="film-selector">
+              <label for="film-select">Choose Your Nightmare:</label>
+              <select id="film-select" class="spooky-select">
+                <option value="">Loading films...</option>
+              </select>
+            </div>
+            <div id="viz-fear-build" class="visualization-large"></div>
           </div>
-          <div id="viz-fear-build" class="visualization-large"></div>
+          <aside class="insight-panel neon-theme">
+            <h3>Track the Pulse</h3>
+            <p>
+              The line is a direct readout from
+              <code>viz2b_fear_journey.csv</code>, where every scene is mapped
+              to a percentile along the runtime and paired with its AI-scored
+              fear level (0–1). When you pick a film, the monitor draws those
+              points in order and highlights any scene where fear clears
+              <strong>0.70</strong> with a skull marker.
+            </p>
+            <p>
+              Average fear converts to the faux “BPM” in the corner, so a steady
+              0.45 rating becomes roughly 120 terror beats per minute. Compare
+              films to spot pacing tactics—slow burns that erupt late versus
+              slashers that keep the needle thrashing.
+            </p>
+          </aside>
         </div>
       </section>
 
       <section class="viz-section" id="section-peaks">
         <div class="section-header">
+          <h3 class="section-chapter">Scene 3 — Graveyard of Spikes</h3>
           <h2 class="section-title">The Cemetery of Terror</h2>
           <p class="section-description">
-            Enter the graveyard where every tombstone marks a moment of pure
-            terror. Each headstone rises from the earth at the exact instant
-            fear struck. Warning signs flicker where tension builds. Watch
-            ghosts float and crows fly across this landscape of dread.
-            <em style="color: #8b0000">RIP to all who dared to watch...</em>
+            Tombstones mark scenes where fear scores climb past 0.40 for eight
+            iconic films, all aligned on a shared 0 to 90 percent runtime axis.
+            Toggle buttons reveal fear versus tension markers, letting you
+            compare sudden jump scares with slow-burn warnings. Think of it as
+            the burial plot for every heart-stopping beat.
           </p>
         </div>
-        <div class="viz-wrapper">
-          <div id="viz-spikes" class="visualization-large"></div>
-        </div>
-        <div class="viz-controls">
-          <button id="toggle-fear" class="spooky-button active">Fear</button>
-          <button id="toggle-tension" class="spooky-button active">
-            Tension
-          </button>
-          <button id="reset-zoom" class="spooky-button">Reset View</button>
+        <div class="section-content">
+          <div class="viz-wrapper">
+            <div id="viz-spikes" class="visualization-large"></div>
+            <div class="viz-controls">
+              <button id="toggle-fear" class="spooky-button active">
+                Fear
+              </button>
+              <button id="toggle-tension" class="spooky-button active">
+                Tension
+              </button>
+              <button id="reset-zoom" class="spooky-button">Reset View</button>
+            </div>
+          </div>
+          <aside class="insight-panel grave-theme">
+            <h3>Spot the Spikes</h3>
+            <p>
+              We filtered the fear-journey data to eight iconic titles and
+              planted a tombstone wherever a scene’s fear score topped
+              <strong>0.40</strong>. The x-axis tracks runtime progression;
+              stacked rows keep each film on its own plotline for quick
+              comparison.
+            </p>
+            <p>
+              Toggle buttons let you isolate fear (tombstones) or tension
+              (warning signs). When both glow, the screenplay is delivering
+              simultaneous gut-punches and slow-burn dread—ideal for dissecting
+              how classics like <em>Halloween</em> choreograph their terror
+              crescendos.
+            </p>
+          </aside>
         </div>
       </section>
 
       <section class="viz-section" id="section-effectiveness">
         <div class="section-header">
+          <h3 class="section-chapter">Scene 4 — Signal Autopsy</h3>
           <h2 class="section-title">The Power of Horror Signals</h2>
           <p class="section-description">
-            Which words trigger the most fear and tension? Each bubble
-            represents a horror signal—size shows frequency, color shows
-            intensity. Click to explore their impact. Hover to see detailed
-            statistics about how each word affects the audience.
+            This bubble lab examines the top fifteen lexicon entries. Radius
+            mirrors how many times a signal appears, color intensity shows its
+            overall fear-and-tension impact, and the dropdown resorts the swarm
+            by different metrics. Hover for stats, click if you dare— the
+            jumpscare overlay reacts to the potency you just unleashed.
           </p>
         </div>
-        <div class="viz-wrapper">
-          <div class="viz-controls" style="margin-bottom: 20px">
-            <label for="sort-select">Sort By:</label>
-            <select id="sort-select" class="spooky-select">
-              <option value="impact">Overall Horror Impact</option>
-              <option value="fear">Fear Generation</option>
-              <option value="tension">Tension Creation</option>
-              <option value="frequency">Frequency of Occurrence</option>
-            </select>
-          </div>
-            <div id="jumpscare-consent" class="disclaimer" role="group" aria-labelledby="jumpscare-title" style="margin:12px 0 18px; padding:12px; border:1px solid #ff4444; background:#140000; color:#ffcccc">
-                <div id="jumpscare-title" style="font-weight:700; margin-bottom:6px;">⚠️ Jumpscare Warning</div>
-                <p style="margin:4px 0 10px; line-height:1.3">
-                    This section may contain loud sounds, rapid image flashes, flickering effects, and sudden visual overlays.
-                </p>
+        <div class="section-content">
+          <div class="viz-wrapper">
+            <div class="viz-controls stacked" style="margin-bottom: 20px">
+              <label for="sort-select">Sort By:</label>
+              <select id="sort-select" class="spooky-select">
+                <option value="impact">Overall Horror Impact</option>
+                <option value="fear">Fear Generation</option>
+                <option value="tension">Tension Creation</option>
+                <option value="frequency">Frequency of Occurrence</option>
+              </select>
             </div>
-          <div id="viz-effectiveness" class="visualization-large"></div>
+            <div
+              id="jumpscare-consent"
+              class="disclaimer"
+              role="group"
+              aria-labelledby="jumpscare-title"
+              style="
+                margin: 12px 0 18px;
+                padding: 12px;
+                border: 1px solid #ff4444;
+                background: #140000;
+                color: #ffcccc;
+              "
+            >
+              <div
+                id="jumpscare-title"
+                style="font-weight: 700; margin-bottom: 6px"
+              >
+                ⚠️ Jumpscare Warning
+              </div>
+              <p style="margin: 4px 0 10px; line-height: 1.3">
+                This section may contain loud sounds, rapid image flashes,
+                flickering effects, and sudden visual overlays.
+              </p>
+            </div>
+            <div id="viz-effectiveness" class="visualization-large"></div>
+          </div>
+          <aside class="insight-panel scream-theme">
+            <h3>Decode the Signals</h3>
+            <p>
+              These bubbles are the top fifteen triggers from the effectiveness
+              dataset. Radius scales with <strong>Total_Occurrences</strong>,
+              color saturation mirrors the combined fear and tension lift, and
+              clicking fires a jumpscare scaled to the
+              <strong>Overall_Impact</strong> score. Resort the swarm to see how
+              rankings change when you prioritize raw frequency versus
+              intensity.
+            </p>
+            <p>
+              Notice how atmospheric terms like <strong>night</strong> dominate
+              by volume yet sit in darker, cooler tones, while
+              <strong>scream</strong> and <strong>blood</strong> blaze
+              bright—rarer than the void but far more potent at spiking both
+              emotion metrics when they appear.
+            </p>
+          </aside>
         </div>
       </section>
-        <!-- NEW: Balance Radar (spider-web vibe) -->
-        <section id="section-balance" class="section">
-            <div class="section-header">
-                <h2>Signal-Balance by Film</h2>
-                <p class="section-subtitle">How evenly do films use different signal families?</p>
-            </div>
+      <!-- NEW: Balance Radar (spider-web vibe) -->
+      <section id="section-balance" class="viz-section">
+        <div class="section-header">
+          <h3 class="section-chapter">Scene 5 — Recipe Cards</h3>
+          <h2 class="section-title">Signal-Balance by Film</h2>
+          <p class="section-subtitle">
+            This radar compares six signal families per film (Audio, Visual,
+            Pace, Threat, Setting, Psyche), scaling each to the dominant value
+            so you can spot whether a story leans on ambience, aggression,
+            psychological dread, or a balanced brew.
+          </p>
+        </div>
+        <div class="section-content">
+          <div class="viz-wrapper stacked">
             <div class="controls">
-                <label for="radar-film-select">Film:</label>
-                <select id="radar-film-select"></select>
+              <label for="radar-film-select">Film:</label>
+              <select id="radar-film-select"></select>
             </div>
             <div id="viz-radar" class="viz"></div>
-            <p class="section-note">We group raw signals into 6 families (Audio, Visual, Pace, Threat, Setting, Psyche) and show balance (0–1) per film.</p>
-        </section>
+            <p class="section-note">
+              We group raw signals into 6 families (Audio, Visual, Pace, Threat,
+              Setting, Psyche) and show balance (0–1) per film.
+            </p>
+          </div>
+          <aside class="insight-panel radar-theme">
+            <h3>Compare the Recipe</h3>
+            <p>
+              We regrouped the ten most common signals per film into six sensory
+              families—Audio, Visual, Pace, Threat, Setting, and Psyche—using
+              the counts in
+              <code>viz1_horror_signals_by_film.csv</code>. Each axis is
+              normalized within that film, so a point at
+              <strong>1.0</strong> marks the dominant ingredient in its fear
+              recipe.
+            </p>
+            <p>
+              Flip through the dropdown to spot stylistic fingerprints:
+              supernatural stories lean on Psyche and Setting, creature features
+              spike Threat, and relentless slashers light up Pace. The radar
+              makes those balances visible at a glance.
+            </p>
+          </aside>
+        </div>
+      </section>
 
-        <!-- NEW: Dripping Impact Strip (dripping-blood vibe) -->
-        <section id="section-drips" class="section">
-            <div class="section-header">
-                <h2>Signal Impact Strip</h2>
-                <p class="section-subtitle">Ranked signals with a dripping strip where “drip depth” ∝ impact.</p>
-            </div>
+      <!-- NEW: Dripping Impact Strip (dripping-blood vibe) -->
+      <section id="section-drips" class="viz-section">
+        <div class="section-header">
+          <h3 class="section-chapter">Scene 6 — Impact Dripline</h3>
+          <h2 class="section-title">Signal Impact Strip</h2>
+          <p class="section-subtitle">
+            A ranked strip that traces each signal’s overall impact and lets the
+            “drip” length visualize how quickly potency falls off. Sort to swap
+            between impact, fear, tension, or name and see which terms keep
+            bleeding through.
+          </p>
+        </div>
+        <div class="section-content">
+          <div class="viz-wrapper stacked">
             <div class="controls">
-                <label for="drip-sort">Sort by:</label>
-                <select id="drip-sort">
-                    <option value="impact">Impact (desc)</option>
-                    <option value="name">Name (A–Z)</option>
-                </select>
+              <label for="drip-sort">Sort by:</label>
+              <select id="drip-sort">
+                <option value="impact">Impact (desc)</option>
+                <option value="name">Name (A–Z)</option>
+              </select>
             </div>
             <div id="viz-drip" class="viz"></div>
-            <p class="section-note">Different look, different question: not frequency, not bubbles — a ranked “impact strip” with stylized drips.</p>
-        </section>
-
+            <p class="section-note">
+              Different look, different question: not frequency, not bubbles — a
+              ranked “impact strip” with stylized drips.
+            </p>
+          </div>
+          <aside class="insight-panel drip-theme">
+            <h3>Read the Ranking</h3>
+            <p>
+              This strip reuses the impact scores from
+              <code>viz3_horror_effectiveness.csv</code>. We sort the signals by
+              your selection, trace a smooth ribbon through their impact values,
+              and hang stylized drips to show how quickly the influence trails
+              off after the heavy hitters.
+            </p>
+            <p>
+              Choose A–Z to compare lexicon coverage or stick with impact to see
+              the steep drop from elite signals (anything above
+              <strong>0.50</strong>) to background atmosphere. It complements
+              the bubble chart by emphasizing order and falloff instead of
+              spatial clustering.
+            </p>
+          </aside>
+        </div>
+      </section>
+      <section id="epilogue" class="snapshot-section">
+        <div class="snapshot-inner">
+          <div class="snapshot-header">
+            <h3 class="section-chapter">Epilogue — Lessons From the Dark</h3>
+            <h2 class="section-title">What the Data Whispers</h2>
+            <p>
+              Stitching together signals, trajectories, and impact scores leaves
+              us with a few takeaways for anyone crafting or studying horror:
+              the lexicon matters, pacing is everything, and balance beats
+              excess.
+            </p>
+          </div>
+          <div class="dataset-overview">
+            <h3>Three Findings to Keep</h3>
+            <ul>
+              <li>
+                <strong>Atmosphere sets the trap, violence springs it.</strong>
+                Words like <em>night</em> blanket scripts, but when visceral
+                cues such as <em>scream</em> or <em>blood</em> arrive, fear and
+                tension surge in tandem.
+              </li>
+              <li>
+                <strong>Dread works best in pulses.</strong> Films hover at
+                mid-level fear, then fire off clusters of spikes near the
+                climax—our heartbeat monitor shows those late surges lighting up
+                with skull markers.
+              </li>
+              <li>
+                <strong>Mix your signal families.</strong> Slashers lean on
+                Threat and Pace, hauntings lean on Setting and Psyche, and the
+                most unsettling films blend all six families to keep nerves
+                frayed from every angle.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </main>
 
-    
     <footer>
       <div class="footer-content">
         <h3>About This Project</h3>
@@ -198,7 +579,6 @@
       </div>
     </footer>
 
-    
     <script src="js/sankeyViz.js"></script>
     <script src="js/fearBuildViz.js"></script>
     <script src="js/spikesViz.js"></script>
