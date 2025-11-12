@@ -148,6 +148,12 @@ a:hover {
   max-width: 360px;
 }
 
+#section-fear-journey .insight-panel {
+  flex: 1 1 100%;
+  max-width: none;
+  width: 100%;
+}
+
 .insight-panel::before {
   content: "";
   position: absolute;
@@ -1301,6 +1307,83 @@ footer {
   margin: 0 auto;
   max-width: 100%;
 }
+
+.visualization-wide {
+  width: 100%;
+  min-height: 520px;
+  position: relative;
+}
+
+.fear-bottom-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: rgba(5, 0, 12, 0.65);
+  border: 1px solid rgba(255, 34, 78, 0.35);
+  border-radius: 12px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+.fear-bottom-legend .legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.9rem;
+  background: rgba(12, 0, 18, 0.85);
+  border: 1px solid rgba(57, 255, 20, 0.4);
+  border-radius: 999px;
+  color: var(--color-text);
+  font-family: "Special Elite", monospace;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    border-color 0.18s ease;
+  position: relative;
+}
+
+.fear-bottom-legend .legend-pill .pill-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.6);
+}
+
+.fear-bottom-legend .legend-pill .pill-label {
+  white-space: nowrap;
+  letter-spacing: 1.1px;
+}
+
+.fear-bottom-legend .legend-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(57, 255, 20, 0.35);
+}
+
+.fear-bottom-legend .legend-pill.is-average {
+  border-color: rgba(255, 34, 78, 0.55);
+  box-shadow: 0 0 14px rgba(255, 34, 78, 0.35);
+}
+
+.fear-bottom-legend .legend-pill.is-active {
+  border-color: rgba(57, 255, 20, 0.85);
+  box-shadow: 0 0 16px rgba(57, 255, 20, 0.55);
+  transform: translateY(-2px);
+}
+
+.fear-bottom-legend .legend-pill.is-active .pill-swatch {
+  box-shadow: 0 0 14px rgba(57, 255, 20, 0.9);
+}
+
+.fear-bottom-legend .legend-pill:is(:focus-visible, :focus) {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.45);
+}
+
 /* Center full layout for the two new sections (header, text, controls, viz, notes) */
 #section-balance,
 #section-drips {

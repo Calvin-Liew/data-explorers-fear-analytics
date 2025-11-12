@@ -1,975 +1,862 @@
 console.log("💀 effectivenessViz.js LOADED!");
 
-function createEffectivenessViz(selector, data) {
+function createEffectivenessViz(selector, rawData) {
   "use strict";
 
-  console.log("⚠️ Effectiveness init:", selector, "data:", data);
+  console.log("⚠️ Effectiveness init:", selector, "data:", rawData);
 
   const container = d3.select(selector);
   const containerNode = container.node();
 
   if (!containerNode) {
     console.error("❌ Container not found:", selector);
-    return;
+    return null;
   }
 
-  console.log("✅ Container found:", containerNode);
-  const margin = { top: 40, right: 40, bottom: 40, left: 40 };
-  const width = containerNode.clientWidth - margin.left - margin.right;
-  const height = 600 - margin.top - margin.bottom;
+  container.selectAll("*").remove();
+  container.style("position", "relative");
 
-  
+  const isCompact = containerNode.clientWidth < 720;
+  const margin = {
+    top: 70,
+    right: isCompact ? 32 : 240,
+    bottom: 90,
+    left: 120,
+  };
+  const baseHeight = isCompact ? 620 : 780;
+  const availableWidth = containerNode.clientWidth - margin.left - margin.right;
+  const width = Math.max(480, availableWidth);
+  const height = baseHeight - margin.top - margin.bottom;
+
   const svg = container
     .append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("height", baseHeight);
+
+  const horizontalOffset = (availableWidth - width) / 2;
+
+  const root = svg
     .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+    .attr(
+      "transform",
+      `translate(${margin.left + Math.max(0, horizontalOffset)},${margin.top})`
+    );
 
-  
-  const jumpscareOverlay = d3
-    .select("body")
-    .append("div")
-    .attr("id", "jumpscare-overlay")
-    .style("position", "fixed")
-    .style("top", "0")
-    .style("left", "0")
-    .style("width", "100vw")
-    .style("height", "100vh")
-    .style("background", "#000")
-    .style("z-index", "9999")
-    .style("display", "none")
-    .style("justify-content", "center")
-    .style("align-items", "center")
-    .style("opacity", "0");
+  const defs = svg.append("defs");
 
-  
+  defs
+    .append("linearGradient")
+    .attr("id", "signal-lab-gradient")
+    .attr("x1", "0%")
+    .attr("y1", "0%")
+    .attr("x2", "100%")
+    .attr("y2", "100%")
+    .selectAll("stop")
+    .data([
+      { offset: "0%", color: "#14001e" },
+      { offset: "45%", color: "#130022" },
+      { offset: "100%", color: "#050008" },
+    ])
+    .enter()
+    .append("stop")
+    .attr("offset", (d) => d.offset)
+    .attr("stop-color", (d) => d.color);
+
+  const glow = defs
+    .append("filter")
+    .attr("id", "signal-glow")
+    .attr("x", "-50%")
+    .attr("y", "-50%")
+    .attr("width", "200%")
+    .attr("height", "200%");
+  glow.append("feGaussianBlur").attr("stdDeviation", 6).attr("result", "coloredBlur");
+  const glowMerge = glow.append("feMerge");
+  glowMerge.append("feMergeNode").attr("in", "coloredBlur");
+  glowMerge.append("feMergeNode").attr("in", "SourceGraphic");
+
+  const rippleFilter = defs
+    .append("filter")
+    .attr("id", "signal-ripple-filter")
+    .attr("x", "-100%")
+    .attr("y", "-100%")
+    .attr("width", "300%")
+    .attr("height", "300%");
+  rippleFilter.append("feGaussianBlur").attr("stdDeviation", 4).attr("result", "rippleBlur");
+  const rippleMerge = rippleFilter.append("feMerge");
+  rippleMerge.append("feMergeNode").attr("in", "rippleBlur");
+  rippleMerge.append("feMergeNode").attr("in", "SourceGraphic");
+
+  const maxScenes = d3.max(rawData, (d) => d.scenesWithSignal) || 1;
+  const maxOccurrences = d3.max(rawData, (d) => d.occurrences) || 1;
+  const maxOverallImpact = d3.max(rawData, (d) => d.overallImpact) || 1;
+
+  function getHaloColor(d, opacity = 0.22) {
+    const base = d3.color(colorScale(d.dominance)) || d3.color("#ffffff");
+    base.opacity = opacity;
+    return base.formatRgb();
+  }
+
+  const data = rawData
+    .map((d) => {
+      const fearImpact = +d.fearImpact;
+      const tensionImpact = +d.tensionImpact;
+      const avgFear = +d.avgFear;
+      const avgTension = +d.avgTension;
+      const overallImpact = +d.overallImpact;
+      const dominance = fearImpact - tensionImpact;
+      let profile = "balanced";
+      if (dominance > 0.05) profile = "shock";
+      if (dominance < -0.05) profile = "dread";
+      const badge = profile === "shock" ? "⚡" : profile === "dread" ? "🌫️" : "🩸";
+      return {
+        signal: d.signal,
+        occurrences: +d.occurrences,
+        scenesWithSignal: +d.scenesWithSignal,
+        fearImpact,
+        tensionImpact,
+        avgFear,
+        avgTension,
+        overallImpact,
+        dominance,
+        profile,
+        badge,
+        scenesShare: (+d.scenesWithSignal || 0) / maxScenes,
+        occurrenceShare: (+d.occurrences || 0) / maxOccurrences,
+      };
+    })
+    .sort((a, b) => b.overallImpact - a.overallImpact);
+
+  const dominanceExtent = d3.extent(data, (d) => d.dominance);
+  const dominanceRange = Math.max(
+    Math.abs(dominanceExtent[0] || 0),
+    Math.abs(dominanceExtent[1] || 0),
+    0.05
+  );
+
+  const radiusScale = d3
+    .scaleSqrt()
+    .domain(d3.extent(data, (d) => d.occurrences))
+    .range(isCompact ? [18, 52] : [22, 68]);
+
+  const colorScale = d3
+    .scaleDiverging()
+    .domain([-dominanceRange, 0, dominanceRange])
+    .interpolator((t) =>
+      d3.interpolateRgbBasis(["#2460ff", "#9b4cff", "#ff365f"])(t)
+    );
+
+  const xScale = d3.scaleLinear().range([0, width]);
+  const yScale = d3.scaleLinear().range([height, 0]);
+
+  root
+    .append("rect")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("fill", "url(#signal-lab-gradient)")
+    .attr("rx", 14)
+    .attr("ry", 14)
+    .attr("stroke", "#451744")
+    .attr("stroke-width", 1.2);
+
+  const gridGroup = root.append("g").attr("class", "signal-grid");
+  const xAxisGroup = root
+    .append("g")
+    .attr("class", "signal-axis signal-axis--x")
+    .attr("transform", `translate(0,${height})`);
+  const yAxisGroup = root.append("g").attr("class", "signal-axis signal-axis--y");
+
+  const xAxisLabel = root
+    .append("text")
+    .attr("class", "signal-axis-label")
+    .attr("text-anchor", "middle")
+    .attr("x", width / 2)
+    .attr("y", height + 52)
+    .style("font-family", "'Special Elite', monospace")
+    .style("font-size", "13px")
+    .style("fill", "#fce6ff");
+
+  const yAxisLabel = root
+    .append("text")
+    .attr("class", "signal-axis-label")
+    .attr("text-anchor", "middle")
+    .attr("transform", `translate(-64,${height / 2}) rotate(-90)`)
+    .style("font-family", "'Special Elite', monospace")
+    .style("font-size", "13px")
+    .style("fill", "#fce6ff");
+
+  const diagonalLine = root
+    .append("line")
+    .attr("class", "signal-diagonal")
+    .attr("stroke", "rgba(255,255,255,0.12)")
+    .attr("stroke-width", 1.2)
+    .attr("stroke-dasharray", "6,6")
+    .style("opacity", 0);
+
+  const quadrantLabels = root
+    .append("g")
+    .attr("class", "signal-quadrants")
+    .style("pointer-events", "none");
+  quadrantLabels
+    .selectAll("text")
+    .data([
+      { x: width - 12, y: 18, anchor: "end", text: "Tension Architects" },
+      { x: width - 12, y: height - 12, anchor: "end", text: "Atmospheric Echoes" },
+      { x: 12, y: 18, anchor: "start", text: "Lingering Dread" },
+      { x: 12, y: height - 12, anchor: "start", text: "Muted Signals" },
+    ])
+    .enter()
+    .append("text")
+    .attr("x", (d) => d.x)
+    .attr("y", (d) => d.y)
+    .attr("text-anchor", (d) => d.anchor)
+    .style("font-family", "'Special Elite', monospace")
+    .style("font-size", "10px")
+    .style("letter-spacing", "0.08em")
+    .style("fill", "rgba(255,255,255,0.35)");
+
+  const modeDescription = root
+    .append("text")
+    .attr("class", "signal-mode-description")
+    .attr("x", 0)
+    .attr("y", -24)
+    .style("font-family", "'Special Elite', monospace")
+    .style("font-size", "12px")
+    .style("fill", "#ff8bff")
+    .style("text-transform", "uppercase");
+
+  const crosshair = root.append("g").attr("class", "signal-crosshair").style("opacity", 0);
+  crosshair
+    .append("line")
+    .attr("class", "crosshair-x")
+    .attr("stroke", "rgba(250,78,125,0.3)")
+    .attr("stroke-width", 1.1)
+    .attr("stroke-dasharray", "4,6");
+  crosshair
+    .append("line")
+    .attr("class", "crosshair-y")
+    .attr("stroke", "rgba(250,78,125,0.3)")
+    .attr("stroke-width", 1.1)
+    .attr("stroke-dasharray", "4,6");
+
+  const pulse = root
+    .append("circle")
+    .attr("class", "signal-pulse")
+    .attr("fill", "none")
+    .attr("stroke", "rgba(255,104,150,0.65)")
+    .attr("stroke-width", 2)
+    .attr("opacity", 0)
+    .style("filter", "url(#signal-ripple-filter)");
+
+  d3.select("#effectiveness-tooltip").remove();
   const tooltip = d3
     .select("body")
     .append("div")
-    .attr("class", "tooltip")
+    .attr("id", "effectiveness-tooltip")
     .style("position", "absolute")
+    .style("pointer-events", "none")
+    .style("background", "rgba(10,0,20,0.94)")
+    .style("border", "1px solid rgba(255,80,150,0.6)")
+    .style("padding", "12px 14px")
+    .style("min-width", "190px")
+    .style("border-radius", "8px")
+    .style("box-shadow", "0 0 18px rgba(255,60,120,0.25)")
+    .style("opacity", 0)
+    .style("color", "#f8e8ff")
+    .style("font-family", "'Special Elite', monospace")
+    .style("font-size", "12px")
+    .style("z-index", 9999);
+
+  d3.select("#signal-dossier-overlay").remove();
+  const dossierOverlay = d3
+    .select("body")
+    .append("div")
+    .attr("id", "signal-dossier-overlay")
+    .style("position", "fixed")
+    .style("left", "0")
+    .style("right", "0")
+    .style("bottom", "0")
+    .style("top", "0")
+    .style("display", "none")
+    .style("pointer-events", "none")
+    .style("background", "rgba(6, 0, 14, 0.28)")
+    .style("backdrop-filter", "blur(4px)")
+    .style("z-index", 10000)
     .style("opacity", 0);
 
-  
-  let currentSort = "impact";
-
-  
-  const topSignals = data.slice(0, 15);
-
-  
-  const sizeScale = d3
-    .scaleSqrt()
-    .domain([0, d3.max(topSignals, (d) => d.occurrences)])
-    .range([20, 80]);
-
-  const colorScale = d3
-    .scaleSequential(d3.interpolateRgb("#330000", "#ff0000"))
-    .domain([0, d3.max(topSignals, (d) => d.overallImpact)]);
-
-  
-  const simulation = d3
-    .forceSimulation(topSignals)
-    .force("charge", d3.forceManyBody().strength(5))
-    .force("center", d3.forceCenter(width / 2, height / 2))
-    .force(
-      "collision",
-      d3.forceCollide().radius((d) => sizeScale(d.occurrences) + 5)
+  const dossierCard = dossierOverlay
+    .append("div")
+    .attr("class", "signal-dossier-card")
+    .style("position", "relative")
+    .style("width", "100%")
+    .style("pointer-events", "auto")
+    .style("padding", isCompact ? "22px 20px 30px" : "26px 44px 38px")
+    .style("border-radius", "26px 26px 0 0")
+    .style("border", "1px solid rgba(255, 90, 214, 0.45)")
+    .style(
+      "background",
+      isCompact
+        ? "linear-gradient(175deg, rgba(16,0,18,0.92), rgba(4,0,12,0.86))"
+        : "linear-gradient(175deg, rgba(12,0,20,0.88), rgba(2,0,10,0.82))"
     )
-    .stop();
+    .style("box-shadow", "0 -18px 46px rgba(3, 0, 20, 0.32)")
+    .style("color", "#ffe9ff")
+    .style("font-family", "'Special Elite', monospace")
+    .style("opacity", 0)
+    .style("transform", "translateY(40px)");
 
-  
-  for (let i = 0; i < 300; i++) simulation.tick();
+  const dossierClose = dossierCard
+    .append("button")
+    .attr("type", "button")
+    .attr("aria-label", "Close signal dossier")
+    .style("position", "absolute")
+    .style("top", "16px")
+    .style("right", "20px")
+    .style("background", "rgba(255, 80, 180, 0.18)")
+    .style("border", "1px solid rgba(255, 120, 210, 0.45)")
+    .style("color", "#ffcbff")
+    .style("font-size", "12px")
+    .style("letter-spacing", "0.18em")
+    .style("text-transform", "uppercase")
+    .style("border-radius", "999px")
+    .style("padding", "6px 16px")
+    .style("cursor", "pointer")
+    .style("font-family", "'Special Elite', monospace")
+    .text("Close");
 
-  
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const dossierContent = dossierCard
+    .append("div")
+    .attr("class", "signal-dossier-content")
+    .style("font-size", "13px")
+    .style("line-height", "1.55");
 
-  function playScreamSound() {
-    
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+  let overlayVisible = false;
 
-    oscillator.type = "sawtooth";
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(
-      200,
-      audioContext.currentTime + 0.5
-    );
-
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(
-      0.01,
-      audioContext.currentTime + 0.5
-    );
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.5);
-  }
-
-  function playStaticSound() {
-    
-    const bufferSize = audioContext.sampleRate * 0.3;
-    const buffer = audioContext.createBuffer(
-      1,
-      bufferSize,
-      audioContext.sampleRate
-    );
-    const data = buffer.getChannelData(0);
-
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
-
-    const source = audioContext.createBufferSource();
-    const gainNode = audioContext.createGain();
-
-    source.buffer = buffer;
-    gainNode.gain.value = 0.2;
-
-    source.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    source.start();
-  }
-
-  function playWhisperSound() {
-    
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(100, audioContext.currentTime);
-    oscillator.frequency.linearRampToValueAtTime(
-      150,
-      audioContext.currentTime + 0.8
-    );
-
-    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.8);
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.8);
-  }
-
-  
-  function triggerJumpscare(signal, impactLevel) {
-    console.log(`💀 JUMPSCARE TRIGGERED: ${signal} (impact: ${impactLevel})`);
-
-    const intensity =
-      impactLevel > 0.6 ? "extreme" : impactLevel > 0.4 ? "high" : "medium";
-
-    
-    document.body.style.animation = "shake 0.5s";
-    setTimeout(() => {
-      document.body.style.animation = "";
-    }, 500);
-
-    jumpscareOverlay.style("display", "flex");
-
-    if (intensity === "extreme") {
-      extremeJumpscare(signal);
-    } else if (intensity === "high") {
-      highJumpscare(signal);
-    } else {
-      mediumJumpscare(signal);
-    }
-  }
-
-  function createCreepyEyes() {
-    
-    const eyeContainer = d3
-      .select("body")
-      .append("div")
-      .style("position", "fixed")
-      .style("top", "0")
-      .style("left", "0")
-      .style("width", "100vw")
-      .style("height", "100vh")
-      .style("z-index", "10000")
-      .style("pointer-events", "none");
-
-    for (let i = 0; i < 8; i++) {
-      const eyePair = eyeContainer
-        .append("div")
-        .style("position", "absolute")
-        .style("left", `${Math.random() * 90}%`)
-        .style("top", `${Math.random() * 90}%`)
-        .style("font-size", "40px")
-        .style("opacity", "0")
-        .html("👁️👁️");
-
-      eyePair
-        .transition()
-        .delay(i * 200)
-        .duration(300)
-        .style("opacity", "1")
-        .transition()
-        .duration(300)
-        .style("opacity", "0");
-    }
-
-    setTimeout(() => eyeContainer.remove(), 3000);
-  }
-
-  function createFollowingEyes() {
-    
-    const eyeContainer = d3
-      .select("body")
-      .append("div")
-      .attr("id", "following-eyes-container")
-      .style("position", "fixed")
-      .style("top", "0")
-      .style("left", "0")
-      .style("width", "100vw")
-      .style("height", "100vh")
-      .style("z-index", "10001")
-      .style("pointer-events", "none");
-
-    const eyePositions = [
-      { x: 20, y: 20 },
-      { x: 80, y: 20 },
-      { x: 50, y: 50 },
-      { x: 20, y: 80 },
-      { x: 80, y: 80 },
-    ];
-
-    const eyeElements = eyePositions.map((pos) => {
-      return eyeContainer
-        .append("div")
-        .style("position", "absolute")
-        .style("left", `${pos.x}%`)
-        .style("top", `${pos.y}%`)
-        .style("font-size", "60px")
-        .style("opacity", "0")
-        .style("transition", "transform 0.1s ease-out")
-        .html("👁️");
-    });
-
-    
-    eyeElements.forEach((eye, i) => {
-      eye
-        .transition()
-        .delay(i * 100)
-        .duration(300)
-        .style("opacity", "0.8");
-    });
-
-    
-    function followCursor(e) {
-      eyeElements.forEach((eye) => {
-        const eyeNode = eye.node();
-        const rect = eyeNode.getBoundingClientRect();
-        const eyeX = rect.left + rect.width / 2;
-        const eyeY = rect.top + rect.height / 2;
-
-        const angle = Math.atan2(e.clientY - eyeY, e.clientX - eyeX);
-        const distance = 5;
-
-        eye.style(
-          "transform",
-          `translate(${Math.cos(angle) * distance}px, ${
-            Math.sin(angle) * distance
-          }px)`
-        );
-      });
-    }
-
-    document.addEventListener("mousemove", followCursor);
-
-    
-    setTimeout(() => {
-      document.removeEventListener("mousemove", followCursor);
-      eyeElements.forEach((eye) => {
-        eye.transition().duration(400).style("opacity", "0");
-      });
-      setTimeout(() => eyeContainer.remove(), 500);
-    }, 2500);
-  }
-
-  function createStaticEffect() {
-    
-    const staticOverlay = d3
-      .select("body")
-      .append("div")
-      .style("position", "fixed")
-      .style("top", "0")
-      .style("left", "0")
-      .style("width", "100vw")
-      .style("height", "100vh")
-      .style("z-index", "9998")
-      .style(
-        "background",
-        "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkYGD4z8DAwMgABXAGNgGwSgYYR1YAUwDSDAC9BgQBTBIYPgAAAABJRU5ErkJggg==)"
-      )
-      .style("animation", "static-noise 0.1s infinite")
-      .style("opacity", "0.3")
-      .style("pointer-events", "none");
-
-    setTimeout(() => staticOverlay.remove(), 1000);
-  }
-
-  function extremeJumpscare(signal) {
-    playScreamSound();
-
-    
-    createFollowingEyes();
-
-    
-    const colors = [
-      "#ff0000",
-      "#000000",
-      "#ffffff",
-      "#8b0000",
-      "#000000",
-      "#ff0000",
-    ];
-    let flashCount = 0;
-
-    const creepyMessages = [
-      "YOU SHOULDN'T HAVE CLICKED",
-      "IT SEES YOU",
-      "THERE'S NO ESCAPE",
-      "BEHIND YOU",
-      "DON'T TURN AROUND",
-      "LOOK AT ME",
-      "YOU'RE NOT ALONE",
-      "WE'RE WATCHING",
-    ];
-
-    
-    const backwardsMessages = [
-      "DNIHEB SI TI", 
-      "NRUT T'NOD", 
-      "OT ETAL OOT", 
-      "EPACSE ON", 
-    ];
-
-    const flashInterval = setInterval(() => {
-      const color = colors[flashCount % colors.length];
-      const showFace = flashCount % 3 === 0;
-      const showBackwards = flashCount % 4 === 0;
-
-      jumpscareOverlay
-        .style("background", color)
-        .html(
-          `
-          <div style="text-align: center; animation: glitchText 0.05s infinite;">
-            ${
-              showFace
-                ? `
-              <div style="position: absolute; top: 10%; left: 10%; font-size: 100px; opacity: 0.3; transform: rotate(-20deg);">
-                👁️
-              </div>
-              <div style="position: absolute; top: 10%; right: 10%; font-size: 100px; opacity: 0.3; transform: rotate(20deg);">
-                👁️
-              </div>
-            `
-                : ""
-            }
-            
-            <div style="font-size: ${
-              100 + Math.random() * 50
-            }px; transform: rotate(${Math.random() * 20 - 10}deg); 
-                        filter: ${
-                          flashCount % 2 === 0 ? "invert(1)" : "none"
-                        };">
-              ${
-                ["💀", "👁️", "🩸", "☠️", "👻", "😱", "🔪"][
-                  Math.floor(Math.random() * 7)
-                ]
-              }
-            </div>
-            
-            <div style="font-family: 'Nosifer', cursive; font-size: ${
-              60 + Math.random() * 40
-            }px; 
-                        color: ${color === "#000000" ? "#fff" : "#000"}; 
-                        text-shadow: 0 0 ${10 + Math.random() * 20}px ${
-            color === "#000000" ? "#ff0000" : "#000"
-          }; 
-                        transform: scaleX(${
-                          0.8 + Math.random() * 0.4
-                        }) scaleY(${0.9 + Math.random() * 0.3});
-                        letter-spacing: ${-5 + Math.random() * 15}px;">
-              ${signal.toUpperCase()}
-            </div>
-            
-            <div style="font-family: 'Creepster', cursive; font-size: 30px; 
-                        color: ${
-                          color === "#000000" ? "#ff0000" : "#8b0000"
-                        }; margin-top: 20px;
-                        opacity: ${Math.random()}; transform: rotate(${
-            Math.random() * 10 - 5
-          }deg);">
-              ${
-                showBackwards
-                  ? backwardsMessages[flashCount % backwardsMessages.length]
-                  : creepyMessages[flashCount % creepyMessages.length]
-              }
-            </div>
-            
-            ${
-              flashCount % 5 === 0
-                ? `
-              <div style="position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%); 
-                          font-size: 150px; opacity: 0.2; animation: float 0.5s ease-in-out;">
-                😱
-              </div>
-            `
-                : ""
-            }
-          </div>
-        `
-        )
-        .style("opacity", Math.random() > 0.2 ? "1" : "0");
-
-      flashCount++;
-      if (flashCount >= 12) {
-        clearInterval(flashInterval);
-        jumpscareOverlay
-          .transition()
-          .duration(300)
-          .style("opacity", "0")
-          .on("end", () => jumpscareOverlay.style("display", "none"));
-      }
-    }, 80);
-
-    
-    setTimeout(() => createCreepyEyes(), 200);
-
-    
-    createStaticEffect();
-
-    
-    for (let i = 0; i < 6; i++) {
+  function bodyJolt() {
+    if (!document.body.animate) {
+      document.body.style.transform = "translateX(6px)";
       setTimeout(() => {
-        document.body.style.filter = `invert(${Math.random()}) hue-rotate(${
-          Math.random() * 360
-        }deg) saturate(${3 + Math.random() * 2})`;
-        setTimeout(() => {
-          document.body.style.filter = "";
-        }, 60);
-      }, i * 150);
-    }
-
-    
-    const cursorTrail = d3
-      .select("body")
-      .append("div")
-      .style("position", "fixed")
-      .style("pointer-events", "none")
-      .style("z-index", "10001");
-
-    let trailTimeout;
-    function updateTrail(e) {
-      cursorTrail
-        .append("div")
-        .style("position", "absolute")
-        .style("left", e.clientX + "px")
-        .style("top", e.clientY + "px")
-        .style("font-size", "30px")
-        .html("🩸")
-        .transition()
-        .duration(500)
-        .style("opacity", "0")
-        .remove();
-    }
-
-    document.addEventListener("mousemove", updateTrail);
-    trailTimeout = setTimeout(() => {
-      document.removeEventListener("mousemove", updateTrail);
-      cursorTrail.remove();
-    }, 2000);
-  }
-
-  function highJumpscare(signal) {
-    playStaticSound();
-
-    const creepyFaces = ["😱", "👁️👁️", "💀", "👻", "🩸"];
-    const messages = [
-      "IT KNOWS YOUR NAME",
-      "CAN YOU FEEL IT?",
-      "IT'S GETTING CLOSER",
-      "RUN",
-      "TOO LATE",
-    ];
-
-    jumpscareOverlay
-      .style("background", "#000000")
-      .html(
-        `
-        <div style="text-align: center; position: relative;">
-          <div style="font-size: 120px; animation: float 0.3s ease-in-out infinite; filter: drop-shadow(0 0 20px #ff0000);">
-            ${creepyFaces[Math.floor(Math.random() * creepyFaces.length)]}
-          </div>
-          <div style="font-family: 'Creepster', cursive; font-size: 70px; color: #fff; 
-                      text-shadow: 0 0 15px #ff0000; letter-spacing: 5px; animation: glitchText 0.1s infinite;">
-            ${signal.toUpperCase()}
-          </div>
-          <div style="font-size: 25px; color: #ff6b6b; margin-top: 30px; font-family: 'Special Elite', monospace;
-                      animation: pulse 0.5s ease-in-out infinite;">
-            ${messages[Math.floor(Math.random() * messages.length)]}
-          </div>
-          <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                      font-size: 200px; opacity: 0.1; z-index: -1;">
-            👁️
-          </div>
-        </div>
-      `
-      )
-      .transition()
-      .duration(100)
-      .style("opacity", "1")
-      .transition()
-      .delay(900)
-      .duration(400)
-      .style("opacity", "0")
-      .on("end", () => {
-        jumpscareOverlay.style("display", "none").style("opacity", "0");
-      });
-
-    
-    for (let i = 0; i < 15; i++) {
-      const shadow = d3
-        .select("body")
-        .append("div")
-        .style("position", "fixed")
-        .style("top", "-50px")
-        .style("left", `${Math.random() * 100}%`)
-        .style("font-size", `${20 + Math.random() * 40}px`)
-        .style("z-index", "9997")
-        .style("pointer-events", "none")
-        .html(["🩸", "💀", "👁️", "🔪"][Math.floor(Math.random() * 4)]);
-
-      shadow
-        .transition()
-        .duration(1000 + Math.random() * 1000)
-        .style("top", "100vh")
-        .style("opacity", "0")
-        .remove();
-    }
-
-    
-    for (let i = 0; i < 4; i++) {
-      setTimeout(() => {
-        document.body.style.transform = `translateX(${
-          Math.random() * 20 - 10
-        }px)`;
-        setTimeout(() => {
-          document.body.style.transform = "";
-        }, 50);
-      }, i * 200);
-    }
-  }
-
-  function mediumJumpscare(signal) {
-    playWhisperSound();
-
-    jumpscareOverlay
-      .style("background", "rgba(0, 0, 0, 0.95)")
-      .html(
-        `
-        <div style="text-align: center;">
-          <div style="font-size: 90px; animation: pulse 0.5s ease-in-out;">⚠️</div>
-          <div style="font-family: 'Special Elite', monospace; font-size: 50px; color: #ff8800;
-                      text-shadow: 0 0 10px #ff8800;">
-            ${signal.toUpperCase()}
-          </div>
-          <div style="font-size: 18px; color: #999; margin-top: 20px; font-style: italic;">
-            "...something is watching..."
-          </div>
-        </div>
-      `
-      )
-      .transition()
-      .duration(150)
-      .style("opacity", "0.9")
-      .transition()
-      .delay(700)
-      .duration(300)
-      .style("opacity", "0")
-      .on("end", () => {
-        jumpscareOverlay.style("display", "none").style("opacity", "0");
-      });
-
-    
-    const eyes = d3
-      .select("body")
-      .append("div")
-      .style("position", "fixed")
-      .style("top", "10%")
-      .style("right", "10%")
-      .style("font-size", "60px")
-      .style("z-index", "10000")
-      .style("opacity", "0")
-      .html("👁️👁️");
-
-    eyes
-      .transition()
-      .duration(200)
-      .style("opacity", "1")
-      .transition()
-      .duration(300)
-      .style("opacity", "0")
-      .remove();
-  }
-
-  
-  function summonTheHorror() {
-    console.log("💀💀💀 SUMMONING THE HORROR 💀💀💀");
-
-    const deadliestSignals = topSignals
-      .filter((d) => d.overallImpact > 0.5)
-      .sort((a, b) => b.overallImpact - a.overallImpact)
-      .slice(0, 5);
-
-    console.log("Deadliest signals:", deadliestSignals);
-
-    if (deadliestSignals.length === 0) {
-      alert("No signals deadly enough to summon...");
+        document.body.style.transform = "";
+      }, 180);
       return;
     }
-
-    
-    let countdown = 3;
-
-    jumpscareOverlay.style("display", "flex").style("opacity", "0");
-
-    const countdownInterval = setInterval(() => {
-      console.log(`Countdown: ${countdown}`);
-
-      jumpscareOverlay
-        .style("display", "flex")
-        .style("background", "#8b0000")
-        .html(
-          `
-          <div style="text-align: center;">
-            <div style="font-family: 'Nosifer', cursive; font-size: 60px; color: #fff; margin-bottom: 30px; animation: pulse 0.5s ease-in-out infinite;">
-              ⚠️ SUMMONING RITUAL ⚠️
-            </div>
-            <div style="font-size: 150px; color: #ff0000; text-shadow: 0 0 30px #fff; font-family: 'Special Elite', monospace;">
-              ${countdown > 0 ? countdown : "💀"}
-            </div>
-            <div style="font-family: 'Creepster', cursive; font-size: 30px; color: #fff; margin-top: 30px;">
-              ${countdown > 0 ? "PREPARE YOURSELF..." : "IT BEGINS..."}
-            </div>
-          </div>
-        `
-        );
-
-      if (
-        jumpscareOverlay.style("opacity") === "0" ||
-        jumpscareOverlay.style("opacity") === ""
-      ) {
-        jumpscareOverlay.transition().duration(200).style("opacity", "1");
-      }
-
-      countdown--;
-
-      if (countdown < -1) {
-        clearInterval(countdownInterval);
-        console.log("🔥 UNLEASHING THE HORROR!");
-
-        jumpscareOverlay.transition().duration(300).style("opacity", "0");
-
-        
-        deadliestSignals.forEach((signal, i) => {
-          console.log(`Scheduling jumpscare ${i + 1}: ${signal.signal}`);
-          setTimeout(() => {
-            console.log(`💀 Triggering: ${signal.signal}`);
-            extremeJumpscare(signal.signal);
-          }, i * 1800);
-        });
-
-        
-        setTimeout(() => {
-          jumpscareOverlay.style("display", "none");
-        }, 500);
-      }
-    }, 1000);
+    document.body.animate(
+      [
+        { transform: "translateX(0)" },
+        { transform: "translateX(6px)" },
+        { transform: "translateX(-5px)" },
+        { transform: "translateX(0)" },
+      ],
+      { duration: 220, easing: "ease-out" }
+    );
   }
 
-  
-  const bubbles = svg
-    .selectAll(".signal-bubble")
-    .data(topSignals)
+  function hideDossier() {
+    if (!overlayVisible) return;
+    overlayVisible = false;
+    dossierOverlay
+      .interrupt()
+      .style("opacity", 1)
+      .transition()
+      .duration(220)
+      .style("opacity", 0)
+      .on("end", () => dossierOverlay.style("display", "none"));
+    dossierCard
+      .interrupt()
+      .transition()
+      .duration(240)
+      .ease(d3.easeCubicIn)
+      .style("transform", "translateY(32px)")
+      .style("opacity", 0);
+    document.removeEventListener("keydown", handleEsc);
+  }
+
+  function handleEsc(event) {
+    if (event.key === "Escape") {
+      hideDossier();
+    }
+  }
+
+  dossierOverlay.on("click", hideDossier);
+
+  dossierClose.on("click", hideDossier);
+
+  const nodesGroup = root.append("g").attr("class", "signal-nodes");
+  const node = nodesGroup
+    .selectAll(".signal-node")
+    .data(data, (d) => d.signal)
     .enter()
     .append("g")
-    .attr("class", "signal-bubble")
-    .attr("transform", (d) => `translate(${d.x},${d.y})`);
-
-  
-  bubbles
-    .append("circle")
-    .attr("class", "danger-ring")
-    .attr("r", (d) => sizeScale(d.occurrences) + 8)
-    .attr("fill", "none")
-    .attr("stroke", (d) => (d.overallImpact > 0.5 ? "#ff0000" : "#666"))
-    .attr("stroke-width", (d) => (d.overallImpact > 0.5 ? 3 : 1))
-    .attr("stroke-dasharray", "5,5")
-    .style("opacity", 0.5)
-    .style("animation", (d) =>
-      d.overallImpact > 0.5 ? "pulse 2s ease-in-out infinite" : "none"
-    );
-
-  
-  bubbles
-    .append("circle")
-    .attr("class", "main-bubble")
-    .attr("r", (d) => sizeScale(d.occurrences))
-    .attr("fill", (d) => colorScale(d.overallImpact))
-    .attr("stroke", "#000")
-    .attr("stroke-width", 2)
+    .attr("class", "signal-node")
     .style("cursor", "pointer")
-    .style("opacity", 0.85)
-    .style("filter", (d) =>
-      d.overallImpact > 0.6
-        ? "drop-shadow(0 0 15px #ff0000)"
-        : "drop-shadow(0 0 5px rgba(0,0,0,0.5))"
-    )
-    .on("mouseover", function (event, d) {
-      d3.select(this)
-        .transition()
-        .duration(200)
-        .attr("r", sizeScale(d.occurrences) * 1.2)
-        .style("opacity", 1);
+    .style("pointer-events", "all");
 
-      if (d.overallImpact > 0.5) {
-        d3.select(this.parentNode)
-          .select(".danger-ring")
-          .transition()
-          .duration(200)
-          .attr("stroke-width", 5)
-          .style("opacity", 1);
-      }
+  node
+    .append("circle")
+    .attr("class", "signal-node-halo")
+    .attr("r", (d) => radiusScale(d.occurrences) + 10)
+    .attr("fill", (d) => getHaloColor(d))
+    .style("filter", "url(#signal-glow)")
+    .style("opacity", 0.7);
 
-      tooltip.transition().duration(200).style("opacity", 1);
-      tooltip
-        .html(
-          `
-          <div style="text-align: center; border: 2px solid ${
-            d.overallImpact > 0.6 ? "#ff0000" : "#ff8800"
-          };">
-            <strong style="font-size: 20px; color: #fff;">${d.signal.toUpperCase()}</strong><br/>
-            <span style="color: #999; font-size: 11px; font-style: italic;">
-               Click to explore
-            </span><br/><br/>
-            Overall Impact: <strong style="color: #ff0000;">${d.overallImpact.toFixed(
-              3
-            )}</strong><br/>
-            Fear: <strong>${d.avgFear.toFixed(2)}</strong> | 
-            Tension: <strong>${d.avgTension.toFixed(2)}</strong><br/>
-            Frequency: <strong>${d.occurrences.toLocaleString()}</strong>
-          </div>
-        `
-        )
-        .style("left", event.pageX + 15 + "px")
-        .style("top", event.pageY - 28 + "px");
-    })
-    .on("mouseout", function (event, d) {
-      d3.select(this)
-        .transition()
-        .duration(200)
-        .attr("r", sizeScale(d.occurrences))
-        .style("opacity", 0.85);
+  node
+    .append("circle")
+    .attr("class", "signal-node-core")
+    .attr("r", (d) => radiusScale(d.occurrences))
+    .attr("fill", (d) => colorScale(d.dominance))
+    .attr("stroke", "rgba(5,0,10,0.65)")
+    .attr("stroke-width", 2.2)
+    .style("filter", "url(#signal-glow)")
+    .style("opacity", 0.92);
 
-      d3.select(this.parentNode)
-        .select(".danger-ring")
-        .transition()
-        .duration(200)
-        .attr("stroke-width", d.overallImpact > 0.5 ? 3 : 1)
-        .style("opacity", 0.5);
-
-      tooltip.transition().duration(500).style("opacity", 0);
-    })
-    .on("click", function (event, d) {
-      event.stopPropagation();
-      triggerJumpscare(d.signal, d.overallImpact);
-
-      
-      const explosion = d3.select(this.parentNode);
-      for (let i = 0; i < 12; i++) {
-        const angle = (i * 2 * Math.PI) / 12;
-        const distance = 60;
-        explosion
-          .append("circle")
-          .attr("r", 5)
-          .attr("fill", colorScale(d.overallImpact))
-          .transition()
-          .duration(500)
-          .attr("cx", Math.cos(angle) * distance)
-          .attr("cy", Math.sin(angle) * distance)
-          .attr("r", 2)
-          .style("opacity", 0)
-          .remove();
-      }
-
-      d3.select(this)
-        .transition()
-        .duration(100)
-        .attr("r", sizeScale(d.occurrences) * 1.5)
-        .transition()
-        .duration(200)
-        .attr("r", sizeScale(d.occurrences));
-    });
-
-  
-  bubbles
+  node
     .append("text")
+    .attr("class", "signal-node-label")
     .attr("text-anchor", "middle")
     .attr("dy", "0.35em")
     .text((d) => d.signal.toUpperCase())
     .style("font-family", "'Creepster', cursive")
-    .style(
-      "font-size",
-      (d) => Math.min(sizeScale(d.occurrences) / 3, 14) + "px"
-    )
+    .style("font-size", (d) => `${Math.min(16, radiusScale(d.occurrences) / 2.4)}px`)
     .style("fill", "#fff")
-    .style("text-shadow", "0 0 5px #000")
-    .style("pointer-events", "none")
-    .style("user-select", "none");
-
-  
-  bubbles
-    .filter((d) => d.overallImpact > 0.5)
-    .append("text")
-    .attr("text-anchor", "middle")
-    .attr("y", (d) => -sizeScale(d.occurrences) - 15)
-    .text("💀")
-    .style("font-size", "20px")
-    .style("animation", "float 2s ease-in-out infinite")
+    .style("letter-spacing", "0.08em")
+    .style("text-shadow", "0 0 6px rgba(0,0,0,0.8)")
     .style("pointer-events", "none");
 
-  
-  const legend = svg
-    .append("g")
-    .attr("transform", `translate(${width - 120}, 20)`);
+  const formatDelta = d3.format("+.3f");
+  const formatNumber = d3.format(",");
+  const formatOverall = d3.format(".3f");
+  const formatPercent = d3.format(".0%");
 
-  legend
-    .append("text")
-    .attr("x", 0)
-    .attr("y", 0)
-    .text("DANGER LEVEL")
-    .style("font-family", "'Special Elite', monospace")
-    .style("font-size", "12px")
-    .style("fill", "#ff0000")
-    .style("font-weight", "bold");
+  const profileCopy = {
+    shock: {
+      title: "Shock Trigger",
+      copy: "Fear spikes outrun tension. Deploy when you want sudden jumps or vivid gore hits.",
+    },
+    dread: {
+      title: "Dread Architect",
+      copy: "Tension builds faster than raw fear. Perfect for slow-burn unease and ominous reveals.",
+    },
+    balanced: {
+      title: "Twin Threat",
+      copy: "Fear and tension climb together — a dependable signal for balanced, full-spectrum scares.",
+    },
+  };
 
-  const legendData = [
-    { label: "EXTREME", color: "#ff0000", emoji: "💀" },
-    { label: "HIGH", color: "#ff4444", emoji: "👻" },
-    { label: "MEDIUM", color: "#ff8800", emoji: "⚠️" },
-    { label: "LOW", color: "#aa0000", emoji: "•" },
-  ];
+  const layoutModes = {
+    impact: {
+      key: "impact",
+      xAccessor: (d) => d.fearImpact,
+      yAccessor: (d) => d.tensionImpact,
+      xLabel: "Fear Impact Δ (vs scenes without signal)",
+      yLabel: "Tension Impact Δ (vs scenes without signal)",
+      xTickFormat: ".2f",
+      yTickFormat: ".2f",
+      xClamp: "zeroMin",
+      yClamp: "zeroMin",
+      description: "Rightward signals deliver bigger fear jolts; higher ones sustain tension.",
+      showDiagonal: true,
+    },
+    fear: {
+      key: "fear",
+      xAccessor: (d) => d.avgFear,
+      yAccessor: (d) => d.fearImpact,
+      xLabel: "Average Fear When Signal Appears",
+      yLabel: "Fear Impact Δ",
+      xTickFormat: ".2f",
+      yTickFormat: ".2f",
+      xClamp: "zeroMin",
+      yClamp: "zeroMin",
+      description: "Shows raw scene fear versus how much extra the signal injects.",
+      showDiagonal: false,
+    },
+    tension: {
+      key: "tension",
+      xAccessor: (d) => d.avgTension,
+      yAccessor: (d) => d.tensionImpact,
+      xLabel: "Average Tension When Signal Appears",
+      yLabel: "Tension Impact Δ",
+      xTickFormat: ".2f",
+      yTickFormat: ".2f",
+      xClamp: "zeroMin",
+      yClamp: "zeroMin",
+      description: "Highlights which cues feed the slow squeeze versus adrenaline spikes.",
+      showDiagonal: false,
+    },
+    frequency: {
+      key: "frequency",
+      xAccessor: (d) => d.scenesShare,
+      yAccessor: (d) => d.overallImpact,
+      xLabel: "Share of Scenes Featuring Signal",
+      yLabel: "Combined Impact Δ",
+      xTickFormat: ".0%",
+      yTickFormat: ".2f",
+      xDomain: [0, 1],
+      yClamp: "zeroMin",
+      description: "Common cues hug the right edge — scan how prevalence compares to potency.",
+      showDiagonal: false,
+    },
+  };
 
-  legendData.forEach((item, i) => {
-    const legendItem = legend
-      .append("g")
-      .attr("transform", `translate(0, ${i * 25 + 20})`);
-    legendItem
-      .append("circle")
-      .attr("r", 8)
-      .attr("fill", item.color)
-      .attr("stroke", "#000")
-      .attr("stroke-width", 1);
-    legendItem
-      .append("text")
-      .attr("x", 15)
-      .attr("y", 4)
-      .text(`${item.emoji} ${item.label}`)
-      .style("font-family", "'Special Elite', monospace")
-      .style("font-size", "10px")
-      .style("fill", "#e0e0e0");
-  });
+  let currentMode = "impact";
+  let activeDatum = null;
 
-  
-  function updateSort(sortBy) {
-    currentSort = sortBy;
-    let sortedData;
-    switch (sortBy) {
-      case "fear":
-        sortedData = [...topSignals].sort((a, b) => b.avgFear - a.avgFear);
-        break;
-      case "tension":
-        sortedData = [...topSignals].sort(
-          (a, b) => b.avgTension - a.avgTension
-        );
-        break;
-      case "frequency":
-        sortedData = [...topSignals].sort(
-          (a, b) => b.occurrences - a.occurrences
-        );
-        break;
-      default:
-        sortedData = [...topSignals].sort(
-          (a, b) => b.overallImpact - a.overallImpact
-        );
+  function showDossier(d) {
+    const profile = profileCopy[d.profile];
+    const overallRatio = maxOverallImpact
+      ? Math.max(8, Math.min(100, (d.overallImpact / maxOverallImpact) * 100))
+      : 100;
+    const dominancePercent = Math.min(
+      100,
+      Math.round((Math.abs(d.dominance) / dominanceRange) * 100)
+    );
+
+    dossierContent.html(`
+      <div style="display:flex; align-items:center; gap:18px; margin-bottom: 16px;">
+        <div style="font-size: 42px; filter: drop-shadow(0 0 14px rgba(255,120,210,0.38));">${d.badge}</div>
+        <div style="flex:1;">
+          <div style="font-family: 'Nosifer', cursive; font-size: 26px; letter-spacing: 0.12em;">
+            ${d.signal.toUpperCase()}
+          </div>
+          <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.22em; color: rgba(255,220,255,0.7); margin-top: 2px;">
+            ${profile.title}
+          </div>
+        </div>
+      </div>
+      <p style="margin-bottom: 16px; color: rgba(255,220,255,0.85);">
+        ${profile.copy}
+      </p>
+      <div style="margin-bottom: 18px;">
+        <div style="display:flex; justify-content:space-between; font-size: 12px;">
+          <span style="letter-spacing: 0.12em; text-transform: uppercase;">Overall delta</span>
+          <strong style="color: #ff9bd6; font-size: 18px;">${formatOverall(d.overallImpact)}</strong>
+        </div>
+        <div style="position:relative; width:100%; height:6px; border-radius:3px; background: rgba(255,120,190,0.18); margin-top:10px;">
+          <div style="position:absolute; left:0; top:0; height:100%; width:${overallRatio}%; border-radius:3px; background: linear-gradient(90deg,#ff4fa5,#ffac5f);"></div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; font-size: 12px;">
+        <div><span style="color: rgba(255,200,255,0.6); text-transform: uppercase; letter-spacing:0.08em;">Scenes flagged</span><br/><strong>${formatNumber(d.scenesWithSignal)}</strong></div>
+        <div><span style="color: rgba(255,200,255,0.6); text-transform: uppercase; letter-spacing:0.08em;">Occurrences</span><br/><strong>${formatNumber(d.occurrences)}</strong></div>
+        <div><span style="color: rgba(255,200,255,0.6); text-transform: uppercase; letter-spacing:0.08em;">Fear Δ</span><br/><strong>${formatDelta(d.fearImpact)}</strong></div>
+        <div><span style="color: rgba(255,200,255,0.6); text-transform: uppercase; letter-spacing:0.08em;">Tension Δ</span><br/><strong>${formatDelta(d.tensionImpact)}</strong></div>
+        <div><span style="color: rgba(255,200,255,0.6); text-transform: uppercase; letter-spacing:0.08em;">Avg fear</span><br/><strong>${d.avgFear.toFixed(3)}</strong></div>
+        <div><span style="color: rgba(255,200,255,0.6); text-transform: uppercase; letter-spacing:0.08em;">Avg tension</span><br/><strong>${d.avgTension.toFixed(3)}</strong></div>
+      </div>
+      <div style="margin-top:18px;">
+        <div style="display:flex; justify-content:space-between; font-size:11px; color: rgba(255,200,255,0.7); text-transform: uppercase; letter-spacing: 0.14em;">
+          <span>Fear vs tension balance</span>
+          <span style="color:#ff9bd6;">${d.dominance > 0 ? "Fear-leaning" : d.dominance < 0 ? "Tension-leaning" : "Balanced"}</span>
+        </div>
+        <div style="position:relative; width:100%; height:6px; border-radius:3px; background: rgba(60,0,90,0.7); margin-top:10px;">
+          <div style="position:absolute; ${d.dominance >= 0 ? "left:50%;" : "right:50%;"} top:0; height:100%; width:${dominancePercent / 2}%; border-radius:3px; background:${d.dominance >= 0 ? "linear-gradient(90deg,#ff4fa5,#ffd45f)" : "linear-gradient(90deg,#3ec0ff,#a87dff)"};"></div>
+          <div style="position:absolute; left:calc(50% - 1px); top:-3px; width:2px; height:12px; background: rgba(255,255,255,0.4);"></div>
+        </div>
+      </div>
+    `);
+
+    overlayVisible = true;
+    dossierOverlay.style("display", "block");
+    dossierOverlay
+      .interrupt()
+      .style("opacity", 0)
+      .transition()
+      .duration(180)
+      .style("opacity", 1);
+    dossierCard
+      .interrupt()
+      .style("transform", "translateY(40px)")
+      .style("opacity", 0)
+      .transition()
+      .duration(260)
+      .ease(d3.easeCubicOut)
+      .style("transform", "translateY(0)")
+      .style("opacity", 1);
+
+    bodyJolt();
+    document.addEventListener("keydown", handleEsc);
+  }
+
+  function moveCrosshair(d) {
+    crosshair.style("opacity", 1);
+    crosshair
+      .select(".crosshair-x")
+      .attr("x1", d.currentX)
+      .attr("y1", 0)
+      .attr("x2", d.currentX)
+      .attr("y2", height);
+    crosshair
+      .select(".crosshair-y")
+      .attr("x1", 0)
+      .attr("y1", d.currentY)
+      .attr("x2", width)
+      .attr("y2", d.currentY);
+  }
+
+  function hideCrosshair() {
+    crosshair.style("opacity", 0);
+  }
+
+  function showTooltip(event, d) {
+    tooltip
+      .style("opacity", 1)
+      .html(`
+        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 6px; color:#ff9bd6;">
+          ${d.signal.toUpperCase()}
+        </div>
+        <div>Overall Δ: <strong>${formatOverall(d.overallImpact)}</strong></div>
+        <div>Fear Δ: <strong>${formatDelta(d.fearImpact)}</strong></div>
+        <div>Tension Δ: <strong>${formatDelta(d.tensionImpact)}</strong></div>
+        <div>Scenes: <strong>${formatNumber(d.scenesWithSignal)}</strong></div>
+        <div>Occurrences: <strong>${formatNumber(d.occurrences)}</strong></div>
+      `)
+      .style("left", `${event.pageX + 18}px`)
+      .style("top", `${event.pageY - 12}px`);
+  }
+
+  function hideTooltip() {
+    tooltip.style("opacity", 0);
+  }
+
+  function resolveCollisions(layoutNodes) {
+    const simNodes = layoutNodes.map((node) => ({
+      datum: node.datum,
+      radius: node.radius,
+      targetX: node.targetX,
+      targetY: node.targetY,
+      x: node.targetX,
+      y: node.targetY,
+    }));
+
+    const simulation = d3
+      .forceSimulation(simNodes)
+      .force("x", d3.forceX((d) => d.targetX).strength(isCompact ? 0.5 : 0.6))
+      .force("y", d3.forceY((d) => d.targetY).strength(isCompact ? 0.5 : 0.6))
+      .force(
+        "collision",
+        d3.forceCollide((d) => d.radius + (isCompact ? 3 : 5))
+      )
+      .stop();
+
+    for (let i = 0; i < 260; i += 1) {
+      simulation.tick();
     }
 
-    simulation.nodes(sortedData).alpha(0.5).restart();
-    setTimeout(() => {
-      bubbles
-        .data(sortedData)
-        .transition()
-        .duration(1000)
-        .attr("transform", (d) => `translate(${d.x},${d.y})`);
-    }, 100);
+    simNodes.forEach((node) => {
+      const limitedX = Math.max(node.radius, Math.min(width - node.radius, node.x));
+      const limitedY = Math.max(node.radius, Math.min(height - node.radius, node.y));
+      node.x = limitedX;
+      node.y = limitedY;
+    });
+
+    return simNodes;
   }
 
-  
+  function triggerPulse(d) {
+    pulse
+      .interrupt()
+      .attr("cx", d.currentX)
+      .attr("cy", d.currentY)
+      .attr("r", radiusScale(d.occurrences) + 6)
+      .attr("opacity", 0.55)
+      .transition()
+      .duration(950)
+      .ease(d3.easeCubicOut)
+      .attr("r", radiusScale(d.occurrences) + (isCompact ? 60 : 90))
+      .attr("opacity", 0)
+      .on("end", () => pulse.attr("opacity", 0));
+  }
+
+  function render(modeKey, animate = true) {
+    currentMode = modeKey;
+    const mode = layoutModes[modeKey];
+
+    const xVals = data.map(mode.xAccessor);
+    const yVals = data.map(mode.yAccessor);
+
+    let xMin = d3.min(xVals);
+    let xMax = d3.max(xVals);
+    let yMin = d3.min(yVals);
+    let yMax = d3.max(yVals);
+
+    if (mode.xDomain) {
+      [xMin, xMax] = mode.xDomain;
+    } else {
+      const xSpan = xMax - xMin;
+      const xPad = (xSpan === 0 ? Math.abs(xMax) || 0.1 : xSpan) * 0.12;
+      if (mode.xClamp === "zeroMin") xMin = 0;
+      else xMin -= xPad;
+      xMax += xPad;
+    }
+
+    if (mode.yDomain) {
+      [yMin, yMax] = mode.yDomain;
+    } else {
+      const ySpan = yMax - yMin;
+      const yPad = (ySpan === 0 ? Math.abs(yMax) || 0.1 : ySpan) * 0.12;
+      if (mode.yClamp === "zeroMin") yMin = 0;
+      else yMin -= yPad;
+      yMax += yPad;
+    }
+
+    xScale.domain([xMin, xMax]).nice();
+    yScale.domain([yMin, yMax]).nice();
+
+    const xGrid = d3.axisBottom(xScale).tickSize(-height).tickFormat("");
+    const yGrid = d3.axisLeft(yScale).tickSize(-width).tickFormat("");
+    gridGroup.selectAll("*").remove();
+    gridGroup
+      .append("g")
+      .attr("class", "grid-x")
+      .attr("transform", `translate(0,${height})`)
+      .call(xGrid)
+      .selectAll("line")
+      .attr("stroke", "rgba(255,255,255,0.06)");
+    gridGroup
+      .append("g")
+      .attr("class", "grid-y")
+      .call(yGrid)
+      .selectAll("line")
+      .attr("stroke", "rgba(255,255,255,0.08)");
+
+    const xAxis = d3.axisBottom(xScale).ticks(isCompact ? 5 : 7);
+    const yAxis = d3.axisLeft(yScale).ticks(isCompact ? 5 : 7);
+
+    if (mode.xTickFormat) xAxis.tickFormat(d3.format(mode.xTickFormat));
+    if (mode.yTickFormat) yAxis.tickFormat(d3.format(mode.yTickFormat));
+
+    (animate ? xAxisGroup.transition().duration(550).ease(d3.easeCubicOut) : xAxisGroup).call(xAxis);
+    (animate ? yAxisGroup.transition().duration(550).ease(d3.easeCubicOut) : yAxisGroup).call(yAxis);
+
+    xAxisGroup
+      .selectAll("text")
+      .style("fill", "#fce6ff")
+      .style("font-family", "'Special Elite', monospace")
+      .style("font-size", "11px");
+    yAxisGroup
+      .selectAll("text")
+      .style("fill", "#fce6ff")
+      .style("font-family", "'Special Elite', monospace")
+      .style("font-size", "11px");
+
+    xAxisGroup.selectAll("path,line").attr("stroke", "rgba(255,255,255,0.2)");
+    yAxisGroup.selectAll("path,line").attr("stroke", "rgba(255,255,255,0.2)");
+
+    xAxisLabel.text(mode.xLabel);
+    yAxisLabel.text(mode.yLabel);
+
+    diagonalLine.style("opacity", mode.showDiagonal ? 0.9 : 0);
+    if (mode.showDiagonal) {
+      const diagMin = Math.max(xScale.domain()[0], yScale.domain()[0]);
+      const diagMax = Math.min(xScale.domain()[1], yScale.domain()[1]);
+      diagonalLine
+        .attr("x1", xScale(diagMin))
+        .attr("y1", yScale(diagMin))
+        .attr("x2", xScale(diagMax))
+        .attr("y2", yScale(diagMax));
+    }
+
+    quadrantLabels.style("opacity", modeKey === "impact" ? 1 : 0);
+
+    modeDescription.text(mode.description);
+
+    const layoutTargets = data.map((datum) => ({
+      datum,
+      targetX: xScale(mode.xAccessor(datum)),
+      targetY: yScale(mode.yAccessor(datum)),
+      radius: radiusScale(datum.occurrences),
+    }));
+
+    const resolvedPositions = resolveCollisions(layoutTargets);
+    const positionBySignal = new Map(
+      resolvedPositions.map((node) => [node.datum.signal, node])
+    );
+
+    node.each(function (d) {
+      const pos = positionBySignal.get(d.signal);
+      d.currentX = pos ? pos.x : xScale(mode.xAccessor(d));
+      d.currentY = pos ? pos.y : yScale(mode.yAccessor(d));
+    });
+
+    (animate
+      ? node.transition().duration(650).ease(d3.easeCubicOut)
+      : node
+    ).attr("transform", (d) => `translate(${d.currentX},${d.currentY})`);
+
+    node
+      .select(".signal-node-core")
+      .attr("fill", (d) => colorScale(d.dominance))
+      .attr("stroke", (d) =>
+        d === activeDatum ? "rgba(255,255,255,0.8)" : "rgba(5,0,10,0.65)"
+      )
+      .attr("stroke-width", (d) => (d === activeDatum ? 3 : 2.2));
+
+    node
+      .select(".signal-node-halo")
+      .attr("fill", (d) => getHaloColor(d))
+      .style("opacity", (d) => (d === activeDatum ? 0.9 : 0.6));
+  }
+
+  node
+    .on("mouseenter", function (event, d) {
+      d3.select(this)
+        .raise()
+        .select(".signal-node-core")
+        .transition()
+        .duration(150)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 3.2);
+
+      moveCrosshair(d);
+      showTooltip(event, d);
+    })
+    .on("mousemove", function (event, d) {
+      showTooltip(event, d);
+    })
+    .on("mouseleave", function (_event, d) {
+      d3.select(this)
+        .select(".signal-node-core")
+        .transition()
+        .duration(150)
+        .attr("stroke", (datum) =>
+          datum === activeDatum ? "rgba(255,255,255,0.8)" : "rgba(5,0,10,0.65)"
+        )
+        .attr("stroke-width", (datum) => (datum === activeDatum ? 3 : 2.2));
+      hideCrosshair();
+      hideTooltip();
+    })
+    .on("click", function (event, d) {
+      event.stopPropagation();
+      hideTooltip();
+      hideCrosshair();
+      activeDatum = d;
+      triggerPulse(d);
+      render(currentMode, false);
+      showDossier(d);
+    });
+
+  root.on("click", () => {
+    hideTooltip();
+    hideCrosshair();
+  });
+
   const sortSelect = document.getElementById("sort-select");
   if (sortSelect) {
-    sortSelect.addEventListener("change", function () {
-      updateSort(this.value);
-    });
-    console.log("✅ Sort select connected");
-  } else {
-    console.error("❌ Sort select not found!");
-  }
-
-  const summonBtn = document.getElementById("summon-horror-btn");
-  if (summonBtn) {
-    console.log("✅ SUMMON button found, attaching event...");
-    summonBtn.addEventListener("click", function () {
-      console.log("🔴 SUMMON BUTTON CLICKED!");
-
-      
-      const confirmed = confirm(
-        "⚠️ WARNING ⚠️\n\nYou are about to trigger ALL the deadliest jumpscares in sequence.\n\nThis will be VERY intense with rapid flashing, distortion effects, and disturbing visuals.\n\nAre you absolutely sure you want to proceed?"
-      );
-
-      console.log("Confirmation result:", confirmed);
-
-      if (confirmed) {
-        summonTheHorror();
+    sortSelect.addEventListener("change", (event) => {
+      const modeKey = event.target.value;
+      if (!layoutModes[modeKey]) return;
+      render(modeKey);
+      if (activeDatum) {
+        moveCrosshair(activeDatum);
       }
     });
-  } else {
-    console.error("❌ SUMMON button not found! ID:", "summon-horror-btn");
   }
 
-  
-  setInterval(() => {
-    const randomBubble = bubbles
-      .filter((d) => d.overallImpact > 0.5 && Math.random() > 0.7)
-      .select(".main-bubble");
-
-    randomBubble
-      .transition()
-      .duration(300)
-      .style("filter", "drop-shadow(0 0 25px #ff0000)")
-      .transition()
-      .duration(300)
-      .style("filter", "drop-shadow(0 0 15px #ff0000)");
-  }, 2000);
+  render(currentMode, false);
 
   return {
-    updateSort: updateSort,
-    svg: svg,
+    setMode: (modeKey) => {
+      if (!layoutModes[modeKey]) return;
+      render(modeKey);
+    },
+    svg,
   };
 }

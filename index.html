@@ -284,33 +284,29 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
         <div class="section-header">
           <h3 class="section-chapter">Scene 2 — Vital Signs Rising</h3>
           <h2 class="section-title">Heartbeat of Terror Monitor</h2>
-          <p class="section-description">
-            Choose a film to plot its fear score across the runtime using the
-            journey table (viz2). The x-axis tracks scene progression, the neon
-            line shows fear intensity on a 0 to 1 scale, and skull markers tag
-            any moment breaking the 0.70 threshold. The BPM readout converts the
-            average fear into a pulse so you can feel the dread build in real
-            time.
-          </p>
         </div>
-        <div class="section-content">
-          <div class="viz-wrapper">
+        <div class="section-content" style="flex-direction: column">
+          <div class="viz-wrapper" style="width: 100%">
             <div class="film-selector">
               <label for="film-select">Choose Your Nightmare:</label>
               <select id="film-select" class="spooky-select">
                 <option value="">Loading films...</option>
               </select>
             </div>
-            <div id="viz-fear-build" class="visualization-large"></div>
+            <div id="viz-fear-build" class="visualization-wide"></div>
           </div>
-          <aside class="insight-panel neon-theme">
+          <aside
+            class="insight-panel neon-theme"
+            style="margin-top: 1.5rem; width: 100%"
+          >
             <h3>Track the Pulse</h3>
             <p>
-              The line maps each scene to a percentile along the runtime and
-              pairs it with its AI scored fear level (0 to 1). When you pick a
-              film, the monitor draws those points in order and highlights any
-              scene where fear clears
-              <strong>0.70</strong> with a skull marker.
+              Choose a film to plot its fear score across the runtime using the
+              journey table. The x-axis tracks scene progression, the neon line
+              shows fear intensity on a 0 to 1 scale, and skull markers tag any
+              moment breaking the 0.70 threshold. The BPM readout converts the
+              average fear into a pulse so you can feel the dread build in real
+              time.
             </p>
             <p>
               Average fear converts to the faux BPM in the corner, so a steady
@@ -319,7 +315,10 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               point before spiking near the finale, showing how a patient build
               primes the audience for a final rush. The lesson across the films
               is the same—strategic pacing with alternating calm and chaos keeps
-              viewers on edge far better than nonstop noise.
+              viewers on edge far better than nonstop noise. We start you with
+              the average horror pulse across all 129 scripts, and the featured
+              list in the dropdown surfaces the five wildest swings so you can
+              compare different pacing strategies in just a few clicks.
             </p>
           </aside>
         </div>
@@ -330,15 +329,16 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           <h3 class="section-chapter">Scene 3 — Graveyard of Spikes</h3>
           <h2 class="section-title">The Cemetery of Terror</h2>
           <p class="section-description">
-            Tombstones mark scenes where fear scores climb past 0.40 for eight
-            iconic films, all aligned on a shared 0 to 90 percent runtime axis.
-            Toggle buttons reveal fear versus tension markers, letting you
-            compare sudden jump scares with slow-burn warnings. Think of it as
-            the burial plot for every heart-stopping beat.
+            Each film gets its own graveyard row. We place a tombstone wherever
+            the fear score jumps above 0.40 and light a lantern at the same
+            runtime when tension climbs past 0.40. Use the fear and tension
+            buttons to show one or both stories. The film bar above the chart
+            starts with eight iconic titles; remove any you don’t need or add a
+            new film from the dropdown to compare different lineups.
           </p>
         </div>
         <div class="section-content">
-          <div class="viz-wrapper">
+          <div class="viz-wrapper stacked" style="width: 100%">
             <div id="viz-spikes" class="visualization-large"></div>
             <div class="viz-controls">
               <button id="toggle-fear" class="spooky-button active">
@@ -350,23 +350,47 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               <button id="reset-zoom" class="spooky-button">Reset View</button>
             </div>
           </div>
-          <aside class="insight-panel grave-theme">
-            <h3>Spot the Spikes</h3>
-            <p>
-              We focus on eight iconic titles and plant a tombstone wherever a
-              scene’s fear score tops <strong>0.40</strong>. The horizontal axis
-              traces the runtime, while stacked rows keep each film on its own
-              line so you can see pacing patterns at a glance.
-            </p>
-            <p>
-              Toggle buttons let you isolate fear tombstones or tension warning
-              signs. When both glow in the same spot, the screenplay is
-              delivering a jump scare and a slow burn at once. In
-              <em>Halloween</em>, for instance, the fear markers crowd the final
-              quarter, reinforcing the lesson that the best horror stacks its
-              climactic beats rather than scattering them randomly.
-            </p>
-          </aside>
+          <div
+            class="scene3-insight-full grave-theme"
+            style="
+              width: 100%;
+              margin-top: 28px;
+              border-radius: 16px;
+              background: rgba(18, 0, 12, 0.82);
+              border: 1px solid rgba(255, 110, 110, 0.35);
+              box-shadow: 0 20px 40px rgba(4, 0, 10, 0.45);
+              padding: 26px 30px;
+              font-family: 'Special Elite', monospace;
+              color: #ffe5e5;
+            "
+          >
+            <h3
+              style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 16px;"
+            >
+              Spot the Spikes
+            </h3>
+            <div
+              style="max-width: 860px; margin: 0 auto; font-size: 14px; line-height: 1.6;"
+            >
+              <p>
+                Fear spikes plant a tombstone the moment the score crosses
+                <strong>0.40</strong>. Tension spikes at the same scene light up a
+                lantern so you can see where suspense and shock overlap without
+                guesswork.
+              </p>
+              <p>
+                When both icons appear together—like in the finale of
+                <em>Halloween</em>—the story is layering a jump scare on top of a
+                slow build. Click any marker to open a quick sparkline that shows
+                fear and tension before and after that moment.
+              </p>
+              <p>
+                Main lesson: the most memorable shock sequences pair a sharp fear rise with elevated
+                tension in surrounding scenes. If spikes stand alone with flat tension, the scare fades
+                fast; when tension climbs before and after, the audience stays rattled far longer.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -375,68 +399,140 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           <h3 class="section-chapter">Scene 4 — Signal Autopsy</h3>
           <h2 class="section-title">The Power of Horror Signals</h2>
           <p class="section-description">
-            This bubble lab examines the top fifteen lexicon entries. Radius
-            mirrors how many times a signal appears, color intensity shows its
-            overall fear-and-tension impact, and the dropdown resorts the swarm
-            by different metrics. Hover for stats, click if you dare— the
-            jumpscare overlay reacts to the potency you just unleashed.
+            This signal lab charts our fiercest horror cues inside a fear versus tension grid.
+            Placement shows how much extra fear and tension each term adds versus scenes that
+            never utter it, bubble size mirrors how often it appears, and color exposes whether
+            the cue leans jump scare shock or slow burn dread. Recast the axes with the dropdown,
+            then hover or click to open a dossier pop-up with the full story.
           </p>
         </div>
         <div class="section-content">
-          <div class="viz-wrapper">
-            <div class="viz-controls stacked" style="margin-bottom: 20px">
-              <label for="sort-select">Sort By:</label>
-              <select id="sort-select" class="spooky-select">
-                <option value="impact">Overall Horror Impact</option>
-                <option value="fear">Fear Generation</option>
-                <option value="tension">Tension Creation</option>
-                <option value="frequency">Frequency of Occurrence</option>
-              </select>
-            </div>
+          <div class="viz-wrapper stacked" style="width: 100%">
             <div
-              id="jumpscare-consent"
-              class="disclaimer"
-              role="group"
-              aria-labelledby="jumpscare-title"
+              class="signal-control-rail"
               style="
-                margin: 12px 0 18px;
-                padding: 12px;
-                border: 1px solid #ff4444;
-                background: #140000;
-                color: #ffcccc;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 16px;
+                margin-bottom: 18px;
+                padding: 14px 18px;
+                border: 1px solid rgba(255, 90, 214, 0.35);
+                background: rgba(20, 0, 32, 0.75);
+                border-radius: 14px;
+                box-shadow: 0 18px 38px rgba(5, 0, 18, 0.45);
               "
             >
               <div
-                id="jumpscare-title"
-                style="font-weight: 700; margin-bottom: 6px"
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 12px;
+                  font-family: 'Special Elite', monospace;
+                  color: #ffd8ff;
+                "
               >
-                ⚠️ Jumpscare Warning
+                <div
+                  style="
+                    font-size: 12px;
+                    letter-spacing: 0.18em;
+                    text-transform: uppercase;
+                    color: rgba(255, 216, 255, 0.7);
+                  "
+                >
+                  View mode
+                </div>
+                <label for="sort-select" style="display: none">Sort By</label>
+                <select
+                  id="sort-select"
+                  class="spooky-select"
+                  style="
+                    min-width: 220px;
+                    background: rgba(10, 0, 20, 0.85);
+                    border: 1px solid rgba(255, 90, 214, 0.6);
+                    color: #ffe0ff;
+                    font-size: 13px;
+                    letter-spacing: 0.08em;
+                    text-transform: uppercase;
+                  "
+                >
+                  <option value="impact">Overall Horror Impact</option>
+                  <option value="fear">Fear Generation</option>
+                  <option value="tension">Tension Creation</option>
+                  <option value="frequency">Frequency of Occurrence</option>
+                </select>
               </div>
-              <p style="margin: 4px 0 10px; line-height: 1.3">
-                This section may contain loud sounds, rapid image flashes,
-                flickering effects, and sudden visual overlays.
+            </div>
+
+            <div
+              id="signal-lab-notes"
+              class="disclaimer"
+              role="group"
+              aria-labelledby="signal-lab-title"
+              style="
+                margin: 0 0 18px;
+                padding: 14px 18px;
+                border: 1px solid rgba(255, 90, 214, 0.3);
+                background: rgba(20, 0, 30, 0.65);
+                color: #ffd8ff;
+                border-radius: 12px;
+                font-family: 'Special Elite', monospace;
+              "
+            >
+              <div
+                id="signal-lab-title"
+                style="font-weight: 700; margin-bottom: 6px; letter-spacing: 0.18em; text-transform: uppercase;"
+              >
+                📡 Signal Lab Field Notes
+              </div>
+              <p style="margin: 4px 0 10px; line-height: 1.4">
+                Hover to reveal crosshairs and quick stats, then click a bubble to launch a dossier
+                pop-up with the full breakdown. Use the view selector to see the swarm through
+                different lenses.
               </p>
             </div>
-            <div id="viz-effectiveness" class="visualization-large"></div>
+
+            <div id="viz-effectiveness" class="visualization-large" style="width: 100%"></div>
           </div>
-          <aside class="insight-panel scream-theme">
-            <h3>Decode the Signals</h3>
-            <p>
-              Each bubble represents a high impact horror cue. The radius shows
-              how often that word appears, the color saturation mirrors the fear
-              and tension it produces, and clicking triggers a jumpscare scaled
-              to its overall impact. Resort the swarm to watch the lineup shift
-              when you care more about frequency versus intensity.
-            </p>
-            <p>
-              Notice how atmospheric terms like <strong>night</strong> dominate
-              by volume yet sit in darker, cooler tones, while
-              <strong>scream</strong> and <strong>blood</strong> blaze bright
-              despite appearing less often. It reinforces our takeaway that the
-              strongest horror blends ambience with sharp shocks instead of
-              leaning on one note.
-            </p>
-          </aside>
+          <div
+            class="scene4-insight-full scream-theme"
+            style="
+              width: 100%;
+              margin-top: 32px;
+              border-radius: 16px;
+              background: rgba(22, 0, 30, 0.78);
+              border: 1px solid rgba(255, 90, 214, 0.35);
+              box-shadow: 0 22px 44px rgba(4, 0, 16, 0.5);
+              padding: 28px 32px;
+              font-family: 'Special Elite', monospace;
+              color: #ffe9ff;
+            "
+          >
+            <h3 style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 16px;">
+              Decode the Signals
+            </h3>
+            <div style="max-width: 860px; margin: 0 auto; font-size: 14px; line-height: 1.6;">
+              <p>
+                Each bubble marks a cue from the lexicon. Crosshairs reveal its precise score,
+                while the dossier pop-up breaks down frequency, impact deltas, and whether it
+                leans toward shock or lingering unease. Use the dropdown to see the swarm through
+                different lenses.
+              </p>
+              <p>
+                Notice how atmospheric staples like <strong>night</strong> claim the right edge
+                for coverage, while <strong>scream</strong> and <strong>blood</strong> blaze in
+                the fear heavy quadrant. Signals hugging the diagonal are balanced weapons, perfect
+                when you need fear and tension to climb together.
+              </p>
+              <p>
+                <strong>Main lesson:</strong> the heaviest hitters pair widespread ambience with select
+                spikes. Use familiar mood setters to keep tension elevated, then drop focused shock triggers
+                to punch fear upward—the combination drives the biggest overall lift without overusing any
+                single cue.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
       <!-- NEW: Balance Radar (spider-web vibe) -->
