@@ -255,19 +255,26 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           <aside class="insight-panel blood-theme">
             <h3>Read the Flow</h3>
             <p>
-              This Sankey taps the
-              <code>viz3_horror_effectiveness.csv</code> table. We feed each
-              signal into one of four thematic “arteries” and scale the links by
-              total occurrences. Slide the threshold to reveal how common cues
-              like <strong>night</strong> (3,694 sightings) give way to rarer,
-              high-impact signals such as <strong>scream</strong> with an
-              overall horror score of <strong>0.691</strong>.
+              The Sankey shows how often key terror cues appear and how strongly
+              they hit. The thicker the stream, the more frequently that signal
+              surfaces; the brighter the node, the more it jolts fear and
+              tension in the scenes it touches. On the left you will see broad
+              signal families such as the void, the violence, and the scream
+              (with the unknown appearing only when a term does not fit the main
+              trio), and on the right you will see the individual words those
+              families summon.
             </p>
             <p>
-              Node intensity reflects the blended fear and tension impact that
-              we computed per signal. Bright nodes mean scripts consistently
-              pair that cue with spikes in audience response, illuminating which
-              ingredients drive the genre’s most visceral moments.
+              Adjust the threshold to filter out the background noise. You will
+              see common ambience like <strong>night</strong> give way to
+              visceral triggers such as <strong>scream</strong>, revealing why
+              audiences remember certain beats long after the credits roll.
+              Watching how each family splits across the right bank shows which
+              ingredients feed the shocks and how often those shocks actually
+              land. For example, the ribbon feeding <strong>blood</strong> pours
+              out of the violence family and stays thick from end to end,
+              signalling that gore is both a recurring presence and a reliable
+              trigger for fear across the scripts.
             </p>
           </aside>
         </div>
@@ -299,18 +306,20 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           <aside class="insight-panel neon-theme">
             <h3>Track the Pulse</h3>
             <p>
-              The line is a direct readout from
-              <code>viz2b_fear_journey.csv</code>, where every scene is mapped
-              to a percentile along the runtime and paired with its AI-scored
-              fear level (0–1). When you pick a film, the monitor draws those
-              points in order and highlights any scene where fear clears
+              The line maps each scene to a percentile along the runtime and
+              pairs it with its AI scored fear level (0 to 1). When you pick a
+              film, the monitor draws those points in order and highlights any
+              scene where fear clears
               <strong>0.70</strong> with a skull marker.
             </p>
             <p>
-              Average fear converts to the faux “BPM” in the corner, so a steady
-              0.45 rating becomes roughly 120 terror beats per minute. Compare
-              films to spot pacing tactics—slow burns that erupt late versus
-              slashers that keep the needle thrashing.
+              Average fear converts to the faux BPM in the corner, so a steady
+              0.45 rating becomes roughly 120 terror beats per minute. In
+              <em>Halloween</em>, for example, the line simmers around the mid
+              point before spiking near the finale, showing how a patient build
+              primes the audience for a final rush. The lesson across the films
+              is the same—strategic pacing with alternating calm and chaos keeps
+              viewers on edge far better than nonstop noise.
             </p>
           </aside>
         </div>
@@ -344,18 +353,18 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           <aside class="insight-panel grave-theme">
             <h3>Spot the Spikes</h3>
             <p>
-              We filtered the fear-journey data to eight iconic titles and
-              planted a tombstone wherever a scene’s fear score topped
-              <strong>0.40</strong>. The x-axis tracks runtime progression;
-              stacked rows keep each film on its own plotline for quick
-              comparison.
+              We focus on eight iconic titles and plant a tombstone wherever a
+              scene’s fear score tops <strong>0.40</strong>. The horizontal axis
+              traces the runtime, while stacked rows keep each film on its own
+              line so you can see pacing patterns at a glance.
             </p>
             <p>
-              Toggle buttons let you isolate fear (tombstones) or tension
-              (warning signs). When both glow, the screenplay is delivering
-              simultaneous gut-punches and slow-burn dread—ideal for dissecting
-              how classics like <em>Halloween</em> choreograph their terror
-              crescendos.
+              Toggle buttons let you isolate fear tombstones or tension warning
+              signs. When both glow in the same spot, the screenplay is
+              delivering a jump scare and a slow burn at once. In
+              <em>Halloween</em>, for instance, the fear markers crowd the final
+              quarter, reinforcing the lesson that the best horror stacks its
+              climactic beats rather than scattering them randomly.
             </p>
           </aside>
         </div>
@@ -413,20 +422,19 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           <aside class="insight-panel scream-theme">
             <h3>Decode the Signals</h3>
             <p>
-              These bubbles are the top fifteen triggers from the effectiveness
-              dataset. Radius scales with <strong>Total_Occurrences</strong>,
-              color saturation mirrors the combined fear and tension lift, and
-              clicking fires a jumpscare scaled to the
-              <strong>Overall_Impact</strong> score. Resort the swarm to see how
-              rankings change when you prioritize raw frequency versus
-              intensity.
+              Each bubble represents a high impact horror cue. The radius shows
+              how often that word appears, the color saturation mirrors the fear
+              and tension it produces, and clicking triggers a jumpscare scaled
+              to its overall impact. Resort the swarm to watch the lineup shift
+              when you care more about frequency versus intensity.
             </p>
             <p>
               Notice how atmospheric terms like <strong>night</strong> dominate
               by volume yet sit in darker, cooler tones, while
-              <strong>scream</strong> and <strong>blood</strong> blaze
-              bright—rarer than the void but far more potent at spiking both
-              emotion metrics when they appear.
+              <strong>scream</strong> and <strong>blood</strong> blaze bright
+              despite appearing less often. It reinforces our takeaway that the
+              strongest horror blends ambience with sharp shocks instead of
+              leaning on one note.
             </p>
           </aside>
         </div>
