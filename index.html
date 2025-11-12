@@ -237,7 +237,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           </p>
         </div>
         <div class="section-content">
-          <div class="viz-wrapper">
+          <div class="viz-wrapper stacked" style="width: 100%">
             <div id="viz-sankey" class="visualization-large"></div>
             <div class="viz-controls">
               <label for="threshold-slider">Signal Threshold:</label>
@@ -252,31 +252,59 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               <span id="threshold-value">400</span>
             </div>
           </div>
-          <aside class="insight-panel blood-theme">
-            <h3>Read the Flow</h3>
-            <p>
-              The Sankey shows how often key terror cues appear and how strongly
-              they hit. The thicker the stream, the more frequently that signal
-              surfaces; the brighter the node, the more it jolts fear and
-              tension in the scenes it touches. On the left you will see broad
-              signal families such as the void, the violence, and the scream
-              (with the unknown appearing only when a term does not fit the main
-              trio), and on the right you will see the individual words those
-              families summon.
-            </p>
-            <p>
-              Adjust the threshold to filter out the background noise. You will
-              see common ambience like <strong>night</strong> give way to
-              visceral triggers such as <strong>scream</strong>, revealing why
-              audiences remember certain beats long after the credits roll.
-              Watching how each family splits across the right bank shows which
-              ingredients feed the shocks and how often those shocks actually
-              land. For example, the ribbon feeding <strong>blood</strong> pours
-              out of the violence family and stays thick from end to end,
-              signalling that gore is both a recurring presence and a reliable
-              trigger for fear across the scripts.
-            </p>
-          </aside>
+          <div
+            class="scene1-insight-full blood-theme"
+            style="
+              width: 100%;
+              margin-top: 28px;
+              border-radius: 16px;
+              background: rgba(20, 0, 8, 0.82);
+              border: 1px solid rgba(255, 60, 60, 0.35);
+              box-shadow: 0 20px 40px rgba(4, 0, 8, 0.45);
+              padding: 26px 30px;
+              font-family: 'Special Elite', monospace;
+              color: #ffe0e0;
+            "
+          >
+            <h3
+              style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 16px;"
+            >
+              Read the Flow
+            </h3>
+            <div
+              style="max-width: 860px; margin: 0 auto; font-size: 14px; line-height: 1.6;"
+            >
+              <p>
+                The Sankey shows how often key terror cues appear and how strongly
+                they hit. The thicker the stream, the more frequently that signal
+                surfaces; the brighter the node, the more it jolts fear and
+                tension in the scenes it touches. On the left you will see broad
+                signal families such as the void, the violence, and the scream
+                (with the unknown appearing only when a term does not fit the main
+                trio), and on the right you will see the individual words those
+                families summon.
+              </p>
+              <p>
+                Adjust the threshold to filter out the background noise. You will
+                see common ambience like <strong>night</strong> give way to
+                visceral triggers such as <strong>scream</strong>, revealing why
+                audiences remember certain beats long after the credits roll.
+                Watching how each family splits across the right bank shows which
+                ingredients feed the shocks and how often those shocks actually
+                land. For example, the ribbon feeding <strong>blood</strong> pours
+                out of the violence family and stays thick from end to end,
+                signalling that gore is both a recurring presence and a reliable
+                trigger for fear across the scripts.
+              </p>
+              <p>
+                Main lesson: the most effective horror signals cluster into distinct families—atmospheric
+                void, visceral violence, and piercing audio cues. When a signal like <strong>blood</strong>
+                maintains a thick stream across the entire flow, it signals both high frequency and
+                consistent impact. The strongest horror blends these families rather than relying on
+                a single type, creating layered scares that hit multiple senses at once.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
