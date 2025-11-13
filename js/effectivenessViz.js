@@ -24,23 +24,27 @@ function createEffectivenessViz(selector, rawData) {
     left: 120,
   };
   const baseHeight = isCompact ? 620 : 780;
-  const availableWidth = containerNode.clientWidth - margin.left - margin.right;
+  const containerWidth = containerNode.clientWidth;
+  
+  // Set a maximum width for the graph area to keep it centered
+  const maxGraphWidth = 1400;
+  const availableWidth = Math.min(containerWidth - margin.left - margin.right, maxGraphWidth - margin.left - margin.right);
   const width = Math.max(480, availableWidth);
   const height = baseHeight - margin.top - margin.bottom;
 
+  // Calculate SVG width
+  const svgWidth = width + margin.left + margin.right;
+
   const svg = container
     .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", baseHeight);
-
-  const horizontalOffset = (availableWidth - width) / 2;
+    .attr("width", svgWidth)
+    .attr("height", baseHeight)
+    .style("display", "block")
+    .style("margin", "0 auto");
 
   const root = svg
     .append("g")
-    .attr(
-      "transform",
-      `translate(${margin.left + Math.max(0, horizontalOffset)},${margin.top})`
-    );
+    .attr("transform", `translate(${margin.left},${margin.top})`);
 
   const defs = svg.append("defs");
 
