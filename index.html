@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress" class="scroll-progress-bar"></div>
     <section id="intro">
       <div class="intro-content">
         <div class="hero-questions" aria-label="Quick questions">
@@ -563,10 +565,66 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           </div>
         </div>
       </section>
+      <!-- NEW: Dripping Impact Strip (dripping-blood vibe) -->
+      <section id="section-drips" class="viz-section">
+        <div class="section-header">
+          <h3 class="section-chapter">Scene 5 — Impact Dripline</h3>
+          <h2 class="section-title">Signal Impact Strip</h2>
+          <p class="section-subtitle">
+            A ranked strip that traces each signal's overall impact and lets the
+            "drip" length visualize how quickly potency falls off. Sort to swap
+            between impact, fear, tension, or name and see which terms keep
+            bleeding through.
+          </p>
+        </div>
+        <div class="section-content">
+          <div class="viz-wrapper stacked" style="width: 100%;">
+            <div class="controls">
+              <label for="drip-sort">Sort by:</label>
+              <select id="drip-sort">
+                <option value="impact">Impact (desc)</option>
+                <option value="name">Name (A–Z)</option>
+              </select>
+            </div>
+            <div id="viz-drip" class="viz" style="width: 100%; min-height: 500px;"></div>
+            <p class="section-note">
+              Different look, different question: not frequency, not bubbles — a
+              ranked "impact strip" with stylized drips.
+            </p>
+          </div>
+          <div
+            class="scene5-drip-insight-full drip-theme"
+            style="
+              width: 100%;
+              margin-top: 32px;
+              border-radius: 16px;
+              background: rgba(40, 0, 10, 0.78);
+              border: 1px solid rgba(255, 31, 107, 0.35);
+              box-shadow: 0 22px 44px rgba(4, 0, 16, 0.5);
+              padding: 28px 32px;
+              font-family: 'Special Elite', monospace;
+              color: #ffe5e5;
+            "
+          >
+            <h3 style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 16px; color: #ff1f6b; text-shadow: 0 0 12px rgba(255, 31, 107, 0.8), 0 0 6px rgba(255, 31, 107, 0.6);">
+              Read the Ranking
+            </h3>
+            <div style="max-width: 860px; margin: 0 auto; font-size: 14px; line-height: 1.6;">
+              <p>
+                This strip uses impact scores from our effectiveness dataset. We sort the signals by your selection, trace a smooth ribbon through their impact values, and hang stylized drips to show how quickly the influence trails off after the heavy hitters.
+              </p>
+              <p>
+                Choose A–Z to compare lexicon coverage or stick with impact to see the steep drop from elite signals (anything above <strong style="color: #ff1f6b;">0.50</strong>) to background atmosphere. Hover over any signal to see its detailed impact score. The visualization complements the bubble chart by emphasizing order and falloff instead of spatial clustering.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- NEW: Balance Radar (spider-web vibe) -->
       <section id="section-balance" class="viz-section">
         <div class="section-header">
-          <h3 class="section-chapter">Scene 5 — Recipe Cards</h3>
+          <h3 class="section-chapter">Scene 6 — Recipe Cards</h3>
           <h2 class="section-title">Signal-Balance by Film</h2>
           <p class="section-subtitle">
             This radar compares six signal families per film (Audio, Visual,
@@ -576,84 +634,71 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           </p>
         </div>
         <div class="section-content">
-          <div class="viz-wrapper stacked">
+          <div class="viz-wrapper stacked" style="width: 100%;">
             <div class="controls">
               <label for="radar-film-select">Film:</label>
               <select id="radar-film-select"></select>
             </div>
-            <div id="viz-radar" class="viz"></div>
+            <div id="viz-radar" class="viz" style="width: 100%; min-height: 600px;"></div>
             <p class="section-note">
               We group raw signals into 6 families (Audio, Visual, Pace, Threat,
               Setting, Psyche) and show balance (0–1) per film.
             </p>
           </div>
-          <aside class="insight-panel radar-theme">
-            <h3>Compare the Recipe</h3>
-            <p>
-              We regrouped the ten most common signals per film into six sensory
-              families—Audio, Visual, Pace, Threat, Setting, and Psyche—using
-              the counts in
-              <code>viz1_horror_signals_by_film.csv</code>. Each axis is
-              normalized within that film, so a point at
-              <strong>1.0</strong> marks the dominant ingredient in its fear
-              recipe.
+          <div
+            id="radar-preference-panel"
+            class="scene5-preference-panel"
+            style="
+              width: 100%;
+              margin-top: 32px;
+              border-radius: 16px;
+              background: rgba(10, 20, 10, 0.78);
+              border: 1px solid rgba(57, 255, 20, 0.35);
+              box-shadow: 0 22px 44px rgba(4, 20, 4, 0.5);
+              padding: 28px 32px;
+              font-family: 'Special Elite', monospace;
+              color: #e0ffe0;
+            "
+          >
+            <h3 style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 8px; color: #39ff14; text-shadow: 0 0 12px rgba(57, 255, 20, 0.8), 0 0 6px rgba(57, 255, 20, 0.6);">
+              🎯 Find Your Perfect Horror Match
+            </h3>
+            <p style="text-align: center; font-size: 12px; color: #b0ffb0; margin-bottom: 24px; opacity: 0.9;">
+              Adjust the sliders to set your horror preferences. We'll recommend films that match your taste.
             </p>
-            <p>
-              Flip through the dropdown to spot stylistic fingerprints:
-              supernatural stories lean on Psyche and Setting, creature features
-              spike Threat, and relentless slashers light up Pace. The radar
-              makes those balances visible at a glance.
-            </p>
-          </aside>
+          </div>
+          <div
+            class="scene5-insight-full radar-theme"
+            style="
+              width: 100%;
+              margin-top: 32px;
+              border-radius: 16px;
+              background: rgba(10, 20, 10, 0.78);
+              border: 1px solid rgba(57, 255, 20, 0.35);
+              box-shadow: 0 22px 44px rgba(4, 20, 4, 0.5);
+              padding: 28px 32px;
+              font-family: 'Special Elite', monospace;
+              color: #e0ffe0;
+            "
+          >
+            <h3 style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 16px; color: #39ff14; text-shadow: 0 0 12px rgba(57, 255, 20, 0.8), 0 0 6px rgba(57, 255, 20, 0.6);">
+              Compare the Recipe
+            </h3>
+            <div style="max-width: 860px; margin: 0 auto; font-size: 14px; line-height: 1.6;">
+              <p>
+                We analyzed all horror signals from our AI dataset and grouped them into six sensory families: Audio, Visual, Pace, Threat, Setting, and Psyche. Each film's signals are counted and normalized, so a value of <strong style="color: #ff224e;">1.0</strong> means that family is the dominant ingredient in that film's horror recipe.
+              </p>
+              <p>
+                Use the dropdown above to explore different films and see their unique horror fingerprints. Supernatural stories typically emphasize Psyche and Setting, creature features focus on Threat, and fast paced slashers highlight Pace. The radar chart makes these patterns visible at a glance.
+              </p>
+              <p>
+                Below, you can set your own horror preferences using the sliders. Adjust each scale to match your taste, and we'll recommend films that align with your preferences. The recommendation system looks for films with similar signal balances, not exact matches, so you'll discover movies that share your horror style.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- NEW: Dripping Impact Strip (dripping-blood vibe) -->
-      <section id="section-drips" class="viz-section">
-        <div class="section-header">
-          <h3 class="section-chapter">Scene 6 — Impact Dripline</h3>
-          <h2 class="section-title">Signal Impact Strip</h2>
-          <p class="section-subtitle">
-            A ranked strip that traces each signal’s overall impact and lets the
-            “drip” length visualize how quickly potency falls off. Sort to swap
-            between impact, fear, tension, or name and see which terms keep
-            bleeding through.
-          </p>
-        </div>
-        <div class="section-content">
-          <div class="viz-wrapper stacked">
-            <div class="controls">
-              <label for="drip-sort">Sort by:</label>
-              <select id="drip-sort">
-                <option value="impact">Impact (desc)</option>
-                <option value="name">Name (A–Z)</option>
-              </select>
-            </div>
-            <div id="viz-drip" class="viz"></div>
-            <p class="section-note">
-              Different look, different question: not frequency, not bubbles — a
-              ranked “impact strip” with stylized drips.
-            </p>
-          </div>
-          <aside class="insight-panel drip-theme">
-            <h3>Read the Ranking</h3>
-            <p>
-              This strip reuses the impact scores from
-              <code>viz3_horror_effectiveness.csv</code>. We sort the signals by
-              your selection, trace a smooth ribbon through their impact values,
-              and hang stylized drips to show how quickly the influence trails
-              off after the heavy hitters.
-            </p>
-            <p>
-              Choose A–Z to compare lexicon coverage or stick with impact to see
-              the steep drop from elite signals (anything above
-              <strong>0.50</strong>) to background atmosphere. It complements
-              the bubble chart by emphasizing order and falloff instead of
-              spatial clustering.
-            </p>
-          </aside>
-        </div>
-      </section>
       <section id="epilogue" class="snapshot-section">
         <div class="snapshot-inner">
           <div class="snapshot-header">
@@ -719,5 +764,6 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
     <script src="js/dripImpactViz.js"></script>
 
     <script src="js/main.js"></script>
+    <script src="js/scrollAnimations.js"></script>
   </body>
 </html>
