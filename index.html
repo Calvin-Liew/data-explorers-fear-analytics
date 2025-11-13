@@ -179,31 +179,6 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               speaking characters.
             </li>
           </ul>
-          <h3>Prompting the AI</h3>
-          <p>
-            Each chunk is handed to GPT-4o-mini with a strict JSON contract; if
-            validation fails we escalate to GPT-4o. The prompt locks the model
-            to horror-specific terminology, emotion scoring guidelines, and a
-            thirty five word summary limit.
-          </p>
-          <pre class="prompt-snippet"><code>{
-  "system": "You are a horror screenplay annotator. Reply with valid JSON only.",
-  "user": {
-    "film": "HALLOWEEN (1978)",
-    "chunk_index": 12,
-    "instructions": [
-      "Extract characters speaking in this chunk.",
-      "Count horror lexicon hits per family.",
-      "Score fear, tension, sentiment on 0 to 1 scales.",
-      "Summarize the scene in no more than 35 words."
-    ],
-    "scene_text": "&lt;raw screenplay excerpt&gt;"
-  }
-}</code></pre>
-          <p class="prompt-note">
-            Our pipeline rejects malformed JSON, retries with adjusted sampling,
-            and merges the validated payload into the master scene table.
-          </p>
           <h3>Reading the Emotional Metrics</h3>
           <p>
             <strong>Fear</strong> scores capture sudden shocks and explicit
@@ -590,10 +565,6 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               </select>
             </div>
             <div id="viz-drip" class="viz" style="width: 100%; min-height: 500px;"></div>
-            <p class="section-note">
-              Different look, different question: not frequency, not bubbles — a
-              ranked "impact strip" with stylized drips.
-            </p>
           </div>
           <div
             class="scene5-drip-insight-full drip-theme"
