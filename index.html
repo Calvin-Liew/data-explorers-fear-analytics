@@ -439,9 +439,52 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
         </div>
       </section>
 
-      <section class="viz-section" id="section-effectiveness">
+        <!-- Scene 4 — Fear State Machine -->
+        <section class="viz-section" id="section-state-machine">
+            <div class="section-header">
+                <h3 class="section-chapter">Scene 4 — Fear State Machine</h3>
+                <h2 class="section-title">How Horror Climbs the Fear Ladder</h2>
+                <p class="section-description">
+                    Instead of tracking raw fear scores, this scene looks at how films move between three coarse
+                    fear bands: calm, unease, and panic. Each cell shows how likely the next scene is to land in a
+                    given band, given where we are now, revealing whether horror prefers slow climbs, sudden jumps,
+                    or stretches of sustained terror.
+                </p>
+            </div>
+            <div class="section-content">
+                <div class="viz-wrapper stacked" style="width: 100%">
+                    <div
+                            id="viz-state-machine"
+                            class="visualization-medium"
+                            style="width: 100%; min-height: 360px;"
+                    ></div>
+                </div>
+                <div
+                        class="insight-panel"
+                        style="
+              width: 100%;
+              margin-top: 24px;
+              border-radius: 16px;
+              background: radial-gradient(circle at top, rgba(14, 46, 68, 0.95), rgba(2, 5, 12, 0.98));
+              border: 1px solid rgba(155, 214, 255, 0.45);
+              box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+            "
+                >
+                    <h3>Reading the Fear Grammar</h3>
+                    <p>
+                        The diagonal tells you how often films hold a mood; off-diagonal cells show how they climb
+                        or drop between states. Strong Calm→Unease and Unease→Panic flows point to a careful ramp-up,
+                        while rare Calm→Panic jumps mark pure ambush moments. Once stories reach Panic, many stay in
+                        the red zone for a while, giving viewers only short chances to breathe.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="viz-section" id="section-effectiveness">
         <div class="section-header">
-          <h3 class="section-chapter">Scene 4 — Signal Autopsy</h3>
+          <h3 class="section-chapter">Scene 5 — Signal Autopsy</h3>
           <h2 class="section-title">The Power of Horror Signals</h2>
           <p class="section-description">
             This signal lab charts our fiercest horror cues inside a fear versus tension grid.
@@ -583,7 +626,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
       <!-- NEW: Dripping Impact Strip (dripping-blood vibe) -->
       <section id="section-drips" class="viz-section">
         <div class="section-header">
-          <h3 class="section-chapter">Scene 5 — Impact Dripline</h3>
+          <h3 class="section-chapter">Scene 6 — Impact Dripline</h3>
           <h2 class="section-title">Signal Impact Strip</h2>
           <p class="section-subtitle">
             A ranked strip that traces each signal's overall impact and lets the
@@ -635,7 +678,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
       <!-- NEW: Balance Radar (spider-web vibe) -->
       <section id="section-balance" class="viz-section">
         <div class="section-header">
-          <h3 class="section-chapter">Scene 6 — Recipe Cards</h3>
+          <h3 class="section-chapter">Scene 7 — Recipe Cards</h3>
           <h2 class="section-title">Signal-Balance by Film</h2>
           <p class="section-subtitle">
             This radar compares six signal families per film (Audio, Visual,
@@ -770,6 +813,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
     <script src="js/sankeyViz.js"></script>
     <script src="js/fearBuildViz.js"></script>
     <script src="js/spikesViz.js"></script>
+    <script src="js/stateMachineViz.js"></script>
     <script src="js/effectivenessViz.js"></script>
     <script src="js/radarBalanceViz.js"></script>
     <script src="js/dripImpactViz.js"></script>

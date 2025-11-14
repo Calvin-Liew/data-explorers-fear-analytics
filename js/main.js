@@ -227,7 +227,23 @@
       console.error("❌ createSpikesViz not found!");
     }
 
-    console.log("💀 Creating Effectiveness...", typeof createEffectivenessViz);
+      console.log("🔁 Creating Fear State Machine...", typeof createStateMachineViz);
+      if (typeof createStateMachineViz === "function") {
+          try {
+              state.visualizations.stateMachine = createStateMachineViz(
+                  "#viz-state-machine",
+                  data.fearJourneyRaw
+              );
+              console.log("✅ Fear State Machine created");
+          } catch (error) {
+              console.error("❌ Fear State Machine error:", error);
+          }
+      } else {
+          console.error("❌ createStateMachineViz not found!");
+      }
+
+
+      console.log("💀 Creating Effectiveness...", typeof createEffectivenessViz);
     if (typeof createEffectivenessViz === "function") {
       try {
         state.visualizations.effectiveness = createEffectivenessViz(
