@@ -52,13 +52,35 @@
         tensionJourney,
         effectiveness,
         filmComparison,
+        movieGalleryData,
       ] = await Promise.all([
         d3.csv("data/cleaner_datasets/viz1_horror_signals_by_film.csv"),
         d3.csv("data/cleaner_datasets/viz2b_fear_journey.csv"),
         d3.csv("data/cleaner_datasets/viz2a_tension_journey.csv"),
         d3.csv("data/cleaner_datasets/viz3_horror_effectiveness.csv"),
         d3.csv("data/cleaner_datasets/viz4_film_comparison.csv"),
+        d3.csv("data/imbd-movies-dataset/imdb_179_horror.csv"),
       ]);
+      const brokenPosterIDs = [
+        "MV5BYWM1YTgxNjMtNzY2NC00YjVmLWE1ODUtNTdiYTI4YjZhODMwXkEyXkFqcGdeQXVyMTUzMTg2ODkz",
+        "MV5BZTk4NzI5NGItYmIxOS00OGI0LTg4NzEtOWU5YjQ0OGEzZDkxXkEyXkFqcGdeQXVyMTQxNzMzNDI@",
+        "MV5BOTE2ODNlYTMtOTdlNi00MWVlLThkYzQtY2QyOWRlZmYyOGNmXkEyXkFqcGdeQXVyMTA3MDk2NDg2",
+        "MV5BYjExYTcwYmYtMWY2Zi00MGJlLTk3YjUtZTU1Zjg4MDc0Y2FjXkEyXkFqcGdeQXVyODE5NzE3OTE@",
+        "MV5BYWU1ZDc0YjMtNjFhYS00NGZiLTk2MzgtNmU0Mzk3ZjdkMTA2XkEyXkFqcGdeQXVyNDE0OTU3NDY@",
+        "MV5BMTIxNTMzNzYtNzA3NC00MzgwLTlhNGYtMDEyYTNlZjcwZTNiXkEyXkFqcGdeQXVyNDAxNjkxNjQ@",
+        "MV5BYWI4MTVlM2UtNTEzZC00MjdiLWE4ZjItNTZmM2U2NjUzNzI1XkEyXkFqcGdeQXVyMjUzOTY1NTc@",
+        "MV5BNzU3Y2IzYTQtNzc0Ni00ZmQzLThkN2ItYTQzZjdhNGRiY2FmXkEyXkFqcGdeQXVyMTQxNzMzNDI@",
+        "MV5BZDE0ZGJlMTYtOWY1OS00NGE4LTgzNTQtMDIxYTM5ZjU2NmVlXkEyXkFqcGdeQXVyODk4OTc3MTY@",
+        "MV5BNjI0ZTUzMzEtNDc3Yy00MjZjLWI4MjgtNzJhNThlYzE0YjNhXkEyXkFqcGdeQXVyMTcwOTQzOTYy",
+        "MV5BNDZmMzE0NjUtZTIzNC00Mzc0LTgyZjgtNzUxMWRiMDIzMDQwXkEyXkFqcGdeQXVyNjc5NjEzNA@@",
+        "MV5BNTFjOTFlMzMtYWIyZi00YmQzLWEyMGMtYzJjY2M1MDY1NjkyXkEyXkFqcGdeQXVyMTUzMDUzNTI3",
+        "MV5BMGNhZDczNTUtOWEzZS00ZjEyLTkzODQtOGM1MTZiMGY2ODIyXkEyXkFqcGdeQXVyMjkwOTAyMDU@",
+        "MV5BMjA0ZTcwMGEtNDc3NC00ODg3LWE3YTctNDU5ODA3MjNlMDkwXkEyXkFqcGdeQXVyNzc5MjA3OA@@"
+      ];
+
+      const cleanMovieData = movieGalleryData.filter(d => 
+        !brokenPosterIDs.some(id => d.Poster.includes(id))
+      );
 
       return {
         signalsByFilm: signalsByFilm,
@@ -68,6 +90,7 @@
         filmComparison: processFilmComparisonData(filmComparison),
         fearJourneyRaw: fearJourney,
         tensionJourneyRaw: tensionJourney,
+        movieGalleryData: cleanMovieData, 
       };
     } catch (error) {
       console.error("Error in loadAllData:", error);
@@ -217,6 +240,20 @@
       }
     } else {
       console.error("❌ createEffectivenessViz not found!");
+    }
+    console.log("🎬 Creating Movie Gallery...", typeof createMovieGalleryViz);
+    if (typeof createMovieGalleryViz === "function") {
+      try {
+        state.visualizations.movieGallery = createMovieGalleryViz(
+          "#viz-movie-gallery",
+          data.movieGalleryData
+        );
+        console.log("✅ Movie Gallery created");
+      } catch (error) {
+        console.error("❌ Movie Gallery error:", error);
+      }
+    } else {
+      console.error("❌ createMovieGalleryViz not found!");
     }
   }
 

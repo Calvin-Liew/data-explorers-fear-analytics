@@ -1943,3 +1943,324 @@ footer::before {
     text-align: center;
   }
 }
+/* ======================================================
+   FINAL COMPLETE CSS FOR HORIZONTAL MOVIE GALLERY
+   ====================================================== */
+
+/* --- 1. Filter Controls Styles --- */
+.gallery-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(10, 0, 0, 0.5);
+  border: 1px solid var(--color-medium-gray);
+  border-radius: 8px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-family: var(--font-typewriter);
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+/* --- 2. Horizontal Gallery & Scroll Buttons --- */
+.gallery-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+#viz-movie-gallery.visualization-gallery-horizontal {
+  display: flex;
+  flex-wrap: nowrap; /* Key property for single row */
+  gap: 1.5rem;
+  padding: 1rem;
+  width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  scroll-behavior: smooth; /* Smooth scrolling for button clicks */
+
+  /* Hide the default scrollbar */
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+}
+
+#viz-movie-gallery.visualization-gallery-horizontal::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: rgba(10, 10, 10, 0.8);
+  color: var(--color-text);
+  border: 1px solid var(--color-medium-gray);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 2.5rem;
+  line-height: 45px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.scroll-arrow:hover {
+  background-color: var(--color-blood-red);
+  border-color: var(--color-accent);
+  opacity: 1;
+}
+
+.scroll-arrow.left {
+  left: -25px;
+}
+
+.scroll-arrow.right {
+  right: -25px;
+}
+
+/* --- 3. Poster Card Styles --- */
+.movie-poster-card {
+  position: relative;
+  flex-shrink: 0; /* Prevent cards from shrinking */
+  width: 180px;
+  height: 260px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: var(--color-dark-gray);
+  border: 1px solid var(--color-medium-gray);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  /* Added transition for opacity and transform for filtering */
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, opacity 0.4s ease-out;
+}
+
+.movie-poster-card:hover {
+  transform: scale(1.08) translateY(-10px);
+  box-shadow: 0 20px 40px rgba(139, 0, 0, 0.5), 0 0 15px rgba(255, 68, 68, 0.3);
+  border-color: var(--color-accent);
+  z-index: 5;
+}
+
+.movie-poster-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.movie-poster-card .movie-poster-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 50%);
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.movie-poster-card:hover .movie-poster-overlay {
+  opacity: 0;
+}
+
+.movie-poster-card .placeholder-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  padding: 1rem;
+  font-family: var(--font-typewriter);
+  color: var(--color-text-dim);
+}
+
+/* --- 4. Modal Pop-up Styles --- */
+#movie-detail-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#movie-detail-modal.visible {
+  opacity: 1;
+}
+
+.modal-content {
+  display: flex;
+  gap: 2rem;
+  background-color: var(--color-dark-gray);
+  color: var(--color-text);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-medium-gray);
+  width: 90%;
+  max-width: 900px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+  box-shadow: 0 0 40px rgba(139, 0, 0, 0.5);
+}
+
+#movie-detail-modal.visible .modal-content {
+  transform: scale(1);
+}
+
+.modal-poster {
+  width: 240px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+
+.modal-info {
+  flex: 1;
+  min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.modal-info h2 {
+  font-family: var(--font-title);
+  color: var(--color-blood-red);
+  margin-top: 0;
+  font-size: 2.5rem;
+  text-shadow: 0 0 15px rgba(139, 0, 0, 0.8);
+  line-height: 1.1;
+}
+
+.modal-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  font-family: var(--font-typewriter);
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--color-text-dim);
+}
+.modal-meta span {
+  background-color: var(--color-medium-gray);
+  padding: 4px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.metascore-icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+  margin-right: 4px;
+  filter: invert(1) grayscale(1) brightness(1.5);
+}
+
+.modal-info p {
+  line-height: 1.6;
+  font-family: var(--font-typewriter);
+  margin-bottom: 1rem;
+}
+.modal-info p.genre, .modal-info p.director, .modal-info p.cast {
+    font-size: 0.95rem;
+}
+.modal-info p strong {
+    color: var(--color-highlight);
+}
+
+.review-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-medium-gray);
+}
+.review-section h4 {
+  font-family: var(--font-typewriter);
+  font-size: 1.2rem;
+  color: var(--color-highlight);
+  margin-bottom: 0.75rem;
+}
+.review-section .review-text {
+  font-style: italic;
+  color: var(--color-text-dim);
+  font-size: 0.95rem;
+}
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 25px;
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  z-index: 1001;
+  line-height: 1;
+}
+
+.close-button:hover {
+  color: var(--color-accent);
+  transform: rotate(90deg);
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+.modal-content::-webkit-scrollbar-track {
+  background: var(--color-dark-gray);
+}
+.modal-content::-webkit-scrollbar-thumb {
+  background-color: var(--color-blood-red);
+  border-radius: 10px;
+  border: 2px solid var(--color-dark-gray);
+}
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-accent);
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    max-height: 90vh;
+  }
+  .modal-poster {
+      width: 180px;
+      margin-bottom: 1rem;
+  }
+  .modal-info h2 {
+      font-size: 2rem;
+      text-align: center;
+  }
+  .modal-meta {
+      justify-content: center;
+  }
+  .scroll-arrow {
+      display: none; /* 在小屏幕上隐藏箭头，依赖原生触摸滚动 */
+  }
+}
