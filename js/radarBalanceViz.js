@@ -2,6 +2,33 @@
 (function () {
     const RADAR_SEL = "#viz-radar";
     const CSV_URL = "data/horror_ai_analysis_datasets/horror_signals.csv";
+    const IMDB_CSV_URL = "data/imbd-movies-dataset/imdb_179_horror.csv";
+
+    // Global cache for IMDB ratings (slug -> rating)
+    let imdbRatings = new Map();
+
+    function slugifyTitle(str) {
+        return String(str || "")
+            .toLowerCase()
+            .replace(/[_\-]+/g, "-")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "");
+    }
+
+    function buildImdbRatingMap(rows) {
+        const map = new Map();
+        rows.forEach(row => {
+            const title = row.Title || row.title || row.Film || row.film || row.name;
+            const rating = +row.Rating || +row.rating || +row.IMDB_Rating || +row.imdb_rating;
+            if (!title || !rating) return;
+            const key = slugifyTitle(title);
+            if (!map.has(key)) {
+                map.set(key, rating);
+            }
+        });
+        return map;
+    }
+
 
     const FAMILY_MAP = [
         { 
@@ -240,6 +267,29 @@
             .style("font-weight", "700")
             .style("letter-spacing", "2px")
             .text(filmName);
+        // Add IMDB rating in the top-right corner of the radar
+        if (imdbRatings && imdbRatings.size) {
+            const prettyTitle = row.film.replace(/_Unknown$/, "").replace(/-/g, " ");
+            const imdbKey = slugifyTitle(prettyTitle);
+            const rating = imdbRatings.get(imdbKey);
+
+            const label = (rating && !Number.isNaN(rating))
+                ? `⭐ IMDB: ${rating.toFixed(1)} / 10`
+                : "⭐ IMDB: N/A";
+
+            svg.append("text")
+                .attr("x", radius * 0.9)
+                .attr("y", -radius - 10)
+                .attr("text-anchor", "end")
+                .attr("class", "radar-imdb-rating")
+                .style("font-family", "'Special Elite', monospace")
+                .style("font-size", "14px")
+                .style("fill", "#ffdd55")
+                .style("text-shadow", "0 0 10px rgba(255, 221, 85, 0.9)")
+                .style("letter-spacing", "1px")
+                .text(label);
+        }
+
     }
 
     function findMatchingFilms(userPrefs, rows, threshold = 0.4) {
@@ -506,11 +556,25 @@
     }
 
     function init() {
-        d3.csv(CSV_URL, d3.autoType).then(raw => {
+        Promise.all([
+            d3.csv(CSV_URL, d3.autoType),
+            d3.csv(IMDB_CSV_URL, d3.autoType).catch(err => {
+                console.warn("IMDB ratings failed to load", err);
+                return [];
+            })
+        ]).then(([raw, imdbRaw]) => {
             if (!raw || !raw.length) {
                 console.error("No data loaded");
                 return;
             }
+
+            // Build IMDB rating lookup
+            if (imdbRaw && imdbRaw.length) {
+                imdbRatings = buildImdbRatingMap(imdbRaw);
+            } else {
+                imdbRatings = new Map();
+            }
+
             const { films, rows } = processHorrorSignals(raw);
 
             if (!films || films.length === 0) {
@@ -547,6 +611,7 @@
                 .text("⚠ Radar failed to load. Check console for details.");
         });
     }
+
 
     if (document.readyState !== "loading") init();
     else document.addEventListener("DOMContentLoaded", init);

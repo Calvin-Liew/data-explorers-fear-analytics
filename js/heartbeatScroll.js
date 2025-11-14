@@ -19,10 +19,10 @@
     let svg, path, totalLen = 0;
     let built = false, ticking = false;
 
-    // --- 核心函数 ---
+
 
     /**
-     * 重构后的核心函数：生成水平ECG路径数据
+     *
      * @param {number} y0 
      * @param {number} x0 
      * @param {number} x1 
@@ -66,9 +66,7 @@
         return out.join(' ');
     }
 
-    /**
-     * 构建或重建SVG心跳图
-     */
+
     function buildSVG() {
         const container = document.getElementById('heartbeat-container');
         if (!container || !window.d3) return;
@@ -87,12 +85,12 @@
         if (path) path.remove();
         path = svg.append('path')
             .attr('d', dParts.join(' '))
-            .attr('stroke', 'url(#heartbeat-gradient)') // 使用渐变色
+            .attr('stroke', 'url(#heartbeat-gradient)')
             .attr('stroke-width', 2.5)
             .attr('fill', 'none')
             .style('filter', 'drop-shadow(0 0 4px rgba(255,51,68,.8))');
 
-        // 定义渐变色
+
         const defs = svg.append("defs");
         const linearGradient = defs.append("linearGradient")
             .attr("id", "heartbeat-gradient");
@@ -104,12 +102,10 @@
             .attr('stroke-dashoffset', totalLen);
 
         built = true;
-        update(); // 初始绘制
+        update();
     }
 
-    /**
-     * 根据滚动位置更新心跳线
-     */
+
     function update() {
         if (!built || !path || ticking) return;
 
@@ -119,8 +115,7 @@
             const scrollTop = scrollRoot.scrollTop;
             const docH = scrollRoot.scrollHeight;
             const viewH = scrollRoot.clientHeight;
-            
-            // 处理文档高度小于视窗高度的情况，防止除以0
+
             const scrollableHeight = docH - viewH;
             const progress = scrollableHeight > 0 ? scrollTop / scrollableHeight : 1;
 
@@ -131,9 +126,7 @@
         });
     }
 
-    /**
-     * 绑定事件监听器
-     */
+
     function attachListeners() {
         window.removeEventListener('scroll', update);
         window.removeEventListener('resize', buildSVG);
@@ -142,7 +135,7 @@
         window.addEventListener('resize', buildSVG, { passive: true });
     }
 
-    // --- 初始化 ---
+
     function init() {
         if (document.readyState === 'complete') {
             buildSVG();

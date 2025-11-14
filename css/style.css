@@ -57,7 +57,6 @@ body {
     z-index: 10000;
     pointer-events: none;
     background: transparent;
-    /* 移除所有旧样式 */
     box-shadow: none;
     animation: none;
     transition: none;
@@ -69,31 +68,27 @@ body {
   }
   
   #heartbeat-svg path {
-    /* 1. 增强的发光效果 */
-    /* 我们叠加了多个不同颜色和大小的阴影来创建辉光效果 */
     filter: 
-      drop-shadow(0 0 1px rgba(255, 68, 68, 0.9))   /* 核心亮线 */
-      drop-shadow(0 0 3px rgba(255, 68, 68, 0.7))   /* 中层辉光 */
-      drop-shadow(0 0 7px rgba(139, 0, 0, 0.5));    /* 外层红色氛围光 */
+      drop-shadow(0 0 1px rgba(255, 68, 68, 0.9))
+      drop-shadow(0 0 3px rgba(255, 68, 68, 0.7))
+      drop-shadow(0 0 7px rgba(139, 0, 0, 0.5));
   
-    /* 2. 添加闪烁动画，让光晕有生命感 */
+
     animation: heartbeat-glow 1.5s ease-in-out infinite;
   
-    /* 绘制进度动画保持不变 */
-    transition: stroke-dashoffset 0.05s linear; /* 改为 linear 感觉更像机器扫描 */
+
+    transition: stroke-dashoffset 0.05s linear;
   }
   
-  /* 定义发光动画 */
+
   @keyframes heartbeat-glow {
     0%, 100% {
-      /* 正常辉光 */
       filter: 
         drop-shadow(0 0 1px rgba(255, 68, 68, 0.9))
         drop-shadow(0 0 3px rgba(255, 68, 68, 0.7))
         drop-shadow(0 0 7px rgba(139, 0, 0, 0.5));
     }
     50% {
-      /* 辉光变强，模拟心跳搏动时的亮度变化 */
       filter: 
         drop-shadow(0 0 2px rgba(255, 100, 100, 1))
         drop-shadow(0 0 6px rgba(255, 68, 68, 0.9))
@@ -101,7 +96,7 @@ body {
     }
   }x
 
-/* Fade-in animations for scroll narrative */
+
 .fade-in-section {
   opacity: 0;
   transform: translateY(40px);
@@ -620,12 +615,12 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-dark-bg); /* 使用纯黑背景，效果更好 */
+    background-color: var(--color-dark-bg);
     position: relative;
     overflow: hidden;
   }
   
-  /* 新的背景图层 */
+
   #intro::before {
     content: '';
     position: absolute;
@@ -634,22 +629,22 @@ a:hover {
     right: 0;
     bottom: 0;
     
-    /* 关键部分：设置背景图 */
-    background-image: url('image-from-rawpixel-id-17674120-original.png'); /* 确保路径正确！ */
-    background-size: cover; /* 覆盖整个区域 */
-    background-position: bottom center; /* 核心！将图片底部对齐容器底部 */
+
+    background-image: url('image-from-rawpixel-id-17674120-original.png');
+    background-size: cover;
+    background-position: bottom center;
     background-repeat: no-repeat;
   
-    /* 添加一个从下到上的黑色蒙版，让图片和背景融合更自然 */
+
     -webkit-mask-image: linear-gradient(to top, black 60%, transparent 100%);
     mask-image: linear-gradient(to top, black 60%, transparent 100%);
   
-    /* 动画效果：让背景平滑载入 */
+
     opacity: 0;
     animation: fadeInBackground 2s ease-out forwards;
     animation-delay: 0.5s;
     
-    z-index: 1; /* 背景图层 */
+    z-index: 1;
   }
   
   @keyframes fadeInBackground {
@@ -658,11 +653,11 @@ a:hover {
     }
   }
   
-  /* 确保文字内容在背景图之上 */
+
   .intro-content {
     text-align: center;
-    position: relative; /* 必须是 relative, absolute, 或 fixed */
-    z-index: 2; /* 确保 z-index 高于 ::before */
+    position: relative;
+    z-index: 2;
     padding: var(--spacing-md);
     max-width: 900px;
   }
@@ -2303,6 +2298,6 @@ footer::before {
       justify-content: center;
   }
   .scroll-arrow {
-      display: none; /* 在小屏幕上隐藏箭头，依赖原生触摸滚动 */
+      display: none;
   }
 }
