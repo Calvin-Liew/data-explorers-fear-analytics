@@ -1,4 +1,4 @@
-dconsole.log("👻 fearBuildViz.js LOADED!");
+console.log("👻 fearBuildViz.js LOADED!");
 
 function createFearBuildViz(selector, fearJourneyData) {
   "use strict";

@@ -224,6 +224,43 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
         </div>
       </div>
     </section>
+    <section id="section-movie-gallery" class="viz-section">
+      <div class="section-header">
+        <h3 class="section-chapter">Final Act — The Horror Archives</h3>
+        <h2 class="section-title">Film Dossiers</h2>
+        <p class="section-description">
+          Use the filters to discover your next nightmare or scroll through the archives. Hover over a poster to see it come alive, and click to open a detailed dossier.
+        </p>
+      </div>
+      <!-- The section-content is now rebuilt for filters and horizontal scrolling -->
+      <div class="section-content">
+        <!-- 1. Filter Controls -->
+        <div class="gallery-controls">
+          <div class="filter-group">
+            <label for="genre-filter">Genre:</label>
+            <select id="genre-filter" class="spooky-select"></select>
+          </div>
+          <div class="filter-group">
+            <label for="decade-filter">Decade:</label>
+            <select id="decade-filter" class="spooky-select"></select>
+          </div>
+          <div class="filter-group">
+              <label for="rating-filter">Min. Rating:</label>
+              <select id="rating-filter" class="spooky-select"></select>
+          </div>
+          <button id="reset-filters" class="spooky-button">Reset</button>
+        </div>
+
+        <!-- 2. Scrollable Gallery Wrapper -->
+        <div class="gallery-wrapper">
+          <button class="scroll-arrow left" id="scroll-left">‹</button>
+          <div id="viz-movie-gallery" class="visualization-gallery-horizontal">
+            <!-- Movie posters will be loaded here by D3 -->
+          </div>
+          <button class="scroll-arrow right" id="scroll-right">›</button>
+        </div>
+      </div>
+    </section>
 
     <main id="viz-container">
       <section class="viz-section" id="section-signals">
@@ -765,6 +802,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
     <script src="js/effectivenessViz.js"></script>
     <script src="js/radarBalanceViz.js"></script>
     <script src="js/dripImpactViz.js"></script>
+    <script src="js/movieGalleryViz.js"></script> 
 
     <script src="js/main.js"></script>
     <script src="js/scrollAnimations.js"></script>
