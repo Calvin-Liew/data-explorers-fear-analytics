@@ -25,6 +25,7 @@
         .then((data) => {
           state.data = data;
           initializeVisualizations(data);
+
           console.log("✅ Initialization complete!");
         })
         .catch((error) => {
@@ -32,24 +33,41 @@
           showError("Failed to load data. Please refresh the page.");
         });
     }, 100);
+      // Hero question bubbles: scroll to section
+      document.querySelectorAll('.blood-bubble[data-target]').forEach(btn => {
+          btn.addEventListener('click', () => {
+              const target = btn.getAttribute('data-target');
+              const el = document.querySelector(target);
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+      });
+
   }
 
   async function loadAllData() {
     try {
-      const [signalsByFilm, fearJourney, effectiveness, filmComparison] =
-        await Promise.all([
-          d3.csv("data/cleaner_datasets/viz1_horror_signals_by_film.csv"),
-          d3.csv("data/cleaner_datasets/viz2b_fear_journey.csv"),
-          d3.csv("data/cleaner_datasets/viz3_horror_effectiveness.csv"),
-          d3.csv("data/cleaner_datasets/viz4_film_comparison.csv"),
-        ]);
+      const [
+        signalsByFilm,
+        fearJourney,
+        tensionJourney,
+        effectiveness,
+        filmComparison,
+      ] = await Promise.all([
+        d3.csv("data/cleaner_datasets/viz1_horror_signals_by_film.csv"),
+        d3.csv("data/cleaner_datasets/viz2b_fear_journey.csv"),
+        d3.csv("data/cleaner_datasets/viz2a_tension_journey.csv"),
+        d3.csv("data/cleaner_datasets/viz3_horror_effectiveness.csv"),
+        d3.csv("data/cleaner_datasets/viz4_film_comparison.csv"),
+      ]);
 
       return {
         signalsByFilm: signalsByFilm,
         fearJourney: processFearJourneyData(fearJourney),
+        tensionJourney: processTensionJourneyData(tensionJourney),
         effectiveness: processEffectivenessData(effectiveness),
         filmComparison: processFilmComparisonData(filmComparison),
         fearJourneyRaw: fearJourney,
+        tensionJourneyRaw: tensionJourney,
       };
     } catch (error) {
       console.error("Error in loadAllData:", error);
@@ -69,6 +87,33 @@
           fear: row[film] ? +row[film] : null,
         }))
         .filter((d) => d.fear !== null);
+
+      if (values.length > 0) {
+        filmData.push({
+          film: filmName,
+          values: values,
+        });
+      }
+    });
+
+    return filmData;
+  }
+
+  function processTensionJourneyData(data) {
+    const films = Object.keys(data[0]).filter((k) => k !== "scene_position");
+    const filmData = [];
+
+    films.forEach((film) => {
+      const filmName = film.replace(/_Unknown$/, "").replace(/-/g, " ");
+      const values = data
+        .map((row) => ({
+          position: +row.scene_position,
+          tension:
+            row[film] !== undefined && row[film] !== ""
+              ? +row[film]
+              : null,
+        }))
+        .filter((d) => d.tension !== null && Number.isFinite(d.tension));
 
       if (values.length > 0) {
         filmData.push({
@@ -147,7 +192,9 @@
         state.visualizations.spikes = createSpikesViz(
           "#viz-spikes",
           data.fearJourney,
-          data.fearJourneyRaw
+          data.tensionJourney,
+          data.fearJourneyRaw,
+          data.tensionJourneyRaw
         );
         console.log("✅ Spikes created");
       } catch (error) {
