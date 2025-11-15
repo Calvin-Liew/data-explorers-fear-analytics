@@ -1,4 +1,4 @@
-// js/dripImpactViz.js — Static visualization without hover interactions
+
 (function () {
     const DRIP_SEL = "#viz-drip";
     const CSV_URL = "data/cleaner_datasets/viz3_horror_effectiveness.csv";
@@ -31,7 +31,7 @@
             return;
         }
 
-        // Create tooltip (fixed position, won't cause layout shifts)
+        
         let tooltip = d3.select("body").select(".drip-tooltip");
         if (tooltip.empty()) {
             tooltip = d3.select("body")
@@ -51,12 +51,12 @@
                 .style("z-index", "10000")
                 .style("max-width", "250px")
                 .style("word-wrap", "break-word")
-                .style("transform", "translateZ(0)"); // Force GPU acceleration
+                .style("transform", "translateZ(0)"); 
         } else {
             tooltip.style("opacity", 0);
         }
         
-        // Helper to position tooltip without causing scroll
+        
         function positionTooltip(event) {
             const tooltipNode = tooltip.node();
             if (!tooltipNode) return;
@@ -66,15 +66,15 @@
             const scrollX = window.pageXOffset || 0;
             const scrollY = window.pageYOffset || 0;
             
-            // Use clientX/clientY for viewport coordinates
+            
             const x = (event.clientX || 0) + 15;
             const y = (event.clientY || 0) - 28;
             
-            // Get tooltip size
+            
             tooltip.style("left", "0px").style("top", "0px");
             const rect = tooltipNode.getBoundingClientRect();
             
-            // Constrain to viewport
+            
             let finalX = Math.max(10, Math.min(x, viewportWidth - rect.width - 10));
             let finalY = Math.max(10, Math.min(y, viewportHeight - rect.height - 10));
             
@@ -96,7 +96,7 @@
         const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
         const defs = svg.append("defs");
         
-        // Gradient for drips
+        
         const gradId = "drip-grad-" + Math.random().toString(36).slice(2, 8);
         const grad = defs.append("linearGradient")
             .attr("id", gradId)
@@ -107,7 +107,7 @@
         grad.append("stop").attr("offset", "100%").attr("stop-color", "#6a0a0a").attr("stop-opacity", 0.85);
         const fillUrl = `url(#${gradId})`;
 
-        // Glow filter
+        
         const glowFilter = defs.append("filter")
             .attr("id", "drip-glow")
             .attr("x", "-50%")
@@ -121,7 +121,7 @@
         feMerge.append("feMergeNode").attr("in", "coloredBlur");
         feMerge.append("feMergeNode").attr("in", "SourceGraphic");
 
-        // Animated gradient for strip
+        
         const animatedGradId = "drip-animated-grad-" + Math.random().toString(36).slice(2, 8);
         const animatedGrad = defs.append("linearGradient")
             .attr("id", animatedGradId)
@@ -144,7 +144,7 @@
             .attr("stop-opacity", 0.85)
             .attr("class", "grad-stop-3");
 
-        // Animate gradient
+        
         function animateGradient() {
             animatedGrad.selectAll("stop")
                 .transition()
@@ -173,7 +173,7 @@
         const yScale = d3.scaleLinear().domain([0, maxImpact]).range([0, Math.max(80, height * 0.5)]);
         const yBase = Math.min(height - 60, height * 0.75);
 
-        // Background with grid
+        
         g.append("rect")
             .attr("x", 0).attr("y", yBase)
             .attr("width", width).attr("height", yScale(maxImpact) + 20)
@@ -181,7 +181,7 @@
             .attr("stroke", "rgba(255, 31, 107, 0.15)")
             .attr("stroke-width", 1);
 
-        // Grid lines
+        
         const gridLines = 5;
         for (let i = 0; i <= gridLines; i++) {
             const yPos = yBase + (yScale(maxImpact) / gridLines) * i;
@@ -193,7 +193,7 @@
                 .attr("stroke-dasharray", "2,4");
         }
 
-        // Build the wavy strip
+        
         const area = d3.area()
             .x((d, i) => x(i))
             .y0(yBase)
@@ -202,14 +202,14 @@
 
         const areaPathD = area(data);
 
-        // ClipPath for drips
+        
         const clipId = "drip-clip-" + Math.random().toString(36).slice(2, 8);
         defs.append("clipPath")
             .attr("id", clipId)
             .append("path")
             .attr("d", areaPathD);
 
-        // Draw drips (static, no hover interactions)
+        
         const dripGroup = g.append("g")
             .attr("clip-path", `url(#${clipId})`);
 
@@ -239,7 +239,7 @@
             let pulseTransition = null;
             let isHovered = false;
 
-            // Subtle pulsing animation (opacity only, pauses on hover)
+            
             function pulseDrip() {
                 if (isHovered) return;
                 pulseTransition = drip.transition()
@@ -254,12 +254,12 @@
             }
             pulseDrip();
 
-            // Hover interactions (visual only, no layout changes)
+            
             drip.on("mouseover", function(event) {
                 isHovered = true;
                 if (pulseTransition) pulseTransition.interrupt();
                 
-                // Only change visual properties
+                
                 d3.select(this)
                     .attr("opacity", 1)
                     .style("filter", isTopSignal ? "url(#drip-glow) brightness(1.3)" : "url(#drip-glow) brightness(1.2)");
@@ -292,7 +292,7 @@
             });
         });
 
-        // Draw strip with animated gradient
+        
         const strip = g.append("path")
             .attr("d", areaPathD)
             .attr("fill", `url(#${animatedGradId})`)
@@ -308,7 +308,7 @@
             .ease(d3.easeCubicOut)
             .attr("opacity", 1);
 
-        // Add hover areas for strip (invisible rectangles)
+        
         const hoverAreas = g.append("g").attr("class", "hover-areas");
         data.forEach((d, i) => {
             const cx = x(i);
@@ -341,7 +341,7 @@
                 });
         });
 
-        // Highlight line
+        
         const highlightLine = g.append("path")
             .attr("d", d3.line()
                 .x((d, i) => x(i))
@@ -358,7 +358,7 @@
             .duration(800)
             .attr("opacity", 1);
 
-        // Baseline
+        
         g.append("line")
             .attr("x1", 0).attr("x2", width)
             .attr("y1", yBase).attr("y2", yBase)
@@ -367,7 +367,7 @@
             .attr("stroke-opacity", 0.5)
             .style("filter", "drop-shadow(0 0 4px rgba(255, 31, 107, 0.6))");
 
-        // Labels with hover interactions
+        
         const labelEvery = Math.max(1, Math.floor(data.length / 15));
         
         g.selectAll(".drip-label")
@@ -389,7 +389,7 @@
             .attr("opacity", 0)
             .text(d => d.signal)
             .on("mouseover", function(event, d) {
-                // Only change visual properties
+                
                 d3.select(this)
                     .style("fill", "#ffffff")
                     .style("text-shadow", "0 0 12px rgba(255, 31, 107, 1), 0 0 6px rgba(255, 255, 255, 0.6)");
@@ -420,13 +420,13 @@
             .duration(400)
             .attr("opacity", 1);
 
-        // Value markers for all signals - show labels for all points
+        
         data.forEach((d, idx) => {
             const i = idx;
             const isTop = topSignals.has(d.signal);
             const yPos = yBase + yScale(d.impact);
             
-            // Position label above the point, with extra space for visibility
+            
             const labelY = yPos - 15;
             
             const marker = g.append("g")
@@ -434,7 +434,7 @@
                 .attr("transform", `translate(${x(i)}, ${labelY})`)
                 .attr("opacity", 0);
             
-            // Only show circle for top signals to reduce clutter
+            
             if (isTop) {
                 marker.append("circle")
                     .attr("r", 4)
@@ -442,7 +442,7 @@
                     .style("filter", "drop-shadow(0 0 6px rgba(255, 31, 107, 0.9))");
             }
             
-            // Add background rectangle for better visibility
+            
             const textBg = marker.append("rect")
                 .attr("x", -18)
                 .attr("y", -8)

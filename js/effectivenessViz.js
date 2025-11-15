@@ -20,19 +20,19 @@ function createEffectivenessViz(selector, rawData) {
   const margin = {
     top: 70,
     right: isCompact ? 32 : 240,
-    bottom: 90,
+    bottom: 200,
     left: 120,
   };
-  const baseHeight = isCompact ? 620 : 780;
+  const baseHeight = isCompact ? 900 : 1100;
   const containerWidth = containerNode.clientWidth;
   
-  // Set a maximum width for the graph area to keep it centered
+  
   const maxGraphWidth = 1400;
   const availableWidth = Math.min(containerWidth - margin.left - margin.right, maxGraphWidth - margin.left - margin.right);
   const width = Math.max(480, availableWidth);
   const height = baseHeight - margin.top - margin.bottom;
 
-  // Calculate SVG width
+  
   const svgWidth = width + margin.left + margin.right;
 
   const svg = container
@@ -640,7 +640,8 @@ function createEffectivenessViz(selector, rawData) {
       )
       .stop();
 
-    for (let i = 0; i < 260; i += 1) {
+    
+    for (let i = 0; i < 80; i += 1) { 
       simulation.tick();
     }
 
@@ -855,6 +856,125 @@ function createEffectivenessViz(selector, rawData) {
   }
 
   render(currentMode, false);
+
+  const legendGroup = svg.append("g").attr("class", "effectiveness-legend");
+  const legendY = baseHeight - 80;
+  const legendSpacing = 200;
+  
+  const colorLegendWidth = 250;
+  const colorLegendHeight = 20;
+  const colorLegendX = (svgWidth - colorLegendWidth * 2 - legendSpacing) / 2;
+  
+  const colorScaleRect = legendGroup
+    .append("g")
+    .attr("transform", `translate(${colorLegendX}, ${legendY})`);
+  
+  const colorGradient = defs
+    .append("linearGradient")
+    .attr("id", "color-legend-gradient")
+    .attr("x1", "0%")
+    .attr("x2", "100%");
+  
+  const numStops = 20;
+  for (let i = 0; i <= numStops; i++) {
+    const t = i / numStops;
+    const color = colorScale(-dominanceRange + t * (dominanceRange * 2));
+    colorGradient
+      .append("stop")
+      .attr("offset", `${(i / numStops) * 100}%`)
+      .attr("stop-color", color);
+  }
+  
+  colorScaleRect
+    .append("rect")
+    .attr("width", colorLegendWidth)
+    .attr("height", colorLegendHeight)
+    .attr("fill", "url(#color-legend-gradient)")
+    .attr("stroke", "rgba(255,255,255,0.3)")
+    .attr("stroke-width", 1)
+    .attr("rx", 4);
+  
+  colorScaleRect
+    .append("text")
+    .attr("x", colorLegendWidth / 2)
+    .attr("y", -8)
+    .attr("text-anchor", "middle")
+    .style("font-family", "'Special Elite', monospace")
+    .style("font-size", "11px")
+    .style("fill", "#fce6ff")
+    .text("Signal Profile");
+  
+  colorScaleRect
+    .append("text")
+    .attr("x", 0)
+    .attr("y", colorLegendHeight + 16)
+    .style("font-family", "'Special Elite', monospace")
+    .style("font-size", "10px")
+    .style("fill", "#ff9bd6")
+    .text("Tension");
+  
+  colorScaleRect
+    .append("text")
+    .attr("x", colorLegendWidth / 2)
+    .attr("y", colorLegendHeight + 16)
+    .attr("text-anchor", "middle")
+    .style("font-family", "'Special Elite', monospace")
+    .style("font-size", "10px")
+    .style("fill", "#9b4cff")
+    .text("Balanced");
+  
+  colorScaleRect
+    .append("text")
+    .attr("x", colorLegendWidth)
+    .attr("y", colorLegendHeight + 16)
+    .attr("text-anchor", "end")
+    .style("font-family", "'Special Elite', monospace")
+    .style("font-size", "10px")
+    .style("fill", "#ff365f")
+    .text("Shock");
+  
+  const sizeLegendX = colorLegendX + colorLegendWidth + legendSpacing;
+  const sizeLegendGroup = legendGroup
+    .append("g")
+    .attr("transform", `translate(${sizeLegendX}, ${legendY})`);
+  
+  sizeLegendGroup
+    .append("text")
+    .attr("x", 0)
+    .attr("y", -8)
+    .style("font-family", "'Special Elite', monospace")
+    .style("font-size", "11px")
+    .style("fill", "#fce6ff")
+    .text("Frequency (Size)");
+  
+  const sizeSteps = [0.2, 0.5, 0.8, 1.0];
+  const sizeLegendItemWidth = 80;
+  
+  sizeSteps.forEach((step, i) => {
+    const x = i * sizeLegendItemWidth;
+    const size = radiusScale.domain()[0] + step * (radiusScale.domain()[1] - radiusScale.domain()[0]);
+    const radius = radiusScale(size);
+    
+    sizeLegendGroup
+      .append("circle")
+      .attr("cx", x + sizeLegendItemWidth / 2)
+      .attr("cy", colorLegendHeight / 2)
+      .attr("r", radius)
+      .attr("fill", "none")
+      .attr("stroke", "#fce6ff")
+      .attr("stroke-width", 1.5)
+      .attr("opacity", 0.6);
+    
+    sizeLegendGroup
+      .append("text")
+      .attr("x", x + sizeLegendItemWidth / 2)
+      .attr("y", colorLegendHeight + 16)
+      .attr("text-anchor", "middle")
+      .style("font-family", "'Special Elite', monospace")
+      .style("font-size", "10px")
+      .style("fill", "#fce6ff")
+      .text(Math.round(size));
+  });
 
   return {
     setMode: (modeKey) => {

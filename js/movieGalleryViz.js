@@ -1,14 +1,26 @@
 function createMovieGalleryViz(selector, data) {
     "use strict";
   
+    if (!data || !data.length) {
+        console.error("❌ Movie Gallery: No data provided", data);
+        return {};
+    }
+    
     const container = d3.select(selector);
+    if (container.empty()) {
+        console.error("❌ Movie Gallery: Container not found", selector);
+        return {};
+    }
+    
     const controls = d3.select('.gallery-controls');
     const scrollLeftBtn = d3.select('#scroll-left');
     const scrollRightBtn = d3.select('#scroll-right');
+    
+    console.log("🎬 Movie Gallery initializing with", data.length, "films");
   
-    // --- 1. 初始化筛选器 ---
+    
     function populateFilters() {
-      // A. Genre Filter
+      
       const genres = new Set();
       data.forEach(d => {
         if (d.Genre) {
@@ -21,7 +33,7 @@ function createMovieGalleryViz(selector, data) {
         genreFilter.append('option').attr('value', genre).text(genre);
       });
   
-      // B. Decade Filter
+      
       const decades = new Set();
       data.forEach(d => {
         const year = parseInt(d.Year, 10);
@@ -36,7 +48,7 @@ function createMovieGalleryViz(selector, data) {
         decadeFilter.append('option').attr('value', decade).text(`${decade}s`);
       });
   
-      // C. Rating Filter
+      
       const ratingFilter = controls.select('#rating-filter');
       ratingFilter.append('option').attr('value', 'all').text('Any Rating');
       [8, 7, 6, 5].forEach(rating => {
@@ -44,7 +56,7 @@ function createMovieGalleryViz(selector, data) {
       });
     }
   
-    // --- 2. 更新可视化的核心函数 ---
+    
     function update() {
       const selectedGenre = controls.select('#genre-filter').property('value');
       const selectedDecade = controls.select('#decade-filter').property('value');
@@ -62,20 +74,20 @@ function createMovieGalleryViz(selector, data) {
         return genreMatch && decadeMatch && ratingMatch;
       });
   
-      // D3 Data Join for smooth updates
+      
       container.selectAll(".movie-poster-card")
-        .data(filteredData, d => d.Title + d.Year) // Use a key for object constancy
+        .data(filteredData, d => d.Title + d.Year) 
         .join(
           enter => enter.append("div")
             .attr("class", "movie-poster-card")
             .style("opacity", 0)
             .style("transform", "scale(0.8)")
-            .call(createCardContent) // Helper to create card internals
+            .call(createCardContent) 
             .on("click", (event, d) => showModal(d))
             .transition().duration(500)
               .style("opacity", 1)
               .style("transform", "scale(1)"),
-          update => update, // No changes for updating elements
+          update => update, 
           exit => exit.transition().duration(300)
             .style("opacity", 0)
             .style("transform", "scale(0.8)")
@@ -83,11 +95,11 @@ function createMovieGalleryViz(selector, data) {
         );
     }
   
-    // --- 3. 辅助函数：创建卡片内容 ---
+    
     function createCardContent(selection) {
       selection.each(function(d) {
         const card = d3.select(this);
-        card.html(''); // Clear previous content
+        card.html(''); 
         
         card.append("img")
           .attr("src", d.Poster)
@@ -101,7 +113,7 @@ function createMovieGalleryViz(selector, data) {
       });
     }
     
-    // --- 4. 滚动按钮事件 ---
+    
     scrollLeftBtn.on('click', () => {
       const scrollAmount = container.node().clientWidth * 0.8;
       container.node().scrollLeft -= scrollAmount;
@@ -113,7 +125,7 @@ function createMovieGalleryViz(selector, data) {
     });
   
   
-    // --- 5. 事件监听器 ---
+    
     controls.selectAll('select').on('change', update);
     controls.select('#reset-filters').on('click', () => {
       controls.selectAll('select').property('value', 'all');
@@ -121,7 +133,7 @@ function createMovieGalleryViz(selector, data) {
     });
   
   
-    // --- 6. Modal 逻辑 (与你提供的代码基本相同) ---
+    
     const modal = d3.select("body").append("div").attr("id", "movie-detail-modal").style("display", "none");
     const modalContent = modal.append("div").attr("class", "modal-content");
     const closeModalButton = modal.append("span").attr("class", "close-button").html("&times;");
@@ -135,7 +147,7 @@ function createMovieGalleryViz(selector, data) {
                   <span>${d.Certificate || 'N/A'}</span>
                   <span>${d.Duration || '?'} min</span>
                   <span>⭐ ${d.Rating || 'N/A'}</span>
-                  ${d.Metascore ? `<span><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Metacritic.svg/1200px-Metacritic.svg.png" class="metascore-icon"> ${d.Metascore}</span>` : ''}
+                  ${d.Metascore ? `<span>Metascore: ${d.Metascore}</span>` : ''}
               </div>
               <p class="genre"><strong>Genre:</strong> ${d.Genre || 'Unknown'}</p>
               <p class="director"><strong>Director:</strong> ${d.Director || 'Unknown'}</p>
@@ -159,9 +171,9 @@ function createMovieGalleryViz(selector, data) {
       if (event.target === this) hideModal();
     });
   
-    // --- 7. 初始调用 ---
+    
     populateFilters();
-    update(); // 首次加载时显示所有电影
+    update(); 
   
     console.log("🎬 Horizontal Movie Gallery with Filters created.");
     return {};

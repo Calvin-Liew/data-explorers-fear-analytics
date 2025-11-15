@@ -12,12 +12,12 @@ function createStateMachineViz(selector, fearJourneyRaw) {
         return null;
     }
 
-    // Clear any existing content
+    
     container.selectAll("*").remove();
 
-    const width = 640;
-    const height = 420;
-    const margin = { top: 80, right: 120, bottom: 80, left: 120 };
+    const width = 1500;
+    const height = 1100;
+    const margin = { top: 200, right: 120, bottom: 80, left: 120 };
 
     const svg = container
         .append("svg")
@@ -25,11 +25,14 @@ function createStateMachineViz(selector, fearJourneyRaw) {
         .attr("viewBox", `0 0 ${width} ${height}`)
         .attr("preserveAspectRatio", "xMidYMid meet")
         .style("width", "100%")
-        .style("height", "100%");
+        .style("height", "100%")
+        .style("max-width", "1500px")
+        .style("margin", "0 auto")
+        .style("display", "block");
 
     const defs = svg.append("defs");
 
-    // Blood-moon style backdrop to feel like a ritual board
+    
     const bgGradient = defs
         .append("radialGradient")
         .attr("id", "stateMachineBloodMoon")
@@ -51,7 +54,7 @@ function createStateMachineViz(selector, fearJourneyRaw) {
         .attr("offset", "100%")
         .attr("stop-color", "#020003");
 
-    // Glow filter for the "hottest" transitions
+    
     const glow = defs
         .append("filter")
         .attr("id", "stateMachineCellGlow")
@@ -84,7 +87,7 @@ function createStateMachineViz(selector, fearJourneyRaw) {
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
-    // Three coarse fear states
+    
     const states = ["Calm", "Unease", "Panic"];
     const stateIcons = {
         Calm: "🕯",
@@ -99,7 +102,7 @@ function createStateMachineViz(selector, fearJourneyRaw) {
         return "Panic";
     }
 
-    // Walk scene -> next scene across all films
+    
     const columns = Object.keys(fearJourneyRaw[0]).filter(
         (k) => k !== "scene_position"
     );
@@ -172,35 +175,35 @@ function createStateMachineViz(selector, fearJourneyRaw) {
 
     const maxProb = d3.max(matrixData, (d) => d.prob) || 0.0001;
 
-    // Custom blood palette: almost-black -> deep red -> neon crimson
+    
     const colorScale = d3
         .scaleLinear()
         .domain([0, maxProb * 0.4, maxProb])
         .range(["#140007", "#5b0716", "#ff224e"])
         .clamp(true);
 
-    // Title & helper text
+    
     g.append("text")
         .attr("class", "state-machine-title")
         .attr("x", (cellSize * states.length) / 2)
-        .attr("y", -34)
+        .attr("y", -60)
         .attr("text-anchor", "middle")
         .style("font-family", "Creepster, cursive")
-        .style("font-size", "22px")
+        .style("font-size", "36px")
         .style("fill", "#ff224e")
         .style("text-shadow", "0 0 10px #ff224e, 0 0 20px #000")
         .text("☠ FEAR RITUAL GRID ☠");
 
     g.append("text")
         .attr("x", (cellSize * states.length) / 2)
-        .attr("y", -12)
+        .attr("y", -35)
         .attr("text-anchor", "middle")
         .style("font-family", "Special Elite, monospace")
-        .style("font-size", "11px")
+        .style("font-size", "20px")
         .style("fill", "#f5d8d8")
         .text("Rows: where you are now · Columns: where the next scene drags you");
 
-    // Faint ritual frame around the grid
+    
     g.append("rect")
         .attr("x", -10)
         .attr("y", -10)
@@ -211,7 +214,7 @@ function createStateMachineViz(selector, fearJourneyRaw) {
         .attr("stroke-width", 1.4)
         .attr("stroke-dasharray", "6 6");
 
-    // Very faint connecting lines for strong transitions, drawn behind cells
+    
     const connectionsLayer = g
         .append("g")
         .attr("class", "state-machine-connections");
@@ -224,7 +227,7 @@ function createStateMachineViz(selector, fearJourneyRaw) {
             const x = xScale(d.to) + xScale.bandwidth() / 2;
             const y = yScale(d.from) + yScale.bandwidth() / 2;
 
-            // Draw a small glowing circle behind strong transitions
+            
             connectionsLayer
                 .append("circle")
                 .attr("cx", x)
@@ -237,7 +240,7 @@ function createStateMachineViz(selector, fearJourneyRaw) {
                 .style("opacity", 0.5);
         });
 
-    // Tooltip shared with other horror charts
+    
     const existingTooltip = d3.select("body").select("div.tooltip");
     const tooltip =
         !existingTooltip.empty()
@@ -275,7 +278,7 @@ function createStateMachineViz(selector, fearJourneyRaw) {
         .attr("stroke-width", 0.8)
         .style("cursor", "pointer");
 
-    // Add glow to the hottest transitions
+    
     rects
         .filter((d) => d.prob >= maxProb * 0.65)
         .style("filter", "url(#stateMachineCellGlow)");
@@ -289,22 +292,23 @@ function createStateMachineViz(selector, fearJourneyRaw) {
         .attr("y", yScale.bandwidth() / 2 - 4)
         .attr("text-anchor", "middle")
         .style("font-family", "Special Elite, monospace")
-        .style("font-size", "12px")
+        .style("font-size", "20px")
         .style("fill", "#fff7f7")
+        .style("font-weight", "bold")
         .text((d) => (d.prob > 0 ? pctFormat(d.prob) : ""));
 
     cells
         .append("text")
         .attr("class", "state-cell-count")
         .attr("x", xScale.bandwidth() / 2)
-        .attr("y", yScale.bandwidth() / 2 + 12)
+        .attr("y", yScale.bandwidth() / 2 + 16)
         .attr("text-anchor", "middle")
         .style("font-family", "Special Elite, monospace")
-        .style("font-size", "9px")
+        .style("font-size", "14px")
         .style("fill", "#ffdfdf")
         .text((d) => (d.count > 0 ? d.count + " jumps" : ""));
 
-    // Tiny icon in the corner of each cell to lean into the horror theme
+    
     cells
         .append("text")
         .attr("class", "state-cell-icon")
@@ -312,11 +316,11 @@ function createStateMachineViz(selector, fearJourneyRaw) {
         .attr("y", yScale.bandwidth() - 6)
         .attr("text-anchor", "end")
         .style("font-family", "Special Elite, monospace")
-        .style("font-size", "10px")
+        .style("font-size", "16px")
         .style("fill", "#ff8099")
         .text((d) => stateIcons[d.to]);
 
-    // Interactions – highlight + tooltip
+    
     rects
         .on("mouseenter", function (event, d) {
             d3.select(this)
@@ -347,12 +351,12 @@ function createStateMachineViz(selector, fearJourneyRaw) {
                 .html(
                     `
           <div style="font-family:'Special Elite', monospace;">
-            <div style="font-size:13px; margin-bottom:4px;">
+            <div style="font-size:18px; margin-bottom:6px;">
               ${fromIcon} <strong>${d.from}</strong> → ${toIcon} <strong>${d.to}</strong>
             </div>
-            <div>Share of transitions: <strong>${pctFormat(d.prob)}</strong></div>
-            <div>Scene jumps observed: <strong>${d.count.toLocaleString()}</strong></div>
-            <div style="margin-top:6px; font-size:11px; opacity:0.85;">
+            <div style="font-size:15px;">Share of transitions: <strong>${pctFormat(d.prob)}</strong></div>
+            <div style="font-size:15px;">Scene jumps observed: <strong>${d.count.toLocaleString()}</strong></div>
+            <div style="margin-top:8px; font-size:14px; opacity:0.85;">
               This step ${moodChange}.
             </div>
           </div>
@@ -376,7 +380,7 @@ function createStateMachineViz(selector, fearJourneyRaw) {
             tooltip.transition().duration(150).style("opacity", 0);
         });
 
-    // Axes – Ouija-board style labels with icons
+    
     const xAxis = d3
         .axisBottom(xScale)
         .tickSize(0)
@@ -395,8 +399,9 @@ function createStateMachineViz(selector, fearJourneyRaw) {
     xAxisG
         .selectAll("text")
         .style("font-family", "Special Elite, monospace")
-        .style("font-size", "11px")
-        .style("fill", "#ffe3e3");
+        .style("font-size", "18px")
+        .style("fill", "#ffe3e3")
+        .style("font-weight", "bold");
 
     xAxisG.selectAll("path,line").remove();
 
@@ -405,12 +410,13 @@ function createStateMachineViz(selector, fearJourneyRaw) {
     yAxisG
         .selectAll("text")
         .style("font-family", "Special Elite, monospace")
-        .style("font-size", "11px")
-        .style("fill", "#ffe3e3");
+        .style("font-size", "18px")
+        .style("fill", "#ffe3e3")
+        .style("font-weight", "bold");
 
     yAxisG.selectAll("path,line").remove();
 
-    // Row totals legend on the right
+    
     const legendX = cellSize * states.length + 26;
 
     const legend = g
@@ -423,8 +429,9 @@ function createStateMachineViz(selector, fearJourneyRaw) {
         .attr("x", 0)
         .attr("y", 0)
         .style("font-family", "Special Elite, monospace")
-        .style("font-size", "11px")
+        .style("font-size", "22px")
         .style("fill", "#ffb3c4")
+        .style("font-weight", "bold")
         .text("Passages through each state");
 
     states.forEach((s, i) => {
@@ -432,9 +439,9 @@ function createStateMachineViz(selector, fearJourneyRaw) {
         legend
             .append("text")
             .attr("x", 0)
-            .attr("y", 18 + i * 16)
+            .attr("y", 22 + i * 20)
             .style("font-family", "Special Elite, monospace")
-            .style("font-size", "10px")
+            .style("font-size", "20px")
             .style("fill", "#ffe3e3")
             .text(`${stateIcons[s]} ${s}: ${total.toLocaleString()} jumps`);
     });

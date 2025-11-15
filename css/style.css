@@ -1,6 +1,4 @@
-/* ================================
-   GLOBAL STYLES & RESET
-   ================================ */
+
 
 @import url("https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&family=Nosifer&family=Eater&display=swap");
 
@@ -44,9 +42,85 @@ body {
   scroll-behavior: smooth;
 }
 
-/* =======================================
-   SCROLL PROGRESS BAR - ENHANCED HEARTBEAT
-   ======================================= */
+
+
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 0, 0, 0.8) rgba(20, 0, 0, 0.3);
+}
+
+
+*::-webkit-scrollbar {
+  width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(10, 0, 0, 0.4);
+  border-left: 1px solid rgba(139, 0, 0, 0.2);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(139, 0, 0, 0.9) 0%,
+    rgba(255, 68, 68, 0.7) 50%,
+    rgba(139, 0, 0, 0.9) 100%
+  );
+  border-radius: 6px;
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  box-shadow: 
+    0 0 8px rgba(255, 68, 68, 0.4),
+    inset 0 0 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 68, 68, 0.95) 0%,
+    rgba(255, 100, 100, 0.8) 50%,
+    rgba(255, 68, 68, 0.95) 100%
+  );
+  box-shadow: 
+    0 0 12px rgba(255, 68, 68, 0.6),
+    inset 0 0 6px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 68, 68, 0.5);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 100, 100, 1) 0%,
+    rgba(255, 68, 68, 0.9) 50%,
+    rgba(255, 100, 100, 1) 100%
+  );
+  box-shadow: 
+    0 0 16px rgba(255, 68, 68, 0.8),
+    inset 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+
+@keyframes scrollbarPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 8px rgba(255, 68, 68, 0.4),
+      inset 0 0 4px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 0 12px rgba(255, 68, 68, 0.6),
+      inset 0 0 6px rgba(0, 0, 0, 0.4);
+  }
+}
+
+
+body:not(:hover) *::-webkit-scrollbar-thumb {
+  animation: scrollbarPulse 2s ease-in-out infinite;
+}
+
+
 
    .scroll-progress-bar {
     position: fixed;
@@ -119,7 +193,7 @@ body {
   transform: translateY(0);
 }
 
-/* Enhanced section separators */
+
 .viz-section::after {
   content: "";
   position: absolute;
@@ -335,6 +409,17 @@ a:hover {
   box-shadow: 0 20px 35px rgba(255, 31, 107, 0.18);
 }
 
+.galaxy-theme {
+  border-left-color: #39ff14;
+  background: radial-gradient(
+    circle at center,
+    rgba(10, 0, 30, 0.95),
+    rgba(0, 0, 0, 0.98)
+  );
+  box-shadow: 0 20px 40px rgba(57, 255, 20, 0.15),
+    0 0 60px rgba(57, 255, 20, 0.1);
+}
+
 .viz-controls,
 .controls {
   display: flex;
@@ -405,12 +490,26 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+  width: 100%;
+}
+
+#epilogue .snapshot-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  align-items: stretch;
 }
 
 .snapshot-header p {
   max-width: 720px;
+  margin: 0;
   font-family: var(--font-typewriter);
   color: var(--color-text-dim);
+  text-align: left;
 }
 
 .snapshot-grid {
@@ -602,22 +701,19 @@ a:hover {
   }
 }
 
-/* ================================
-   INTRO SECTION
-   ================================ */
 
-/* ================================
-   INTRO SECTION (WITH GRAVEYARD BACKGROUND)
-   ================================ */
+
+
 
    #intro {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     background-color: var(--color-dark-bg);
     position: relative;
     overflow: hidden;
+    padding-top: 40px;
   }
   
 
@@ -660,6 +756,7 @@ a:hover {
     z-index: 2;
     padding: var(--spacing-md);
     max-width: 900px;
+    margin-top: 20px;
   }
 
 .title {
@@ -746,9 +843,7 @@ a:hover {
   }
 }
 
-/* ================================
-   VISUALIZATION SECTIONS
-   ================================ */
+
 
 #viz-container {
   background-color: var(--color-dark-bg);
@@ -756,7 +851,7 @@ a:hover {
   position: relative;
 }
 
-/* Visual narrative separators between major sections */
+
 #viz-container::before {
   content: "";
   position: absolute;
@@ -937,9 +1032,7 @@ a:hover {
   max-width: 100%;
 }
 
-/* ================================
-   CONTROLS
-   ================================ */
+
 
 .viz-controls {
   margin-top: var(--spacing-md);
@@ -1036,9 +1129,7 @@ a:hover {
   box-shadow: 0 0 15px rgba(139, 0, 0, 0.6);
 }
 
-/* ================================
-   D3 VISUALIZATION STYLES
-   ================================ */
+
 
 .axis path,
 .axis line {
@@ -1157,9 +1248,7 @@ a:hover {
   stroke-width: 0;
 }
 
-/* ================================
-   FOOTER
-   ================================ */
+
 
 footer {
   background-color: var(--color-dark-gray);
@@ -1235,9 +1324,7 @@ footer::before {
   font-style: italic;
 }
 
-/* ================================
-   RESPONSIVE DESIGN
-   ================================ */
+
 
 @media (max-width: 1200px) {
   .viz-section {
@@ -1291,9 +1378,7 @@ footer::before {
   }
 }
 
-/* ================================
-   ANIMATIONS & EFFECTS
-   ================================ */
+
 
 @keyframes bloodDrip {
   0% {
@@ -1470,7 +1555,7 @@ footer::before {
   animation: bloodPulse 2s ease-in-out infinite;
 }
 
-/* === NEW: Radar + Drip styles (append-only) === */
+
 #section-balance .controls,
 #section-drips .controls {
   margin: 8px 0 12px;
@@ -1505,7 +1590,7 @@ footer::before {
   margin-top: 6px;
 }
 
-/* === Dark horror dropdowns (radar + others) === */
+
 #section-balance .controls label,
 #section-drips .controls label {
   color: #f2f2f2;
@@ -1535,7 +1620,7 @@ footer::before {
   position: relative;
 }
 
-/* neon-ish focus + hover */
+
 #radar-film-select:hover,
 #drip-sort:hover,
 #sort-select:hover,
@@ -1554,7 +1639,7 @@ footer::before {
     0 0 18px rgba(255, 42, 42, 0.25), 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 
-/* custom arrow */
+
 #radar-film-select,
 #drip-sort,
 #sort-select,
@@ -1570,7 +1655,7 @@ footer::before {
   background-size: 18px 18px;
 }
 
-/* disabled option look (if any) */
+
 #radar-film-select:disabled,
 #drip-sort:disabled,
 #sort-select:disabled,
@@ -1579,7 +1664,7 @@ footer::before {
   cursor: not-allowed;
 }
 
-/* container spacing alignment */
+
 #section-balance .controls,
 #section-drips .controls {
   gap: 10px;
@@ -1595,14 +1680,14 @@ footer::before {
   }
 }
 
-/* Full width radar visualization */
+
 #section-balance .viz,
 #section-drips .viz {
   width: 100%;
   display: block;
 }
 
-/* Full width SVGs */
+
 #viz-radar svg,
 #viz-drip svg {
   display: block;
@@ -1686,7 +1771,7 @@ footer::before {
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.45);
 }
 
-/* Full width layout for radar section */
+
 #section-balance {
   width: 100%;
   margin: calc(var(--spacing-xl) * 2) auto 0 auto;
@@ -1713,7 +1798,7 @@ footer::before {
   flex-direction: column;
 }
 
-/* Full width for radar inner blocks */
+
 #section-balance .section-header,
 #section-balance .controls,
 #section-balance .viz,
@@ -1728,7 +1813,7 @@ footer::before {
   max-width: 100%;
 }
 
-/* Preference panel slider styling */
+
 #radar-preference-panel input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -1788,7 +1873,7 @@ footer::before {
   margin-bottom: 1rem;
 }
 
-/* Full width for drips inner blocks */
+
 #section-drips .section-header,
 #section-drips .controls,
 #section-drips .viz,
@@ -1817,6 +1902,8 @@ footer::before {
   border-top: 1px solid rgba(255, 68, 68, 0.2);
   padding: var(--spacing-xl) 0;
   position: relative;
+  width: 100%;
+  text-align: center;
 }
 
 #epilogue::before {
@@ -1833,6 +1920,15 @@ footer::before {
 #epilogue .snapshot-header {
   text-align: center;
   margin-bottom: var(--spacing-lg);
+  width: 100%;
+}
+
+#epilogue .snapshot-header p {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  font-family: var(--font-typewriter);
+  color: var(--color-text-dim);
 }
 
 #epilogue .snapshot-header h2 {
@@ -1843,6 +1939,7 @@ footer::before {
 #epilogue .dataset-overview {
   max-width: 900px;
   margin: 0 auto;
+  width: 100%;
 }
 
 #epilogue .dataset-overview li {
@@ -1860,7 +1957,7 @@ footer::before {
   transform: translateX(5px);
 }
 
-/* Enhanced intro section with parallax */
+
 .intro-content {
   position: relative;
   z-index: 2;
@@ -1884,17 +1981,24 @@ footer::before {
 }
 
 .hero-questions {
-  position: absolute;
-  inset: 0;
+  position: relative;
   z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px 30px;
+  max-width: 1200px;
+  margin: 40px auto 60px;
+  padding: 30px 20px;
   pointer-events: none;
 }
 
 .hero-questions .blood-bubble {
-  position: absolute;
+  position: relative;
   pointer-events: auto;
-  transform: translate(-50%, -50%);
-  padding: 14px 18px;
+  transform: none;
+  padding: 14px 24px;
   border: none;
   border-radius: 999px;
   background: linear-gradient(#7a0000, #3a0000);
@@ -1904,11 +2008,21 @@ footer::before {
   letter-spacing: 0.3px;
   cursor: pointer;
   box-shadow: 0 0 18px rgba(255, 0, 0, 0.25), inset 0 0 12px rgba(0, 0, 0, 0.6);
-  transition: transform 0.12s ease-out, filter 0.12s ease-out;
+  transition: transform 0.12s ease-out, filter 0.12s ease-out, box-shadow 0.3s ease;
+  flex: 0 1 auto;
+  min-width: 200px;
+  max-width: 320px;
+}
+
+.hero-questions .blood-bubble:nth-child(2),
+.hero-questions .blood-bubble:nth-child(7) {
+  min-width: 280px;
+  white-space: nowrap;
 }
 
 .blood-bubble:hover {
-  transform: translate(-50%, -52%) scale(1.02);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 4px 24px rgba(255, 0, 0, 0.4), inset 0 0 12px rgba(0, 0, 0, 0.6);
 }
 
 .blood-bubble::before,
@@ -1948,48 +2062,29 @@ footer::before {
   }
 }
 
-.hero-questions .blood-bubble:nth-child(1) {
-  left: 5%;
-  top: 95%;
-}
-.hero-questions .blood-bubble:nth-child(2) {
-  left: 95%;
-  top: 95%;
-  min-width: 280px;
-  white-space: nowrap;
-}
-.hero-questions .blood-bubble:nth-child(3) {
-  left: 20%;
-  top: 115%;
-}
-.hero-questions .blood-bubble:nth-child(4) {
-  left: 50%;
-  top: 70%;
-}
-.hero-questions .blood-bubble:nth-child(5) {
-  left: 80%;
-  top: 115%;
-}
-.hero-questions .blood-bubble:nth-child(6) {
-  left: 8%;
-  top: 75%;
-}
-.hero-questions .blood-bubble:nth-child(7) {
-  left: 92%;
-  top: 75%;
-  min-width: 280px;
-  white-space: nowrap;
-}
-.hero-questions .blood-bubble:nth-child(8) {
-  left: 50%;
-  top: 110%;
+
+@media (max-width: 768px) {
+  .hero-questions {
+    gap: 15px 20px;
+    padding: 20px 15px;
+    margin: 30px auto 40px;
+  }
+  
+  .hero-questions .blood-bubble {
+    min-width: 180px;
+    max-width: 100%;
+    font-size: 14px;
+    padding: 12px 20px;
+  }
+  
+  .hero-questions .blood-bubble:nth-child(2),
+  .hero-questions .blood-bubble:nth-child(7) {
+    min-width: 180px;
+  }
 }
 
 @media (max-width: 640px) {
   .hero-questions {
-    display: grid;
-    grid-template-columns: 1fr;
-    place-items: center;
     gap: 12px;
     padding-bottom: 12vh;
   }
@@ -2000,11 +2095,9 @@ footer::before {
     text-align: center;
   }
 }
-/* ======================================================
-   FINAL COMPLETE CSS FOR HORIZONTAL MOVIE GALLERY
-   ====================================================== */
 
-/* --- 1. Filter Controls Styles --- */
+
+
 .gallery-controls {
   display: flex;
   flex-wrap: wrap;
@@ -2032,7 +2125,7 @@ footer::before {
   font-size: 0.9rem;
 }
 
-/* --- 2. Horizontal Gallery & Scroll Buttons --- */
+
 .gallery-wrapper {
   position: relative;
   width: 100%;
@@ -2042,20 +2135,20 @@ footer::before {
 
 #viz-movie-gallery.visualization-gallery-horizontal {
   display: flex;
-  flex-wrap: nowrap; /* Key property for single row */
+  flex-wrap: nowrap; 
   gap: 1.5rem;
   padding: 1rem;
   width: 100%;
-  overflow-x: auto; /* Enable horizontal scrolling */
-  scroll-behavior: smooth; /* Smooth scrolling for button clicks */
+  overflow-x: auto; 
+  scroll-behavior: smooth; 
 
-  /* Hide the default scrollbar */
-  scrollbar-width: none; /* For Firefox */
-  -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+  
+  scrollbar-width: none; 
+  -ms-overflow-style: none;  
 }
 
 #viz-movie-gallery.visualization-gallery-horizontal::-webkit-scrollbar {
-  display: none; /* For Chrome, Safari, and Opera */
+  display: none; 
 }
 
 .scroll-arrow {
@@ -2091,10 +2184,10 @@ footer::before {
   right: -25px;
 }
 
-/* --- 3. Poster Card Styles --- */
+
 .movie-poster-card {
   position: relative;
-  flex-shrink: 0; /* Prevent cards from shrinking */
+  flex-shrink: 0; 
   width: 180px;
   height: 260px;
   border-radius: 8px;
@@ -2103,7 +2196,7 @@ footer::before {
   background-color: var(--color-dark-gray);
   border: 1px solid var(--color-medium-gray);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-  /* Added transition for opacity and transform for filtering */
+  
   transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, opacity 0.4s ease-out;
 }
 
@@ -2146,7 +2239,7 @@ footer::before {
   color: var(--color-text-dim);
 }
 
-/* --- 4. Modal Pop-up Styles --- */
+
 #movie-detail-modal {
   position: fixed;
   top: 0;
@@ -2201,7 +2294,7 @@ footer::before {
 
 .modal-info {
   flex: 1;
-  min-width: 0; /* Prevents flex item from overflowing */
+  min-width: 0; 
 }
 
 .modal-info h2 {

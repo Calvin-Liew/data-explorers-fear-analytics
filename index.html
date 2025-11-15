@@ -4,6 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Anatomy of Fear: How Horror Films Terrify Us</title>
+    <meta
+      name="description"
+      content="An interactive data visualization exploring how horror films engineer terror through 129 screenplays, 9,760 scenes, and 11,204 horror signals. Discover signal effectiveness, fear state transitions, pacing patterns, and the relationship between horror craftsmanship and audience ratings through eight immersive visualizations."
+    />
+    <meta
+      name="keywords"
+      content="horror films, data visualization, fear analysis, horror signals, film analysis, interactive visualization, D3.js, horror screenplays, IMDB ratings, signal effectiveness"
+    />
+    <meta
+      name="author"
+      content="Calvin Liew, Yichen Fan, Yansong Zhu, Olivia Doerrstein, Mehmet Gunenc, Fanke Qin"
+    />
+    <meta
+      property="og:title"
+      content="The Anatomy of Fear: How Horror Films Terrify Us"
+    />
+    <meta
+      property="og:description"
+      content="Explore how horror films engineer terror through data visualization. Analyze 129 horror screenplays, discover signal effectiveness, fear patterns, and pacing strategies across eight interactive scenes."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/png" href="favicon.png" />
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
@@ -11,42 +33,45 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <!-- Scroll Progress Bar -->
     <div id="heartbeat-container" class="scroll-progress-bar">
       <svg id="heartbeat-svg"></svg>
     </div>
     <section id="intro">
       <div class="intro-content">
-        <div class="hero-questions" aria-label="Quick questions">
-          <button class="blood-bubble" data-target="#section-signals">
-            Which source feeds the scariest outcomes?
-          </button>
-          <button class="blood-bubble" data-target="#section-fear-journey">
-            How does fear build during a film?
-          </button>
-          <button class="blood-bubble" data-target="#section-peaks">
-            Where do terror spikes hit?
-          </button>
-          <button class="blood-bubble" data-target="#section-state-machine">
-            How does horror transition between fear states?
-          </button>
-          <button class="blood-bubble" data-target="#section-effectiveness">
-            Which signal hits hardest?
-          </button>
-          <button class="blood-bubble" data-target="#section-drips">
-            Which signals have the most impact?
-          </button>
-          <button class="blood-bubble" data-target="#section-balance">
-            What's each film's horror recipe?
-          </button>
-          <button class="blood-bubble" data-target="#section-movie-gallery">
-            Explore the horror archives?
-          </button>
-        </div>
         <h1 class="title">The Anatomy of Fear</h1>
         <p class="subtitle">
-          Unveiling the Dark Patterns Behind Horror's Most Terrifying Moments
+          From Signal to Story: How Horror Films Build Fear Across Eight
+          Interactive Scenes
         </p>
+        <div class="hero-questions" aria-label="Quick questions">
+          <button class="blood-bubble" data-target="#section-state-machine">
+            1. How does horror transition between fear states?
+          </button>
+          <button class="blood-bubble" data-target="#section-effectiveness">
+            2. Which signal hits hardest?
+          </button>
+          <button class="blood-bubble" data-target="#section-fear-journey">
+            3. How does fear build during a film?
+          </button>
+          <button class="blood-bubble" data-target="#section-peaks">
+            4. Where do terror spikes hit?
+          </button>
+          <button class="blood-bubble" data-target="#section-movie-gallery">
+            5. Explore the horror archives?
+          </button>
+          <button class="blood-bubble" data-target="#section-balance">
+            6. What's each film's horror recipe?
+          </button>
+          <button class="blood-bubble" data-target="#section-rating-impact">
+            7. Do horror signals impact ratings?
+          </button>
+          <button class="blood-bubble" data-target="#section-signals">
+            8. Which source feeds the scariest outcomes?
+          </button>
+          <button class="blood-bubble" data-target="#section-drips">
+            9. Which signals have the most impact?
+          </button>
+        </div>
         <div class="scroll-indicator">
           <span>Explore the Terror Below</span>
           <div class="arrow-down"></div>
@@ -57,13 +82,13 @@
     <section id="project-snapshot" class="snapshot-section">
       <div class="snapshot-inner">
         <div class="snapshot-header">
-          <h3 class="section-chapter">Prologue — Opening the Case File</h3>
+          <h3 class="section-chapter">Prologue - Opening the Case File</h3>
           <h2 class="section-title">Project Snapshot</h2>
-          <p>
-            Before diving into the visuals, here’s what the dataset looks like.
+          <p style="text-align: left">
+            Before diving into the visuals, here's what the dataset looks like.
             Every scene went through a scripted GPT-4o-mini review (with GPT-4o
             fallbacks), prompting the model to extract structured stats, tag
-            horror signals, and score emotions—turning raw screenplays into
+            horror signals, and score emotions, turning raw screenplays into
             quantifiable dread.
           </p>
         </div>
@@ -110,6 +135,73 @@
             <em>ghost</em> or <em>possessed</em>, and psychological cues like
             <em>dread</em> or <em>trapped</em>.
           </p>
+          <p>
+            Our 207-term horror lexicon is organized into six signal families:
+            <strong>Audio</strong> (sounds, screams, music cues),
+            <strong>Visual</strong> (darkness, shadows, gore),
+            <strong>Pace</strong> (sudden, rapid, silence),
+            <strong>Threat</strong> (weapons, danger, violence),
+            <strong>Setting</strong> (isolated, abandoned, night), and
+            <strong>Psyche</strong> (dread, panic, madness). Each signal is
+            detected when it appears in scene text, dialogue, or action
+            descriptions.
+          </p>
+          <p>
+            Throughout this narrative, we'll explore not just which signals
+            appear most often, but which ones actually <em>work</em>, measuring
+            their effectiveness by correlating signal presence with spikes in
+            fear scores. A signal that appears rarely but triggers high fear is
+            more powerful than one that's common but emotionally flat.
+          </p>
+          <h3>IMDB Ratings & Audience Reception</h3>
+          <p>
+            To understand whether technical horror craftsmanship translates to
+            audience acclaim, we've integrated IMDB ratings data for all films
+            in our dataset. These ratings represent audience scores on a scale
+            from 0 to 10, reflecting how viewers received each film.
+          </p>
+          <p>
+            In <strong>Scene 7</strong>, we explore the relationship between our
+            horror metrics (signal effectiveness, fear state transitions, impact
+            scores) and IMDB ratings. This reveals whether films with stronger
+            technical horror execution, more dynamic pacing, effective signal
+            deployment, higher fear peaks, tend to rate higher with audiences,
+            or if other factors like story, character development, and
+            innovation matter more than pure technical craft.
+          </p>
+          <p>
+            The correlation analysis helps us understand if there's a formula
+            for horror success, or if the best films break the rules, blending
+            technical mastery with creative storytelling that transcends
+            metrics.
+          </p>
+          <h3>Navigating the Narrative</h3>
+          <p>
+            This visualization unfolds as a story across eight scenes, each
+            revealing a different dimension of horror filmmaking. You can jump
+            to any scene using the question bubbles above, or scroll through
+            sequentially to follow the complete narrative arc.
+          </p>
+          <p>
+            <strong>Scene 1</strong> shows which signal sources (Audio, Visual,
+            Threat, etc.) feed into the scariest outcomes.
+            <strong>Scene 2</strong> tracks how fear builds across scenes within
+            individual films. <strong>Scene 3</strong> maps where terror spikes
+            occur. <strong>Scene 4</strong> visualizes how horror transitions
+            between fear states (Calm, Unease, Panic).
+            <strong>Scene 5</strong> reveals which signals hit hardest by
+            comparing frequency to effectiveness. <strong>Scene 6</strong> shows
+            the cumulative impact of signals over time.
+            <strong>Scene 7</strong> explores how horror metrics correlate with
+            IMDB ratings. <strong>Scene 8</strong> compares each film's unique
+            horror recipe across signal families.
+          </p>
+          <p>
+            Each visualization is interactive, hover for details, click to
+            explore, and use filters to focus on specific films, time periods,
+            or metrics. The data tells a story, but you control how deep you
+            dive.
+          </p>
           <h3>How We Split Scenes</h3>
           <p>
             Heuristics scan for scene headings (INT, EXT, SCENE numbers,
@@ -140,7 +232,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
             Each chunk is handed to GPT-4o-mini with a strict JSON contract; if
             validation fails we escalate to GPT-4o. The prompt locks the model
             to horror-specific terminology, emotion scoring guidelines, and a
-            thirty five word summary limit.
+            thirty-five word summary limit.
           </p>
           <pre class="prompt-snippet"><code>{
   "system": "You are a horror screenplay annotator. Reply with valid JSON only.",
@@ -204,10 +296,10 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           </p>
           <h3>Beyond the Signals</h3>
           <p>
-            We log scene index, runtime percentile, dialogue-to-action ratios,
-            and stage-direction density. These columns reveal pacing
+            We log scene index, runtime percentile, dialogue to action ratios,
+            and stage direction density. These columns reveal pacing
             fingerprints, character involvement, and how much visual description
-            versus spoken word drives the fear response—context you can keep in
+            versus spoken word drives the fear response, context you can keep in
             mind as you explore the charts below.
           </p>
         </div>
@@ -217,14 +309,15 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
     <main id="viz-container">
       <section class="viz-section" id="section-signals">
         <div class="section-header">
-          <h3 class="section-chapter">Scene 1 — Signal Intake</h3>
+          <h3 class="section-chapter">Scene 1 - Signal Intake</h3>
           <h2 class="section-title">The Blood Flow of Horror</h2>
           <p class="section-description">
-            This Sankey channels the top horror signals from our effectiveness
-            dataset (viz3). Link thickness shows how often each term appears,
-            while node glow reflects the combined fear and tension it induces.
-            Nudge the threshold to focus on only the heaviest streams and watch
-            the arterial horror reveal itself.
+            This visualization maps how horror signals flow from broad families
+            (left) to specific terms (right). Link thickness shows frequency,
+            how often each signal appears across all films. Node brightness
+            shows impact, how much fear and tension each signal generates. Use
+            the slider to filter signals by frequency and discover which terms
+            drive the most terror.
           </p>
         </div>
         <div class="section-content">
@@ -265,7 +358,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
                 margin-bottom: 16px;
               "
             >
-              Read the Flow
+              How to Read This
             </h3>
             <div
               style="
@@ -276,36 +369,29 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               "
             >
               <p>
-                The Sankey shows how often key terror cues appear and how
-                strongly they hit. The thicker the stream, the more frequently
-                that signal surfaces; the brighter the node, the more it jolts
-                fear and tension in the scenes it touches. On the left you will
-                see broad signal families such as the void, the violence, and
-                the scream (with the unknown appearing only when a term does not
-                fit the main trio), and on the right you will see the individual
-                words those families summon.
+                <strong>Interact:</strong> Use the slider to adjust the
+                frequency threshold. Lower values show more signals; higher
+                values reveal only the most common terms. Hover over nodes to
+                see exact counts and impact scores.
               </p>
               <p>
-                Adjust the threshold to filter out the background noise. You
-                will see common ambience like <strong>night</strong> give way to
-                visceral triggers such as <strong>scream</strong>, revealing why
-                audiences remember certain beats long after the credits roll.
-                Watching how each family splits across the right bank shows
-                which ingredients feed the shocks and how often those shocks
-                actually land. For example, the ribbon feeding
-                <strong>blood</strong> pours out of the violence family and
-                stays thick from end to end, signalling that gore is both a
-                recurring presence and a reliable trigger for fear across the
-                scripts.
+                <strong>Interpret:</strong> On the left are signal families
+                (Void, Violence, Scream). On the right are individual signals.
+                Thick streams = frequent signals. Bright nodes = high impact
+                signals. Watch how families branch into specific terms, some
+                families produce many high impact signals, others rely on a few
+                powerful ones.
               </p>
               <p>
-                Main lesson: the most effective horror signals cluster into
-                distinct families—atmospheric void, visceral violence, and
-                piercing audio cues. When a signal like <strong>blood</strong>
-                maintains a thick stream across the entire flow, it signals both
-                high frequency and consistent impact. The strongest horror
-                blends these families rather than relying on a single type,
-                creating layered scares that hit multiple senses at once.
+                <strong>Main lesson:</strong> Horror signals organize into
+                distinct families, but not all families are equal. Violence and
+                audio cues (like <strong>scream</strong> and
+                <strong>blood</strong>) maintain thick streams because they're
+                both frequent and impactful. Atmospheric signals like
+                <strong>night</strong> appear constantly but generate less fear
+                per occurrence. The most effective horror blends families
+                strategically, using atmosphere to set the mood, then deploying
+                visceral triggers at key moments for maximum impact.
               </p>
             </div>
           </div>
@@ -314,18 +400,15 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
 
       <section class="viz-section" id="section-fear-journey">
         <div class="section-header">
-          <h3 class="section-chapter">Scene 2 — Vital Signs Rising</h3>
+          <h3 class="section-chapter">Scene 2 - Vital Signs Rising</h3>
           <h2 class="section-title">Heartbeat of Terror Monitor</h2>
           <p class="section-description">
-            This monitor tracks fear intensity across each film's runtime,
-            plotting scene by scene progression on the x-axis and fear scores
-            from 0 to 1 on the y-axis. The neon line traces the emotional
-            journey, skull markers highlight moments breaking the 0.70
-            threshold, and the BPM readout converts average fear into a pulse
-            rate so you can feel the dread build in real time. Start with the
-            average across all 129 scripts, then select individual films from
-            the dropdown to compare different pacing strategies and see how
-            patient builds prime audiences for final rushes.
+            Watch how fear builds across a film's runtime. The line charts fear
+            intensity (0-1) scene by scene. Skull markers highlight peak moments
+            (fear > 0.70). The BPM counter converts average fear into a pulse
+            rate. Start with the average across all films, then select
+            individual titles to compare pacing strategies, some films build
+            slowly, others hit hard early.
           </p>
         </div>
         <div class="section-content" style="flex-direction: column">
@@ -342,26 +425,30 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
             class="insight-panel neon-theme"
             style="margin-top: 1.5rem; width: 100%"
           >
-            <h3>Track the Pulse</h3>
+            <h3>How to Read This</h3>
             <p>
-              Choose a film to plot its fear score across the runtime using the
-              journey table. The x-axis tracks scene progression, the neon line
-              shows fear intensity on a 0 to 1 scale, and skull markers tag any
-              moment breaking the 0.70 threshold. The BPM readout converts the
-              average fear into a pulse so you can feel the dread build in real
-              time.
+              <strong>Interact:</strong> Use the dropdown to select a film.
+              Start with "Average Across All Films" to see the overall pattern,
+              then explore individual titles. The BPM counter shows average fear
+              as a pulse rate, higher fear = faster pulse.
             </p>
             <p>
-              Average fear converts to the faux BPM in the corner, so a steady
-              0.45 rating becomes roughly 120 terror beats per minute. In
-              <em>Halloween</em>, for example, the line simmers around the mid
-              point before spiking near the finale, showing how a patient build
-              primes the audience for a final rush. The lesson across the films
-              is the same—strategic pacing with alternating calm and chaos keeps
-              viewers on edge far better than nonstop noise. We start you with
-              the average horror pulse across all 129 scripts, and the featured
-              list in the dropdown surfaces the five wildest swings so you can
-              compare different pacing strategies in just a few clicks.
+              <strong>Interpret:</strong> The x-axis shows scene progression
+              (left = beginning, right = end). The y-axis shows fear intensity
+              (0 = calm, 1 = maximum terror). Skull markers appear when fear
+              exceeds 0.70. Watch the line's shape: steady climbs, sudden
+              spikes, or waves of tension. Compare films to see different pacing
+              strategies, some build slowly to a climax, others maintain
+              constant tension.
+            </p>
+            <p>
+              <strong>Main lesson:</strong> Effective horror uses strategic
+              pacing, not constant terror. Most films hover at moderate fear
+              levels (0.3-0.5) with occasional spikes, especially near the end.
+              This pattern, alternating calm and chaos, keeps viewers engaged
+              longer than nonstop intensity. Patient builds that prime audiences
+              for final rushes create more memorable experiences than films that
+              peak too early or never let up.
             </p>
           </aside>
         </div>
@@ -369,15 +456,14 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
 
       <section class="viz-section" id="section-peaks">
         <div class="section-header">
-          <h3 class="section-chapter">Scene 3 — Graveyard of Spikes</h3>
+          <h3 class="section-chapter">Scene 3 - Graveyard of Spikes</h3>
           <h2 class="section-title">The Cemetery of Terror</h2>
           <p class="section-description">
-            Each film gets its own graveyard row. We place a tombstone wherever
-            the fear score jumps above 0.40 and light a lantern at the same
-            runtime when tension climbs past 0.40. Use the fear and tension
-            buttons to show one or both stories. The film bar above the chart
-            starts with eight iconic titles; remove any you don’t need or add a
-            new film from the dropdown to compare different lineups.
+            Each film gets its own row in this graveyard. Tombstones mark fear
+            spikes (fear > 0.40). Lanterns mark tension spikes (tension > 0.40).
+            Use the buttons to toggle fear, tension, or both. Add or remove
+            films from the bar above to compare different lineups and see where
+            terror peaks occur.
           </p>
         </div>
         <div class="section-content">
@@ -415,7 +501,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
                 margin-bottom: 16px;
               "
             >
-              Spot the Spikes
+              How to Read This
             </h3>
             <div
               style="
@@ -426,40 +512,45 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               "
             >
               <p>
-                Fear spikes plant a tombstone the moment the score crosses
-                <strong>0.40</strong>. Tension spikes at the same scene light up
-                a lantern so you can see where suspense and shock overlap
-                without guesswork.
+                <strong>Interact:</strong> Use the Fear/Tension buttons to show
+                one or both spike types. Click any tombstone or lantern to see a
+                mini-chart of fear and tension before/after that moment. Add or
+                remove films using the bar above to compare different lineups.
               </p>
               <p>
-                When both icons appear together—like in the finale of
-                <em>Halloween</em>—the story is layering a jump scare on top of
-                a slow build. Click any marker to open a quick sparkline that
-                shows fear and tension before and after that moment.
+                <strong>Interpret:</strong> Each row represents one film's
+                runtime (left = beginning, right = end). Tombstones appear when
+                fear exceeds 0.40. Lanterns appear when tension exceeds 0.40.
+                When both appear together, the film is layering shock (fear) on
+                top of suspense (tension). Clusters of markers indicate intense
+                sequences; sparse markers show restrained pacing.
               </p>
               <p>
-                Main lesson: the most memorable shock sequences pair a sharp
-                fear rise with elevated tension in surrounding scenes. If spikes
-                stand alone with flat tension, the scare fades fast; when
-                tension climbs before and after, the audience stays rattled far
-                longer.
+                <strong>Main lesson:</strong> The most memorable scares combine
+                sudden fear spikes with sustained tension. When a tombstone
+                appears alone (fear spike without tension), the scare is brief
+                and fades quickly. When lanterns surround a tombstone (tension
+                builds before and after the fear spike), the audience stays
+                rattled longer. Effective horror sequences use tension to prime
+                viewers, then deploy fear spikes at the peak moment for maximum
+                impact.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Scene 4 — Fear State Machine -->
       <section class="viz-section" id="section-state-machine">
         <div class="section-header">
-          <h3 class="section-chapter">Scene 4 — Fear State Machine</h3>
+          <h3 class="section-chapter">Scene 4 - Fear State Machine</h3>
           <h2 class="section-title">How Horror Climbs the Fear Ladder</h2>
           <p class="section-description">
-            Instead of tracking raw fear scores, this scene looks at how films
-            move between three coarse fear bands: calm, unease, and panic. Each
-            cell shows how likely the next scene is to land in a given band,
-            given where we are now, revealing whether horror prefers slow
-            climbs, sudden jumps, or stretches of sustained terror.
+            This matrix reveals how films transition between three fear states:
+            Calm, Unease, and Panic. Each cell shows the probability of moving
+            from one state (row) to another (column). The diagonal shows how
+            often films stay in the same state. Off diagonal cells reveal
+            whether horror prefers gradual climbs, sudden jumps, or sustained
+            terror.
           </p>
         </div>
         <div class="section-content">
@@ -467,48 +558,85 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
             <div
               id="viz-state-machine"
               class="visualization-medium"
-              style="width: 100%; min-height: 360px"
+              style="
+                width: 100%;
+                min-height: 1100px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
             ></div>
           </div>
           <div
-            class="insight-panel"
+            class="insight-panel state-machine-theme"
             style="
               width: 100%;
-              margin-top: 24px;
+              margin-top: 48px;
+              height: 1100px;
+              min-height: 1100px;
               border-radius: 16px;
-              background: radial-gradient(
-                circle at top,
-                rgba(14, 46, 68, 0.95),
-                rgba(2, 5, 12, 0.98)
+              display: flex;
+              flex-direction: column;
+              background: linear-gradient(
+                135deg,
+                rgba(20, 0, 20, 0.95),
+                rgba(40, 0, 10, 0.92),
+                rgba(10, 0, 0, 0.98)
               );
-              border: 1px solid rgba(155, 214, 255, 0.45);
-              box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+              border: 1px solid rgba(255, 68, 68, 0.4);
+              box-shadow: 0 20px 40px rgba(139, 0, 0, 0.5),
+                0 0 60px rgba(255, 68, 68, 0.2);
             "
           >
-            <h3>Reading the Fear Grammar</h3>
-            <p>
-              The diagonal tells you how often films hold a mood; off-diagonal
-              cells show how they climb or drop between states. Strong
-              Calm→Unease and Unease→Panic flows point to a careful ramp-up,
-              while rare Calm→Panic jumps mark pure ambush moments. Once stories
-              reach Panic, many stay in the red zone for a while, giving viewers
-              only short chances to breathe.
-            </p>
+            <h3
+              style="
+                color: #ff4444;
+                text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+              "
+            >
+              How to Read This
+            </h3>
+            <div style="color: #ffe0e0">
+              <p>
+                <strong>Interact:</strong> Hover over cells to see exact
+                transition probabilities. Darker cells = higher probability. The
+                color intensity shows how likely each transition is.
+              </p>
+              <p>
+                <strong>Interpret:</strong> Rows show the current state (Calm,
+                Unease, Panic). Columns show the next state. The diagonal (top
+                left to bottom right) shows how often films stay in the same
+                state. Off diagonal cells show transitions. Strong Calm→Unease
+                and Unease→Panic flows indicate gradual builds. Rare Calm→Panic
+                jumps indicate sudden ambushes. High Panic→Panic values show
+                sustained terror.
+              </p>
+              <p>
+                <strong>Main lesson:</strong> Horror follows a grammar. Most
+                films prefer gradual climbs (Calm→Unease→Panic) over sudden
+                jumps (Calm→Panic). Once films reach Panic, they tend to stay
+                there, giving viewers few chances to breathe. This pattern,
+                careful ramp up followed by sustained intensity, creates more
+                effective scares than random state changes. The best horror
+                respects this grammar while occasionally breaking it for
+                surprise.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="viz-section" id="section-effectiveness">
         <div class="section-header">
-          <h3 class="section-chapter">Scene 5 — Signal Autopsy</h3>
+          <h3 class="section-chapter">Scene 5 - Signal Autopsy</h3>
           <h2 class="section-title">The Power of Horror Signals</h2>
           <p class="section-description">
-            This signal lab charts our fiercest horror cues inside a fear versus
-            tension grid. Placement shows how much extra fear and tension each
-            term adds versus scenes that never utter it, bubble size mirrors how
-            often it appears, and color exposes whether the cue leans jump scare
-            shock or slow burn dread. Recast the axes with the dropdown, then
-            hover or click to open a dossier pop-up with the full story.
+            This bubble chart reveals which signals are most effective. Each
+            bubble represents one signal. Position shows impact (how much
+            fear/tension it adds). Size shows frequency (how often it appears).
+            Color shows whether it's shock heavy (jump scares) or tension heavy
+            (slow burns). Use the dropdown to view by different metrics. Hover
+            for details, click for full dossier.
           </p>
         </div>
         <div class="section-content">
@@ -606,7 +734,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
             <div
               id="viz-effectiveness"
               class="visualization-large"
-              style="width: 100%"
+              style="width: 100%; min-height: 1100px"
             ></div>
           </div>
           <div
@@ -631,7 +759,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
                 margin-bottom: 16px;
               "
             >
-              Decode the Signals
+              How to Read This
             </h3>
             <div
               style="
@@ -642,40 +770,45 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               "
             >
               <p>
-                Each bubble marks a cue from the lexicon. Crosshairs reveal its
-                precise score, while the dossier pop-up breaks down frequency,
-                impact deltas, and whether it leans toward shock or lingering
-                unease. Use the dropdown to see the swarm through different
-                lenses.
+                <strong>Interact:</strong> Use the dropdown to change what the
+                axes show (Impact, Fear, Tension, or Frequency). Hover over
+                bubbles to see crosshairs and quick stats. Click any bubble to
+                open a detailed dossier with full breakdown.
               </p>
               <p>
-                Notice how atmospheric staples like <strong>night</strong> claim
-                the right edge for coverage, while <strong>scream</strong> and
-                <strong>blood</strong> blaze in the fear heavy quadrant. Signals
-                hugging the diagonal are balanced weapons, perfect when you need
-                fear and tension to climb together.
+                <strong>Interpret:</strong> Each bubble is one signal. Position
+                = impact (top right = high impact). Size = frequency (bigger =
+                more common). Color = shock vs. tension (red = shock heavy, blue
+                = tension heavy). Signals in the top right are both frequent and
+                impactful. Signals in the bottom left are rare and weak. Signals
+                on the diagonal balance fear and tension.
               </p>
               <p>
-                <strong>Main lesson:</strong> the heaviest hitters pair
-                widespread ambience with select spikes. Use familiar mood
-                setters to keep tension elevated, then drop focused shock
-                triggers to punch fear upward—the combination drives the biggest
-                overall lift without overusing any single cue.
+                <strong>Main lesson:</strong> The most effective horror strategy
+                pairs widespread atmosphere with selective spikes. Common
+                signals like <strong>night</strong> and
+                <strong>dark</strong> maintain baseline tension but generate low
+                fear per occurrence. Rare signals like
+                <strong>scream</strong> and <strong>blood</strong> generate high
+                fear but appear infrequently. The best horror uses atmosphere to
+                keep tension elevated, then deploys powerful triggers at key
+                moments for maximum impact. This combination, steady mood plus
+                strategic spikes, drives the biggest overall emotional lift.
               </p>
             </div>
           </div>
         </div>
       </section>
-      <!-- NEW: Dripping Impact Strip (dripping-blood vibe) -->
+
       <section id="section-drips" class="viz-section">
         <div class="section-header">
-          <h3 class="section-chapter">Scene 6 — Impact Dripline</h3>
+          <h3 class="section-chapter">Scene 6 - Impact Dripline</h3>
           <h2 class="section-title">Signal Impact Strip</h2>
           <p class="section-subtitle">
-            A ranked strip that traces each signal's overall impact and lets the
-            "drip" length visualize how quickly potency falls off. Sort to swap
-            between impact, fear, tension, or name and see which terms keep
-            bleeding through.
+            A ranked visualization showing all signals ordered by impact. The
+            "drip" length shows how quickly potency falls off after the top
+            performers. Use the sort dropdown to view by impact, name, or other
+            metrics. Hover to see exact impact scores.
           </p>
         </div>
         <div class="section-content">
@@ -718,7 +851,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
                   0 0 6px rgba(255, 31, 107, 0.6);
               "
             >
-              Read the Ranking
+              How to Read This
             </h3>
             <div
               style="
@@ -729,50 +862,143 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               "
             >
               <p>
-                This strip uses impact scores from our effectiveness dataset. We
-                sort the signals by your selection, trace a smooth ribbon
-                through their impact values, and hang stylized drips to show how
-                quickly the influence trails off after the heavy hitters.
+                <strong>Interact:</strong> Use the sort dropdown to order
+                signals by impact (default), name (A-Z), or other metrics. Hover
+                over any signal to see its exact impact score. The longer the
+                "drip," the higher the impact.
               </p>
               <p>
-                Choose A–Z to compare lexicon coverage or stick with impact to
-                see the steep drop from elite signals (anything above
-                <strong style="color: #ff1f6b">0.50</strong>) to background
-                atmosphere. Hover over any signal to see its detailed impact
-                score. The visualization complements the bubble chart by
-                emphasizing order and falloff instead of spatial clustering.
+                <strong>Interpret:</strong> Signals are ranked left to right by
+                impact (highest on left). The ribbon shows the impact curve,
+                steep drop off indicates a power law distribution. Signals above
+                0.50 are elite performers. The long tail represents atmospheric
+                cues that provide context but minimal direct impact. Compare
+                this ranking to the bubble chart to see how frequency and impact
+                relate.
               </p>
               <p>
-                <strong>Main lesson:</strong> the impact distribution reveals a
-                power law where a small elite of signals (typically 5 to 10
-                terms) drive the majority of fear and tension, while the long
-                tail of atmospheric cues provides essential context but minimal
-                direct impact. This ranking shows why horror relies on strategic
-                repetition of proven triggers rather than scattering dozens of
-                weak signals. The steep falloff after the top performers
-                demonstrates that quality beats quantity: a few well placed
-                <strong style="color: #ff1f6b">scream</strong> or
-                <strong style="color: #ff1f6b">blood</strong> moments outperform
-                hundreds of generic <em>night</em> or <em>dark</em> references.
-                Effective horror scripts identify their elite signals and deploy
-                them at key moments, using the background lexicon to maintain
-                atmosphere without diluting the impact of the heavy hitters.
+                <strong>Main lesson:</strong> Horror follows a power law: a
+                small elite of signals (5-10 terms like
+                <strong style="color: #ff1f6b">scream</strong> and
+                <strong style="color: #ff1f6b">blood</strong>) drive most of the
+                fear and tension, while the long tail (hundreds of atmospheric
+                terms like <em>night</em> and <em>dark</em>) provides essential
+                context but minimal direct impact. This reveals why effective
+                horror relies on strategic repetition of proven triggers rather
+                than scattering dozens of weak signals. Quality beats quantity:
+                a few well placed elite signals outperform hundreds of generic
+                references. The best horror scripts identify their elite signals
+                and deploy them at key moments, using the background lexicon to
+                maintain atmosphere without diluting impact.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- NEW: Balance Radar (spider-web vibe) -->
+      <section id="section-rating-impact" class="viz-section">
+        <div class="section-header">
+          <h3 class="section-chapter">Scene 7 - The Rating Constellation</h3>
+          <h2 class="section-title">How Horror Signals Shape IMDB Ratings</h2>
+          <p class="section-description">
+            This scatter plot explores whether technical horror craftsmanship
+            translates to audience acclaim. Each point is a film positioned by
+            its horror impact score (x-axis) and IMDB rating (y-axis). Point
+            size = rating magnitude. Color = average fear intensity. The
+            correlation line reveals whether stronger horror metrics lead to
+            higher ratings. Use filters to explore by year or rating range.
+          </p>
+        </div>
+        <div class="section-content">
+          <div class="viz-wrapper stacked" style="width: 100%">
+            <div
+              id="viz-rating-impact"
+              class="visualization-large"
+              style="width: 100%; min-height: 700px"
+            ></div>
+          </div>
+          <div
+            class="insight-panel galaxy-theme"
+            style="
+              width: 100%;
+              margin-top: 24px;
+              border-radius: 16px;
+              background: radial-gradient(
+                circle at center,
+                rgba(20, 0, 0, 0.95),
+                rgba(5, 0, 0, 0.98)
+              );
+              border: 1px solid rgba(139, 0, 0, 0.4);
+              box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7),
+                0 0 30px rgba(139, 0, 0, 0.3);
+              padding: 26px 30px;
+              font-family: 'Special Elite', monospace;
+              color: #ffe5e5;
+            "
+          >
+            <h3
+              style="
+                text-align: center;
+                font-family: 'Nosifer', cursive;
+                font-size: 22px;
+                margin-bottom: 16px;
+                color: #ff4444;
+                text-shadow: 0 0 12px rgba(255, 68, 68, 0.8),
+                  0 0 6px rgba(139, 0, 0, 0.6);
+              "
+            >
+              How to Read This
+            </h3>
+            <div
+              style="
+                max-width: 860px;
+                margin: 0 auto;
+                font-size: 14px;
+                line-height: 1.6;
+              "
+            >
+              <p>
+                <strong>Interact:</strong> Use the film selector dropdown to
+                highlight specific films. Use year and rating filters to narrow
+                the dataset. Hover over points to see detailed metrics. Click to
+                highlight and see connections to similar films.
+              </p>
+              <p>
+                <strong>Interpret:</strong> Each point is one film. X-axis =
+                horror impact score (combines signal effectiveness, fear
+                transitions, peak fear). Y-axis = IMDB rating (0-10). Larger
+                points = higher ratings. Brighter colors = higher average fear.
+                The dashed line shows correlation, positive slope means stronger
+                horror metrics correlate with higher ratings. Clusters indicate
+                similar films. Outliers break the pattern.
+              </p>
+              <p>
+                <strong>Main lesson:</strong> Technical horror craftsmanship
+                doesn't guarantee audience acclaim. While some highly rated
+                films cluster in high impact regions (showing effective signal
+                deployment and dynamic pacing can elevate horror), many outliers
+                prove that story, character, and innovation matter just as much
+                as technical execution. The best horror blends craft with
+                creativity, using metrics to inform decisions but not constrain
+                them. There's no formula for success, but understanding the
+                relationship between technique and reception helps filmmakers
+                make informed choices.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="section-balance" class="viz-section">
         <div class="section-header">
-          <h3 class="section-chapter">Scene 7 — Recipe Cards</h3>
+          <h3 class="section-chapter">Scene 8 - Recipe Cards</h3>
           <h2 class="section-title">Signal-Balance by Film</h2>
           <p class="section-subtitle">
-            This radar compares six signal families per film (Audio, Visual,
-            Pace, Threat, Setting, Psyche), scaling each to the dominant value
-            so you can spot whether a story leans on ambience, aggression,
-            psychological dread, or a balanced brew.
+            This radar chart reveals each film's unique horror recipe. Six
+            signal families (Audio, Visual, Pace, Threat, Setting, Psyche) are
+            normalized to show relative emphasis. Use the dropdown to compare
+            films. Adjust the preference sliders below to find films that match
+            your horror taste.
           </p>
         </div>
         <div class="section-content">
@@ -857,7 +1083,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
                   0 0 6px rgba(57, 255, 20, 0.6);
               "
             >
-              Compare the Recipe
+              How to Read This
             </h3>
             <div
               style="
@@ -868,27 +1094,33 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               "
             >
               <p>
-                We analyzed all horror signals from our AI dataset and grouped
-                them into six sensory families: Audio, Visual, Pace, Threat,
-                Setting, and Psyche. Each film's signals are counted and
-                normalized, so a value of
-                <strong style="color: #ff224e">1.0</strong> means that family is
-                the dominant ingredient in that film's horror recipe.
+                <strong>Interact:</strong> Use the film dropdown to select a
+                title and see its radar pattern. Adjust the preference sliders
+                below to set your ideal horror mix, then see recommended films
+                that match your taste. Click recommended films to view their
+                full details.
               </p>
               <p>
-                Use the dropdown above to explore different films and see their
-                unique horror fingerprints. Supernatural stories typically
-                emphasize Psyche and Setting, creature features focus on Threat,
-                and fast paced slashers highlight Pace. The radar chart makes
-                these patterns visible at a glance.
+                <strong>Interpret:</strong> Each axis represents one signal
+                family (Audio, Visual, Pace, Threat, Setting, Psyche). Values
+                are normalized (0-1), where 1.0 means that family dominates the
+                film's horror approach. The shape reveals the film's strategy:
+                balanced (round), focused (spiky), or mixed (irregular).
+                Supernatural films emphasize Psyche and Setting. Slashers
+                emphasize Threat and Pace. Psychological horror emphasizes
+                Psyche and Visual.
               </p>
               <p>
-                Below, you can set your own horror preferences using the
-                sliders. Adjust each scale to match your taste, and we'll
-                recommend films that align with your preferences. The
-                recommendation system looks for films with similar signal
-                balances, not exact matches, so you'll discover movies that
-                share your horror style.
+                <strong>Main lesson:</strong> Every film has a unique horror
+                recipe, a signature blend of signal families that defines its
+                approach. Some films are specialists (one or two dominant
+                families), others are generalists (balanced across families).
+                Neither approach is inherently better, but understanding a
+                film's recipe helps explain why it feels different. The most
+                unsettling films often blend families strategically, using each
+                for its strengths: Setting for atmosphere, Threat for shocks,
+                Psyche for lingering dread. This diversity in recipes is what
+                makes horror such a rich and varied genre.
               </p>
             </div>
           </div>
@@ -897,7 +1129,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
 
       <section id="section-movie-gallery" class="viz-section">
         <div class="section-header">
-          <h3 class="section-chapter">Final Act — The Horror Archives</h3>
+          <h3 class="section-chapter">Final Act - The Horror Archives</h3>
           <h2 class="section-title">Film Dossiers</h2>
           <p class="section-description">
             Use the filters to discover your next nightmare or scroll through
@@ -905,9 +1137,8 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
             open a detailed dossier.
           </p>
         </div>
-        <!-- The section-content is now rebuilt for filters and horizontal scrolling -->
+
         <div class="section-content">
-          <!-- 1. Filter Controls -->
           <div class="gallery-controls">
             <div class="filter-group">
               <label for="genre-filter">Genre:</label>
@@ -924,15 +1155,12 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
             <button id="reset-filters" class="spooky-button">Reset</button>
           </div>
 
-          <!-- 2. Scrollable Gallery Wrapper -->
           <div class="gallery-wrapper">
             <button class="scroll-arrow left" id="scroll-left">‹</button>
             <div
               id="viz-movie-gallery"
               class="visualization-gallery-horizontal"
-            >
-              <!-- Movie posters will be loaded here by D3 -->
-            </div>
+            ></div>
             <button class="scroll-arrow right" id="scroll-right">›</button>
           </div>
         </div>
@@ -941,37 +1169,83 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
       <section id="epilogue" class="snapshot-section">
         <div class="snapshot-inner">
           <div class="snapshot-header">
-            <h3 class="section-chapter">Epilogue — Lessons From the Dark</h3>
+            <h3 class="section-chapter">Epilogue - Lessons From the Dark</h3>
             <h2 class="section-title">What the Data Whispers</h2>
             <p>
-              Stitching together signals, trajectories, and impact scores leaves
-              us with a few takeaways for anyone crafting or studying horror:
-              the lexicon matters, pacing is everything, and balance beats
-              excess.
+              After analyzing 129 horror films, 9,760 scenes, and 11,204
+              signals, patterns emerge that reveal how effective horror is
+              crafted. The journey through these eight scenes tells a complete
+              story about the anatomy of fear, from individual signals to
+              overall strategies.
             </p>
           </div>
           <div class="dataset-overview">
-            <h3>Three Findings to Keep</h3>
-            <ul>
+            <h3>The Complete Picture: How Horror Works</h3>
+            <p>
+              Our analysis reveals that effective horror follows a
+              <strong>strategic architecture</strong> built on three
+              foundational principles:
+            </p>
+            <ol style="line-height: 1.8; margin: 20px 0">
               <li>
-                <strong>Atmosphere sets the trap, violence springs it.</strong>
-                Words like <em>night</em> blanket scripts, but when visceral
-                cues such as <em>scream</em> or <em>blood</em> arrive, fear and
-                tension surge in tandem.
+                <strong>Signal Hierarchy:</strong> Horror signals organize into
+                families (Audio, Visual, Pace, Threat, Setting, Psyche), but not
+                all signals are equal. A power law governs impact: a small elite
+                of signals (like <em>scream</em> and <em>blood</em>) drive most
+                of the fear, while hundreds of atmospheric terms provide
+                essential context but minimal direct impact. Effective horror
+                uses atmosphere to maintain baseline tension, then deploys elite
+                signals at key moments for maximum impact.
               </li>
               <li>
-                <strong>Dread works best in pulses.</strong> Films hover at
-                mid-level fear, then fire off clusters of spikes near the
-                climax—our heartbeat monitor shows those late surges lighting up
-                with skull markers.
+                <strong>Strategic Pacing:</strong> Horror follows a grammar.
+                Films prefer gradual climbs (Calm→Unease→Panic) over sudden
+                jumps, building tension before deploying fear spikes. Most films
+                hover at moderate fear levels (0.3-0.5) with occasional spikes,
+                especially near the end. The most memorable scares combine
+                sudden fear spikes with sustained tension, using tension to
+                prime viewers, then deploying shocks at peak moments. This
+                pattern, alternating calm and chaos, keeps viewers engaged
+                longer than nonstop intensity.
               </li>
               <li>
-                <strong>Mix your signal families.</strong> Slashers lean on
-                Threat and Pace, hauntings lean on Setting and Psyche, and the
-                most unsettling films blend all six families to keep nerves
-                frayed from every angle.
+                <strong>Balanced Recipes:</strong> Every film has a unique
+                horror recipe, a signature blend of signal families. Some films
+                are specialists (emphasizing one or two families), others are
+                generalists (balanced across families). The most unsettling
+                films blend families strategically, using each for its
+                strengths: Setting for atmosphere, Threat for shocks, Psyche for
+                lingering dread. This diversity in recipes is what makes horror
+                such a rich and varied genre.
               </li>
-            </ul>
+            </ol>
+            <h3>The Ultimate Insight</h3>
+            <p>
+              <strong>Effective horror is both art and craft.</strong> The craft
+              comes from understanding signal hierarchies, pacing patterns, and
+              transition grammars, the measurable techniques that create fear.
+              But the art comes from knowing when to break the rules, how to
+              blend families creatively, and why technical execution alone
+              doesn't guarantee audience acclaim. The best horror films use
+              metrics to inform decisions but not constrain them, blending
+              technical mastery with creative storytelling that transcends the
+              data.
+            </p>
+            <p>
+              There's no formula for horror success, but there is a science to
+              fear. Understanding signal effectiveness, pacing patterns, and
+              transition grammars gives filmmakers tools to craft more impactful
+              scares. Yet the outliers in our data, films that break patterns
+              and still succeed, remind us that innovation, character, and story
+              matter just as much as technique. The anatomy of fear isn't a
+              blueprint to follow blindly, but a map to navigate creatively.
+            </p>
+            <p style="margin-top: 30px; font-style: italic; color: #ffaaaa">
+              The data whispers: master the craft, but trust the art. Use
+              signals strategically, pace with intention, and blend families
+              thoughtfully. Then, when the moment is right, break the rules.
+              That's where the magic happens.
+            </p>
           </div>
         </div>
       </section>
@@ -1000,8 +1274,9 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
     <script src="js/spikesViz.js"></script>
     <script src="js/stateMachineViz.js"></script>
     <script src="js/effectivenessViz.js"></script>
-    <script src="js/radarBalanceViz.js"></script>
     <script src="js/dripImpactViz.js"></script>
+    <script src="js/ratingImpactViz.js"></script>
+    <script src="js/radarBalanceViz.js"></script>
     <script src="js/movieGalleryViz.js"></script>
     <script src="js/heartbeatScroll.js"></script>
 

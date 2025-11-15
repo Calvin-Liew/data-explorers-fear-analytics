@@ -33,15 +33,24 @@
           showError("Failed to load data. Please refresh the page.");
         });
     }, 100);
-      // Hero question bubbles: scroll to section
-      document.querySelectorAll('.blood-bubble[data-target]').forEach(btn => {
-          btn.addEventListener('click', () => {
-              const target = btn.getAttribute('data-target');
-              const el = document.querySelector(target);
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          });
-      });
 
+    document.querySelectorAll(".blood-bubble[data-target]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-target");
+        const el = document.querySelector(target);
+        if (el) {
+          const headerOffset = 60;
+          const elementPosition = el.offsetTop;
+          const offsetPosition = elementPosition - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        } else {
+          console.warn("Target element not found:", target);
+        }
+      });
+    });
   }
 
   async function loadAllData() {
@@ -75,11 +84,11 @@
         "MV5BNDZmMzE0NjUtZTIzNC00Mzc0LTgyZjgtNzUxMWRiMDIzMDQwXkEyXkFqcGdeQXVyNjc5NjEzNA@@",
         "MV5BNTFjOTFlMzMtYWIyZi00YmQzLWEyMGMtYzJjY2M1MDY1NjkyXkEyXkFqcGdeQXVyMTUzMDUzNTI3",
         "MV5BMGNhZDczNTUtOWEzZS00ZjEyLTkzODQtOGM1MTZiMGY2ODIyXkEyXkFqcGdeQXVyMjkwOTAyMDU@",
-        "MV5BMjA0ZTcwMGEtNDc3NC00ODg3LWE3YTctNDU5ODA3MjNlMDkwXkEyXkFqcGdeQXVyNzc5MjA3OA@@"
+        "MV5BMjA0ZTcwMGEtNDc3NC00ODg3LWE3YTctNDU5ODA3MjNlMDkwXkEyXkFqcGdeQXVyNzc5MjA3OA@@",
       ];
 
-      const cleanMovieData = movieGalleryData.filter(d => 
-        !brokenPosterIDs.some(id => d.Poster.includes(id))
+      const cleanMovieData = movieGalleryData.filter(
+        (d) => !brokenPosterIDs.some((id) => d.Poster.includes(id))
       );
 
       return {
@@ -90,7 +99,7 @@
         filmComparison: processFilmComparisonData(filmComparison),
         fearJourneyRaw: fearJourney,
         tensionJourneyRaw: tensionJourney,
-        movieGalleryData: cleanMovieData, 
+        movieGalleryData: cleanMovieData,
       };
     } catch (error) {
       console.error("Error in loadAllData:", error);
@@ -132,9 +141,7 @@
         .map((row) => ({
           position: +row.scene_position,
           tension:
-            row[film] !== undefined && row[film] !== ""
-              ? +row[film]
-              : null,
+            row[film] !== undefined && row[film] !== "" ? +row[film] : null,
         }))
         .filter((d) => d.tension !== null && Number.isFinite(d.tension));
 
@@ -227,23 +234,25 @@
       console.error("❌ createSpikesViz not found!");
     }
 
-      console.log("🔁 Creating Fear State Machine...", typeof createStateMachineViz);
-      if (typeof createStateMachineViz === "function") {
-          try {
-              state.visualizations.stateMachine = createStateMachineViz(
-                  "#viz-state-machine",
-                  data.fearJourneyRaw
-              );
-              console.log("✅ Fear State Machine created");
-          } catch (error) {
-              console.error("❌ Fear State Machine error:", error);
-          }
-      } else {
-          console.error("❌ createStateMachineViz not found!");
+    console.log(
+      "🔁 Creating Fear State Machine...",
+      typeof createStateMachineViz
+    );
+    if (typeof createStateMachineViz === "function") {
+      try {
+        state.visualizations.stateMachine = createStateMachineViz(
+          "#viz-state-machine",
+          data.fearJourneyRaw
+        );
+        console.log("✅ Fear State Machine created");
+      } catch (error) {
+        console.error("❌ Fear State Machine error:", error);
       }
+    } else {
+      console.error("❌ createStateMachineViz not found!");
+    }
 
-
-      console.log("💀 Creating Effectiveness...", typeof createEffectivenessViz);
+    console.log("💀 Creating Effectiveness...", typeof createEffectivenessViz);
     if (typeof createEffectivenessViz === "function") {
       try {
         state.visualizations.effectiveness = createEffectivenessViz(

@@ -1,4 +1,4 @@
-// js/heartbeatScroll.js
+
 
 (function () {
     "use strict";
@@ -21,18 +21,11 @@
 
 
 
-    /**
-     *
-     * @param {number} y0 
-     * @param {number} x0 
-     * @param {number} x1 
-     * @param {object} preset 
-     * @returns {string} - SVG path 'd' attribute string
-     */
+    
     function buildSegmentPolylineH(y0, x0, x1, preset) {
         const { A, cycle, step, jitter, Ap, Aq, Ar, As, At } = preset;
         const out = [];
-        const s = (t) => t * t * (3 - 2 * t); // Smoothstep function
+        const s = (t) => t * t * (3 - 2 * t); 
 
         function phaseOffset(ph) {
             let yOffset = 0;

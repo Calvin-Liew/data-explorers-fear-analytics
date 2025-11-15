@@ -1,11 +1,14 @@
-// js/radarBalanceViz.js (REV 3) — Enhanced with horror_signals.csv data
+
 (function () {
     const RADAR_SEL = "#viz-radar";
     const CSV_URL = "data/horror_ai_analysis_datasets/horror_signals.csv";
     const IMDB_CSV_URL = "data/imbd-movies-dataset/imdb_179_horror.csv";
 
-    // Global cache for IMDB ratings (slug -> rating)
+    
     let imdbRatings = new Map();
+    
+    let movieGalleryData = [];
+    let movieDataMap = new Map();
 
     function slugifyTitle(str) {
         return String(str || "")
@@ -27,6 +30,48 @@
             }
         });
         return map;
+    }
+
+    function buildMovieDataMap(rows) {
+        const map = new Map();
+        rows.forEach(row => {
+            const title = row.Title || row.title || row.Film || row.film || row.name;
+            if (!title) return;
+            const key = slugifyTitle(title);
+            if (!map.has(key)) {
+                map.set(key, row);
+            }
+        });
+        return map;
+    }
+
+    
+    function findMovieByRadarTitle(radarTitle) {
+        
+        const cleaned = radarTitle.replace(/_Unknown$/, "").replace(/-/g, " ");
+        const slug = slugifyTitle(cleaned);
+        
+        
+        if (movieDataMap.has(slug)) {
+            return movieDataMap.get(slug);
+        }
+        
+        
+        for (const [key, movie] of movieDataMap.entries()) {
+            const movieTitle = slugifyTitle(movie.Title || movie.title || "");
+            
+            if (slug.includes(movieTitle) || movieTitle.includes(slug)) {
+                return movie;
+            }
+            
+            const cleanedNoYear = cleaned.replace(/\s*\(\d{4}\)\s*$/, "").trim();
+            const slugNoYear = slugifyTitle(cleanedNoYear);
+            if (slugNoYear && (slugNoYear.includes(movieTitle) || movieTitle.includes(slugNoYear))) {
+                return movie;
+            }
+        }
+        
+        return null;
     }
 
 
@@ -59,7 +104,7 @@
     const families = FAMILY_MAP.map(d => d.family);
 
     function matchFamily(signalName) {
-        // Remove 'hs_' prefix if present
+        
         const cleanSignal = signalName.replace(/^hs_/i, '');
         for (const f of FAMILY_MAP) { 
             if (f.includes.some(rx => rx.test(cleanSignal))) return f.family; 
@@ -73,10 +118,10 @@
     }
 
     function processHorrorSignals(data) {
-        // Process long-format data: one row per scene, aggregate by film
+        
         const byFilm = new Map();
         
-        // First pass: collect all films and initialize
+        
         data.forEach(row => {
             const film = row.film_title;
             if (film && !byFilm.has(film)) {
@@ -84,14 +129,14 @@
             }
         });
 
-        // Second pass: aggregate signal counts by family
+        
         data.forEach(row => {
             const film = row.film_title;
             if (!film) return;
             
             const filmData = byFilm.get(film);
             Object.keys(row).forEach(key => {
-                // Skip non-signal columns
+                
                 if (/film|title|scene|heading/i.test(key)) return;
                 
                 const val = +row[key] || 0;
@@ -135,10 +180,10 @@
             .append("g")
             .attr("transform", `translate(${margin.left + w / 2}, ${margin.top + h / 2})`);
 
-        // Add defs for gradients and filters
+        
         const defs = svg.append("defs");
         
-        // Glow filter
+        
         const glowFilter = defs.append("filter")
             .attr("id", "radar-glow")
             .attr("x", "-50%")
@@ -155,7 +200,7 @@
             .append("feMergeNode")
             .attr("in", "SourceGraphic");
 
-        // Radial gradient for fill
+        
         const fillGradient = defs.append("linearGradient")
             .attr("id", "radar-fill-gradient")
             .attr("gradientUnits", "userSpaceOnUse")
@@ -173,7 +218,7 @@
         const levels = 5;
         const angleSlice = (Math.PI * 2) / families.length;
 
-        // Draw concentric rings with enhanced styling
+        
         for (let lvl = 1; lvl <= levels; lvl++) {
             const r = radius * (lvl / levels);
             const points = d3.range(families.length).map(i => {
@@ -195,7 +240,7 @@
             }
         }
 
-        // Draw axis lines with glow
+        
         families.forEach((fam, i) => {
             const a = i * angleSlice - Math.PI / 2;
             svg.append("line")
@@ -206,7 +251,7 @@
                 .attr("stroke-width", 1.5)
                 .style("filter", "drop-shadow(0 0 2px rgba(57, 255, 20, 0.4))");
 
-            // Enhanced labels
+            
             svg.append("text")
                 .attr("x", Math.cos(a) * (radius + 28))
                 .attr("y", Math.sin(a) * (radius + 28))
@@ -232,7 +277,7 @@
             return [Math.cos(a) * rScale(values[i]), Math.sin(a) * rScale(values[i])];
         });
 
-        // Draw filled polygon with gradient
+        
         svg.append("path")
             .attr("d", d3.line().curve(d3.curveCardinalClosed.tension(0.65))(poly))
             .attr("fill", "url(#radar-fill-gradient)")
@@ -241,7 +286,7 @@
             .style("filter", "url(#radar-glow)")
             .style("mix-blend-mode", "screen");
 
-        // Draw data points with glow
+        
         svg.selectAll(".radar-dot")
             .data(poly)
             .enter().append("circle")
@@ -254,7 +299,7 @@
             .attr("stroke-width", 2)
             .style("filter", "drop-shadow(0 0 6px rgba(255, 34, 78, 0.9))");
 
-        // Enhanced title with more spacing
+        
         const filmName = row.film.replace(/_Unknown$/, "").replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
         svg.append("text")
             .attr("y", -radius - 55)
@@ -267,7 +312,7 @@
             .style("font-weight", "700")
             .style("letter-spacing", "2px")
             .text(filmName);
-        // Add IMDB rating in the top-right corner of the radar
+        
         if (imdbRatings && imdbRatings.size) {
             const prettyTitle = row.film.replace(/_Unknown$/, "").replace(/-/g, " ");
             const imdbKey = slugifyTitle(prettyTitle);
@@ -293,7 +338,7 @@
     }
 
     function findMatchingFilms(userPrefs, rows, threshold = 0.4) {
-        // Calculate similarity score for each film using a more lenient approach
+        
         const scores = rows.map(row => {
             let weightedScore = 0;
             let totalWeight = 0;
@@ -302,27 +347,27 @@
                 const userVal = userPrefs[fam] || 0;
                 const filmVal = row[fam] || 0;
                 
-                // Use a more forgiving distance calculation
-                // Give partial credit for being close, not just exact matches
+                
+                
                 const diff = Math.abs(userVal - filmVal);
                 
-                // Weighted scoring: closer values get more points
-                // If difference is small, give high score; if large, still give some credit
+                
+                
                 let matchScore = 0;
                 if (diff <= 0.2) {
-                    matchScore = 1.0; // Very close match
+                    matchScore = 1.0; 
                 } else if (diff <= 0.35) {
-                    matchScore = 0.8; // Good match
+                    matchScore = 0.8; 
                 } else if (diff <= 0.5) {
-                    matchScore = 0.6; // Decent match
+                    matchScore = 0.6; 
                 } else if (diff <= 0.65) {
-                    matchScore = 0.4; // Somewhat similar
+                    matchScore = 0.4; 
                 } else {
-                    matchScore = 0.2; // Still somewhat related
+                    matchScore = 0.2; 
                 }
                 
-                // Weight by user preference strength (if user cares about this, weight it more)
-                const weight = userVal > 0.3 ? 1.5 : 1.0; // Boost weight if user has strong preference
+                
+                const weight = userVal > 0.3 ? 1.5 : 1.0; 
                 
                 weightedScore += matchScore * weight;
                 totalWeight += weight;
@@ -337,11 +382,11 @@
             };
         });
         
-        // Sort by similarity (best matches first)
+        
         scores.sort((a, b) => b.similarity - a.similarity);
         
-        // Return top matches with more lenient threshold
-        // Show top 5-8 films that have at least some similarity
+        
+        
         return scores.filter(s => s.similarity >= 0.3).slice(0, 8);
     }
 
@@ -359,7 +404,7 @@
             Psyche: "Fear, paranoia, madness, supernatural dread, and psychological horror"
         };
 
-        // Create sliders for each family
+        
         families.forEach((fam, idx) => {
             const sliderGroup = prefContainer.append("div")
                 .attr("class", "preference-slider-group")
@@ -419,14 +464,14 @@
                     updateRecommendations(rows);
                 });
 
-            // Style the slider thumb
+            
             slider.node().style.setProperty("-webkit-appearance", "none");
             slider.node().style.setProperty("appearance", "none");
             
             sliders[fam] = slider;
         });
 
-        // Add recommendation button
+        
         const buttonRow = prefContainer.append("div")
             .style("display", "flex")
             .style("justify-content", "center")
@@ -464,11 +509,60 @@
             })
             .on("click", () => updateRecommendations(rows));
 
-        // Recommendation results container
+        
         prefContainer.append("div")
             .attr("id", "recommendation-results")
             .style("margin-top", "24px")
             .style("min-height", "100px");
+    }
+
+    
+    function showMovieModal(movieData) {
+        
+        let modal = d3.select("#movie-detail-modal");
+        if (modal.empty()) {
+            modal = d3.select("body").append("div").attr("id", "movie-detail-modal");
+            const modalContent = modal.append("div").attr("class", "modal-content");
+            const closeButton = modal.append("span").attr("class", "close-button").html("&times;");
+            
+            closeButton.on("click", hideMovieModal);
+            modal.on("click", function(event) {
+                if (event.target === this) hideMovieModal();
+            });
+        }
+        
+        const modalContent = modal.select(".modal-content");
+        modalContent.html(`
+            <img src="${movieData.Poster || ''}" alt="${movieData.Title || ''}" class="modal-poster" onerror="this.style.display='none'">
+            <div class="modal-info">
+                <h2>${movieData.Title || 'Unknown'} (${parseInt(movieData.Year) || '?'})</h2>
+                <div class="modal-meta">
+                    <span>${movieData.Certificate || 'N/A'}</span>
+                    <span>${movieData.Duration || '?'} min</span>
+                    <span>⭐ ${movieData.Rating || 'N/A'}</span>
+                    ${movieData.Metascore ? `<span>Metascore: ${movieData.Metascore}</span>` : ''}
+                </div>
+                <p class="genre"><strong>Genre:</strong> ${movieData.Genre || 'Unknown'}</p>
+                <p class="director"><strong>Director:</strong> ${movieData.Director || 'Unknown'}</p>
+                <p class="cast"><strong>Cast:</strong> ${movieData.Cast || 'Unknown'}</p>
+                <p class="description">${movieData.Description || 'No description available.'}</p>
+                ${movieData.Review ? `
+                <div class="review-section">
+                    <h4>"${movieData['Review Title'] || 'Review'}"</h4>
+                    <p class="review-text">"${(movieData.Review || '').substring(0, 400)}..."</p>
+                </div>
+                ` : ''}
+            </div>
+        `);
+        
+        modal.style("display", "flex");
+        setTimeout(() => modal.classed("visible", true), 10);
+    }
+    
+    function hideMovieModal() {
+        const modal = d3.select("#movie-detail-modal");
+        modal.classed("visible", false);
+        setTimeout(() => modal.style("display", "none"), 300);
     }
 
     function updateRecommendations(rows) {
@@ -506,31 +600,39 @@
 
         const matchList = resultsContainer.append("div")
             .style("display", "grid")
-            .style("grid-template-columns", "repeat(auto-fit, minmax(200px, 1fr))")
-            .style("gap", "12px");
+            .style("grid-template-columns", "repeat(auto-fill, minmax(180px, 1fr))")
+            .style("gap", "16px");
 
         matches.forEach((match, idx) => {
             const filmName = match.film.replace(/_Unknown$/, "").replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+            const movieData = findMovieByRadarTitle(match.film);
+            
             const matchCard = matchList.append("div")
                 .attr("class", "recommendation-card")
-                .style("padding", "12px 16px")
-                .style("background", "rgba(0, 0, 0, 0.4)")
+                .style("padding", "0")
+                .style("background", "rgba(0, 0, 0, 0.5)")
                 .style("border", "1px solid rgba(57, 255, 20, 0.3)")
                 .style("border-radius", "8px")
                 .style("cursor", "pointer")
                 .style("transition", "all 0.3s ease")
+                .style("overflow", "hidden")
                 .on("click", function() {
-                    const filmSelect = document.getElementById("radar-film-select");
-                    if (filmSelect) {
-                        filmSelect.value = match.film;
-                        filmSelect.dispatchEvent(new Event("change"));
+                    if (movieData) {
+                        showMovieModal(movieData);
+                    } else {
+                        
+                        const filmSelect = document.getElementById("radar-film-select");
+                        if (filmSelect) {
+                            filmSelect.value = match.film;
+                            filmSelect.dispatchEvent(new Event("change"));
+                        }
                     }
                 })
                 .on("mouseover", function() {
                     d3.select(this)
                         .style("border-color", "#39ff14")
-                        .style("box-shadow", "0 0 12px rgba(57, 255, 20, 0.4)")
-                        .style("transform", "translateY(-2px)");
+                        .style("box-shadow", "0 0 15px rgba(57, 255, 20, 0.5)")
+                        .style("transform", "translateY(-3px)");
                 })
                 .on("mouseout", function() {
                     d3.select(this)
@@ -539,23 +641,90 @@
                         .style("transform", "translateY(0)");
                 });
 
-            matchCard.append("div")
+            
+            if (movieData && movieData.Poster) {
+                const posterContainer = matchCard.append("div")
+                    .style("width", "100%")
+                    .style("height", "260px")
+                    .style("overflow", "hidden")
+                    .style("background", "rgba(10, 0, 0, 0.8)");
+                
+                posterContainer.append("img")
+                    .attr("src", movieData.Poster)
+                    .attr("alt", movieData.Title || filmName)
+                    .style("width", "100%")
+                    .style("height", "100%")
+                    .style("object-fit", "cover")
+                    .on("error", function() {
+                        d3.select(this).remove();
+                        posterContainer.append("div")
+                            .style("display", "flex")
+                            .style("align-items", "center")
+                            .style("justify-content", "center")
+                            .style("height", "100%")
+                            .style("color", "#39ff14")
+                            .style("font-family", "'Special Elite', monospace")
+                            .style("font-size", "12px")
+                            .style("text-align", "center")
+                            .style("padding", "10px")
+                            .text(filmName);
+                    });
+            } else {
+                
+                matchCard.append("div")
+                    .style("width", "100%")
+                    .style("height", "260px")
+                    .style("display", "flex")
+                    .style("align-items", "center")
+                    .style("justify-content", "center")
+                    .style("background", "rgba(10, 0, 0, 0.8)")
+                    .style("color", "#39ff14")
+                    .style("font-family", "'Special Elite', monospace")
+                    .style("font-size", "12px")
+                    .style("text-align", "center")
+                    .style("padding", "10px")
+                    .text(filmName);
+            }
+
+            
+            const infoSection = matchCard.append("div")
+                .style("padding", "12px");
+
+            infoSection.append("div")
                 .style("font-family", "'Special Elite', monospace")
                 .style("color", "#39ff14")
                 .style("font-weight", "700")
                 .style("font-size", "13px")
-                .style("margin-bottom", "4px")
-                .text(filmName);
+                .style("margin-bottom", "6px")
+                .style("line-height", "1.3")
+                .text(movieData ? (movieData.Title || filmName) : filmName);
 
-            matchCard.append("div")
+            
+            if (movieData && movieData.Rating) {
+                infoSection.append("div")
+                    .style("font-family", "'Special Elite', monospace")
+                    .style("color", "#ffdd55")
+                    .style("font-size", "11px")
+                    .style("margin-bottom", "4px")
+                    .text(`⭐ ${movieData.Rating}`);
+            }
+
+            infoSection.append("div")
                 .style("font-family", "'Special Elite', monospace")
                 .style("color", "#b0ffb0")
-                .style("font-size", "11px")
+                .style("font-size", "10px")
                 .text(`Match: ${(match.similarity * 100).toFixed(0)}%`);
         });
     }
 
     function init() {
+        console.log("🎯 Radar Balance Viz initializing...");
+        const container = d3.select(RADAR_SEL);
+        if (container.empty()) {
+            console.error("❌ Radar container not found:", RADAR_SEL);
+            return;
+        }
+        
         Promise.all([
             d3.csv(CSV_URL, d3.autoType),
             d3.csv(IMDB_CSV_URL, d3.autoType).catch(err => {
@@ -564,15 +733,26 @@
             })
         ]).then(([raw, imdbRaw]) => {
             if (!raw || !raw.length) {
-                console.error("No data loaded");
+                console.error("❌ No radar data loaded");
+                container.append("div")
+                    .attr("class", "error")
+                    .style("color", "#ff224e")
+                    .style("font-family", "'Special Elite', monospace")
+                    .style("padding", "2rem")
+                    .text("⚠ No data loaded. Check console for details.");
                 return;
             }
+            console.log("✅ Radar data loaded:", raw.length, "rows");
 
-            // Build IMDB rating lookup
+            
             if (imdbRaw && imdbRaw.length) {
                 imdbRatings = buildImdbRatingMap(imdbRaw);
+                movieGalleryData = imdbRaw;
+                movieDataMap = buildMovieDataMap(imdbRaw);
             } else {
                 imdbRatings = new Map();
+                movieGalleryData = [];
+                movieDataMap = new Map();
             }
 
             const { films, rows } = processHorrorSignals(raw);
@@ -599,7 +779,7 @@
                 drawRadar(RADAR_SEL, rows, this.value);
             });
 
-            // Initialize recommendation system
+            
             initRecommendationSystem(rows);
         }).catch(err => {
             console.error("Radar load error", err);

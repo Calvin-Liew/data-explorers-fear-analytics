@@ -665,10 +665,44 @@ function createSpikesViz(
       .attr("y", height + 50)
       .attr("x", Math.random() * width)
       .style("opacity", 0)
-      .remove();
+      .on("end", function() {
+        ghostCount--;
+        d3.select(this).remove();
+      });
   }
 
-  d3.interval(createGhost, 5500);
+  
+  let ghostInterval = null;
+  let ghostCount = 0;
+  const MAX_GHOSTS = 2; 
+  
+  function startGhostAnimation() {
+    if (ghostInterval) return; 
+    ghostInterval = d3.interval(() => {
+      if (ghostCount < MAX_GHOSTS) {
+        createGhost();
+        ghostCount++;
+        setTimeout(() => ghostCount--, 12000); 
+      }
+    }, 8000); 
+  }
+  
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        startGhostAnimation();
+      } else if (ghostInterval) {
+        ghostInterval.stop();
+        ghostInterval = null;
+        ghostCount = 0;
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  if (containerNode) {
+    observer.observe(containerNode);
+  }
 
   function pulseWarning(selection) {
     selection.each(function repeat() {
@@ -685,10 +719,17 @@ function createSpikesViz(
     });
   }
 
+  
+  let fireflyCount = 0;
+  const MAX_FIREFLIES = 3; 
+  
   function spawnFirefly() {
+    if (fireflyCount >= MAX_FIREFLIES) return; 
     if (activeFilms.slice(0, MAX_ACTIVE_FILMS).length > 20) {
       return;
     }
+    
+    fireflyCount++;
     const startX = 20 + Math.random() * (totalWidth - 40);
     const startY = totalHeight - 30;
     const driftX = startX + (Math.random() * 60 - 30);
@@ -711,7 +752,10 @@ function createSpikesViz(
       .attr("cx", driftX)
       .attr("cy", endY)
       .style("opacity", 0)
-      .remove();
+      .on("end", function() {
+        fireflyCount--;
+        d3.select(this).remove();
+      });
   }
 
   function toggleNightMode(enabled) {
@@ -734,12 +778,15 @@ function createSpikesViz(
     fireflyLayer.selectAll("*").remove();
 
     if (enabled) {
-      for (let i = 0; i < 4; i += 1) {
-        setTimeout(spawnFirefly, i * 250);
+      fireflyCount = 0; 
+      for (let i = 0; i < 2; i += 1) { 
+        setTimeout(spawnFirefly, i * 500); 
       }
       nightFireflyTimer = setInterval(() => {
-        spawnFirefly();
-      }, 1400);
+        if (fireflyCount < MAX_FIREFLIES) {
+          spawnFirefly();
+        }
+      }, 3000); 
     }
   }
 

@@ -60,15 +60,40 @@ function createSankeyViz(selector, effectivenessData) {
       .ease(d3.easeQuadIn)
       .attr("cy", y + 50)
       .style("opacity", 0)
-      .remove();
+      .on("end", function() {
+        dripCount--;
+        d3.select(this).remove();
+      });
   }
 
   
-  setInterval(() => {
-    if (Math.random() > 0.7) {
-      createBloodDrip(Math.random() * width, Math.random() * 50);
-    }
-  }, 500);
+  
+  let dripCount = 0;
+  const MAX_DRIPS = 2;
+  let dripInterval = null;
+  
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !dripInterval) {
+        dripInterval = setInterval(() => {
+          if (dripCount < MAX_DRIPS && Math.random() > 0.85) { 
+            createBloodDrip(Math.random() * width, Math.random() * 50);
+            dripCount++;
+            setTimeout(() => dripCount--, 2000); 
+          }
+        }, 2000); 
+      } else if (!entry.isIntersecting && dripInterval) {
+        clearInterval(dripInterval);
+        dripInterval = null;
+        dripCount = 0;
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  if (containerNode) {
+    observer.observe(containerNode);
+  }
 
   function update(threshold = currentThreshold) {
     currentThreshold = threshold;
@@ -288,7 +313,7 @@ function createSankeyViz(selector, effectivenessData) {
     }
 
     
-    setInterval(animateBloodParticles, 800);
+    setInterval(animateBloodParticles, 1500);
 
     
     const node = svg
