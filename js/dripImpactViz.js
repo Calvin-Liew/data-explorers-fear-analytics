@@ -420,36 +420,56 @@
             .duration(400)
             .attr("opacity", 1);
 
-        // Value markers for top signals (static)
-        data.filter(d => topSignals.has(d.signal)).slice(0, 5).forEach((d, idx) => {
-            const i = data.indexOf(d);
-            if (i === -1) return;
+        // Value markers for all signals - show labels for all points
+        data.forEach((d, idx) => {
+            const i = idx;
+            const isTop = topSignals.has(d.signal);
+            const yPos = yBase + yScale(d.impact);
+            
+            // Position label above the point, with extra space for visibility
+            const labelY = yPos - 15;
             
             const marker = g.append("g")
                 .attr("class", "impact-marker")
-                .attr("transform", `translate(${x(i)}, ${yBase + yScale(d.impact) - 15})`)
+                .attr("transform", `translate(${x(i)}, ${labelY})`)
                 .attr("opacity", 0);
             
-            marker.append("circle")
-                .attr("r", 4)
-                .attr("fill", "#ff1f6b")
-                .style("filter", "drop-shadow(0 0 6px rgba(255, 31, 107, 0.9))");
+            // Only show circle for top signals to reduce clutter
+            if (isTop) {
+                marker.append("circle")
+                    .attr("r", 4)
+                    .attr("fill", "#ff1f6b")
+                    .style("filter", "drop-shadow(0 0 6px rgba(255, 31, 107, 0.9))");
+            }
+            
+            // Add background rectangle for better visibility
+            const textBg = marker.append("rect")
+                .attr("x", -18)
+                .attr("y", -8)
+                .attr("width", 36)
+                .attr("height", 12)
+                .attr("fill", isTop ? "rgba(139, 0, 0, 0.85)" : "rgba(0, 0, 0, 0.7)")
+                .attr("rx", 2)
+                .style("filter", "drop-shadow(0 0 4px rgba(255, 31, 107, 0.4))");
             
             marker.append("text")
-                .attr("y", -10)
+                .attr("y", 0)
                 .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
                 .style("font-family", "'Special Elite', monospace")
-                .style("font-size", "10px")
-                .style("fill", "#8b0000")
-                .style("font-weight", "700")
-                .style("stroke", "#ffffff")
-                .style("stroke-width", "0.5px")
+                .style("font-size", isTop ? "10px" : "9px")
+                .style("fill", isTop ? "#ffffff" : "#ff1f6b")
+                .style("font-weight", isTop ? "700" : "500")
+                .style("stroke", isTop ? "#8b0000" : "#000000")
+                .style("stroke-width", isTop ? "0.5px" : "0.3px")
                 .style("paint-order", "stroke fill")
-                .style("text-shadow", "0 0 4px rgba(255, 255, 255, 0.8), 0 0 2px rgba(0, 0, 0, 0.9)")
+                .style("text-shadow", isTop 
+                    ? "0 0 4px rgba(255, 255, 255, 0.8), 0 0 2px rgba(0, 0, 0, 0.9)"
+                    : "0 0 3px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 31, 107, 0.6)")
                 .text(d.impact.toFixed(2));
             
             marker.transition()
-                .delay(1000 + idx * 100)
+                .delay(1000 + idx * 15)
                 .duration(600)
                 .attr("opacity", 1);
         });

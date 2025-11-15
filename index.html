@@ -14,7 +14,8 @@
     <!-- Scroll Progress Bar -->
     <div id="heartbeat-container" class="scroll-progress-bar">
       <svg id="heartbeat-svg"></svg>
-    </div>    <section id="intro">
+    </div>
+    <section id="intro">
       <div class="intro-content">
         <div class="hero-questions" aria-label="Quick questions">
           <button class="blood-bubble" data-target="#section-signals">
@@ -26,8 +27,20 @@
           <button class="blood-bubble" data-target="#section-peaks">
             Where do terror spikes hit?
           </button>
+          <button class="blood-bubble" data-target="#section-state-machine">
+            How does horror transition between fear states?
+          </button>
           <button class="blood-bubble" data-target="#section-effectiveness">
             Which signal hits hardest?
+          </button>
+          <button class="blood-bubble" data-target="#section-drips">
+            Which signals have the most impact?
+          </button>
+          <button class="blood-bubble" data-target="#section-balance">
+            What's each film's horror recipe?
+          </button>
+          <button class="blood-bubble" data-target="#section-movie-gallery">
+            Explore the horror archives?
           </button>
         </div>
         <h1 class="title">The Anatomy of Fear</h1>
@@ -200,43 +213,6 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
         </div>
       </div>
     </section>
-    <section id="section-movie-gallery" class="viz-section">
-      <div class="section-header">
-        <h3 class="section-chapter">Final Act — The Horror Archives</h3>
-        <h2 class="section-title">Film Dossiers</h2>
-        <p class="section-description">
-          Use the filters to discover your next nightmare or scroll through the archives. Hover over a poster to see it come alive, and click to open a detailed dossier.
-        </p>
-      </div>
-      <!-- The section-content is now rebuilt for filters and horizontal scrolling -->
-      <div class="section-content">
-        <!-- 1. Filter Controls -->
-        <div class="gallery-controls">
-          <div class="filter-group">
-            <label for="genre-filter">Genre:</label>
-            <select id="genre-filter" class="spooky-select"></select>
-          </div>
-          <div class="filter-group">
-            <label for="decade-filter">Decade:</label>
-            <select id="decade-filter" class="spooky-select"></select>
-          </div>
-          <div class="filter-group">
-              <label for="rating-filter">Min. Rating:</label>
-              <select id="rating-filter" class="spooky-select"></select>
-          </div>
-          <button id="reset-filters" class="spooky-button">Reset</button>
-        </div>
-
-        <!-- 2. Scrollable Gallery Wrapper -->
-        <div class="gallery-wrapper">
-          <button class="scroll-arrow left" id="scroll-left">‹</button>
-          <div id="viz-movie-gallery" class="visualization-gallery-horizontal">
-            <!-- Movie posters will be loaded here by D3 -->
-          </div>
-          <button class="scroll-arrow right" id="scroll-right">›</button>
-        </div>
-      </div>
-    </section>
 
     <main id="viz-container">
       <section class="viz-section" id="section-signals">
@@ -282,41 +258,54 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
             "
           >
             <h3
-              style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 16px;"
+              style="
+                text-align: center;
+                font-family: 'Nosifer', cursive;
+                font-size: 22px;
+                margin-bottom: 16px;
+              "
             >
               Read the Flow
             </h3>
             <div
-              style="max-width: 860px; margin: 0 auto; font-size: 14px; line-height: 1.6;"
+              style="
+                max-width: 860px;
+                margin: 0 auto;
+                font-size: 14px;
+                line-height: 1.6;
+              "
             >
               <p>
-                The Sankey shows how often key terror cues appear and how strongly
-                they hit. The thicker the stream, the more frequently that signal
-                surfaces; the brighter the node, the more it jolts fear and
-                tension in the scenes it touches. On the left you will see broad
-                signal families such as the void, the violence, and the scream
-                (with the unknown appearing only when a term does not fit the main
-                trio), and on the right you will see the individual words those
-                families summon.
+                The Sankey shows how often key terror cues appear and how
+                strongly they hit. The thicker the stream, the more frequently
+                that signal surfaces; the brighter the node, the more it jolts
+                fear and tension in the scenes it touches. On the left you will
+                see broad signal families such as the void, the violence, and
+                the scream (with the unknown appearing only when a term does not
+                fit the main trio), and on the right you will see the individual
+                words those families summon.
               </p>
               <p>
-                Adjust the threshold to filter out the background noise. You will
-                see common ambience like <strong>night</strong> give way to
+                Adjust the threshold to filter out the background noise. You
+                will see common ambience like <strong>night</strong> give way to
                 visceral triggers such as <strong>scream</strong>, revealing why
                 audiences remember certain beats long after the credits roll.
-                Watching how each family splits across the right bank shows which
-                ingredients feed the shocks and how often those shocks actually
-                land. For example, the ribbon feeding <strong>blood</strong> pours
-                out of the violence family and stays thick from end to end,
-                signalling that gore is both a recurring presence and a reliable
-                trigger for fear across the scripts.
+                Watching how each family splits across the right bank shows
+                which ingredients feed the shocks and how often those shocks
+                actually land. For example, the ribbon feeding
+                <strong>blood</strong> pours out of the violence family and
+                stays thick from end to end, signalling that gore is both a
+                recurring presence and a reliable trigger for fear across the
+                scripts.
               </p>
               <p>
-                Main lesson: the most effective horror signals cluster into distinct families—atmospheric
-                void, visceral violence, and piercing audio cues. When a signal like <strong>blood</strong>
-                maintains a thick stream across the entire flow, it signals both high frequency and
-                consistent impact. The strongest horror blends these families rather than relying on
-                a single type, creating layered scares that hit multiple senses at once.
+                Main lesson: the most effective horror signals cluster into
+                distinct families—atmospheric void, visceral violence, and
+                piercing audio cues. When a signal like <strong>blood</strong>
+                maintains a thick stream across the entire flow, it signals both
+                high frequency and consistent impact. The strongest horror
+                blends these families rather than relying on a single type,
+                creating layered scares that hit multiple senses at once.
               </p>
             </div>
           </div>
@@ -328,7 +317,15 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           <h3 class="section-chapter">Scene 2 — Vital Signs Rising</h3>
           <h2 class="section-title">Heartbeat of Terror Monitor</h2>
           <p class="section-description">
-            This monitor tracks fear intensity across each film's runtime, plotting scene by scene progression on the x-axis and fear scores from 0 to 1 on the y-axis. The neon line traces the emotional journey, skull markers highlight moments breaking the 0.70 threshold, and the BPM readout converts average fear into a pulse rate so you can feel the dread build in real time. Start with the average across all 129 scripts, then select individual films from the dropdown to compare different pacing strategies and see how patient builds prime audiences for final rushes.
+            This monitor tracks fear intensity across each film's runtime,
+            plotting scene by scene progression on the x-axis and fear scores
+            from 0 to 1 on the y-axis. The neon line traces the emotional
+            journey, skull markers highlight moments breaking the 0.70
+            threshold, and the BPM readout converts average fear into a pulse
+            rate so you can feel the dread build in real time. Start with the
+            average across all 129 scripts, then select individual films from
+            the dropdown to compare different pacing strategies and see how
+            patient builds prime audiences for final rushes.
           </p>
         </div>
         <div class="section-content" style="flex-direction: column">
@@ -411,88 +408,107 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
             "
           >
             <h3
-              style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 16px;"
+              style="
+                text-align: center;
+                font-family: 'Nosifer', cursive;
+                font-size: 22px;
+                margin-bottom: 16px;
+              "
             >
               Spot the Spikes
             </h3>
             <div
-              style="max-width: 860px; margin: 0 auto; font-size: 14px; line-height: 1.6;"
+              style="
+                max-width: 860px;
+                margin: 0 auto;
+                font-size: 14px;
+                line-height: 1.6;
+              "
             >
               <p>
                 Fear spikes plant a tombstone the moment the score crosses
-                <strong>0.40</strong>. Tension spikes at the same scene light up a
-                lantern so you can see where suspense and shock overlap without
-                guesswork.
+                <strong>0.40</strong>. Tension spikes at the same scene light up
+                a lantern so you can see where suspense and shock overlap
+                without guesswork.
               </p>
               <p>
                 When both icons appear together—like in the finale of
-                <em>Halloween</em>—the story is layering a jump scare on top of a
-                slow build. Click any marker to open a quick sparkline that shows
-                fear and tension before and after that moment.
+                <em>Halloween</em>—the story is layering a jump scare on top of
+                a slow build. Click any marker to open a quick sparkline that
+                shows fear and tension before and after that moment.
               </p>
               <p>
-                Main lesson: the most memorable shock sequences pair a sharp fear rise with elevated
-                tension in surrounding scenes. If spikes stand alone with flat tension, the scare fades
-                fast; when tension climbs before and after, the audience stays rattled far longer.
+                Main lesson: the most memorable shock sequences pair a sharp
+                fear rise with elevated tension in surrounding scenes. If spikes
+                stand alone with flat tension, the scare fades fast; when
+                tension climbs before and after, the audience stays rattled far
+                longer.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-        <!-- Scene 4 — Fear State Machine -->
-        <section class="viz-section" id="section-state-machine">
-            <div class="section-header">
-                <h3 class="section-chapter">Scene 4 — Fear State Machine</h3>
-                <h2 class="section-title">How Horror Climbs the Fear Ladder</h2>
-                <p class="section-description">
-                    Instead of tracking raw fear scores, this scene looks at how films move between three coarse
-                    fear bands: calm, unease, and panic. Each cell shows how likely the next scene is to land in a
-                    given band, given where we are now, revealing whether horror prefers slow climbs, sudden jumps,
-                    or stretches of sustained terror.
-                </p>
-            </div>
-            <div class="section-content">
-                <div class="viz-wrapper stacked" style="width: 100%">
-                    <div
-                            id="viz-state-machine"
-                            class="visualization-medium"
-                            style="width: 100%; min-height: 360px;"
-                    ></div>
-                </div>
-                <div
-                        class="insight-panel"
-                        style="
+      <!-- Scene 4 — Fear State Machine -->
+      <section class="viz-section" id="section-state-machine">
+        <div class="section-header">
+          <h3 class="section-chapter">Scene 4 — Fear State Machine</h3>
+          <h2 class="section-title">How Horror Climbs the Fear Ladder</h2>
+          <p class="section-description">
+            Instead of tracking raw fear scores, this scene looks at how films
+            move between three coarse fear bands: calm, unease, and panic. Each
+            cell shows how likely the next scene is to land in a given band,
+            given where we are now, revealing whether horror prefers slow
+            climbs, sudden jumps, or stretches of sustained terror.
+          </p>
+        </div>
+        <div class="section-content">
+          <div class="viz-wrapper stacked" style="width: 100%">
+            <div
+              id="viz-state-machine"
+              class="visualization-medium"
+              style="width: 100%; min-height: 360px"
+            ></div>
+          </div>
+          <div
+            class="insight-panel"
+            style="
               width: 100%;
               margin-top: 24px;
               border-radius: 16px;
-              background: radial-gradient(circle at top, rgba(14, 46, 68, 0.95), rgba(2, 5, 12, 0.98));
+              background: radial-gradient(
+                circle at top,
+                rgba(14, 46, 68, 0.95),
+                rgba(2, 5, 12, 0.98)
+              );
               border: 1px solid rgba(155, 214, 255, 0.45);
               box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
             "
-                >
-                    <h3>Reading the Fear Grammar</h3>
-                    <p>
-                        The diagonal tells you how often films hold a mood; off-diagonal cells show how they climb
-                        or drop between states. Strong Calm→Unease and Unease→Panic flows point to a careful ramp-up,
-                        while rare Calm→Panic jumps mark pure ambush moments. Once stories reach Panic, many stay in
-                        the red zone for a while, giving viewers only short chances to breathe.
-                    </p>
-                </div>
-            </div>
-        </section>
+          >
+            <h3>Reading the Fear Grammar</h3>
+            <p>
+              The diagonal tells you how often films hold a mood; off-diagonal
+              cells show how they climb or drop between states. Strong
+              Calm→Unease and Unease→Panic flows point to a careful ramp-up,
+              while rare Calm→Panic jumps mark pure ambush moments. Once stories
+              reach Panic, many stay in the red zone for a while, giving viewers
+              only short chances to breathe.
+            </p>
+          </div>
+        </div>
+      </section>
 
-
-        <section class="viz-section" id="section-effectiveness">
+      <section class="viz-section" id="section-effectiveness">
         <div class="section-header">
           <h3 class="section-chapter">Scene 5 — Signal Autopsy</h3>
           <h2 class="section-title">The Power of Horror Signals</h2>
           <p class="section-description">
-            This signal lab charts our fiercest horror cues inside a fear versus tension grid.
-            Placement shows how much extra fear and tension each term adds versus scenes that
-            never utter it, bubble size mirrors how often it appears, and color exposes whether
-            the cue leans jump scare shock or slow burn dread. Recast the axes with the dropdown,
-            then hover or click to open a dossier pop-up with the full story.
+            This signal lab charts our fiercest horror cues inside a fear versus
+            tension grid. Placement shows how much extra fear and tension each
+            term adds versus scenes that never utter it, bubble size mirrors how
+            often it appears, and color exposes whether the cue leans jump scare
+            shock or slow burn dread. Recast the axes with the dropdown, then
+            hover or click to open a dossier pop-up with the full story.
           </p>
         </div>
         <div class="section-content">
@@ -571,18 +587,27 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
             >
               <div
                 id="signal-lab-title"
-                style="font-weight: 700; margin-bottom: 6px; letter-spacing: 0.18em; text-transform: uppercase;"
+                style="
+                  font-weight: 700;
+                  margin-bottom: 6px;
+                  letter-spacing: 0.18em;
+                  text-transform: uppercase;
+                "
               >
                 📡 Signal Lab Field Notes
               </div>
               <p style="margin: 4px 0 10px; line-height: 1.4">
-                Hover to reveal crosshairs and quick stats, then click a bubble to launch a dossier
-                pop-up with the full breakdown. Use the view selector to see the swarm through
-                different lenses.
+                Hover to reveal crosshairs and quick stats, then click a bubble
+                to launch a dossier pop-up with the full breakdown. Use the view
+                selector to see the swarm through different lenses.
               </p>
             </div>
 
-            <div id="viz-effectiveness" class="visualization-large" style="width: 100%"></div>
+            <div
+              id="viz-effectiveness"
+              class="visualization-large"
+              style="width: 100%"
+            ></div>
           </div>
           <div
             class="scene4-insight-full scream-theme"
@@ -598,27 +623,44 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               color: #ffe9ff;
             "
           >
-            <h3 style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 16px;">
+            <h3
+              style="
+                text-align: center;
+                font-family: 'Nosifer', cursive;
+                font-size: 22px;
+                margin-bottom: 16px;
+              "
+            >
               Decode the Signals
             </h3>
-            <div style="max-width: 860px; margin: 0 auto; font-size: 14px; line-height: 1.6;">
+            <div
+              style="
+                max-width: 860px;
+                margin: 0 auto;
+                font-size: 14px;
+                line-height: 1.6;
+              "
+            >
               <p>
-                Each bubble marks a cue from the lexicon. Crosshairs reveal its precise score,
-                while the dossier pop-up breaks down frequency, impact deltas, and whether it
-                leans toward shock or lingering unease. Use the dropdown to see the swarm through
-                different lenses.
+                Each bubble marks a cue from the lexicon. Crosshairs reveal its
+                precise score, while the dossier pop-up breaks down frequency,
+                impact deltas, and whether it leans toward shock or lingering
+                unease. Use the dropdown to see the swarm through different
+                lenses.
               </p>
               <p>
-                Notice how atmospheric staples like <strong>night</strong> claim the right edge
-                for coverage, while <strong>scream</strong> and <strong>blood</strong> blaze in
-                the fear heavy quadrant. Signals hugging the diagonal are balanced weapons, perfect
-                when you need fear and tension to climb together.
+                Notice how atmospheric staples like <strong>night</strong> claim
+                the right edge for coverage, while <strong>scream</strong> and
+                <strong>blood</strong> blaze in the fear heavy quadrant. Signals
+                hugging the diagonal are balanced weapons, perfect when you need
+                fear and tension to climb together.
               </p>
               <p>
-                <strong>Main lesson:</strong> the heaviest hitters pair widespread ambience with select
-                spikes. Use familiar mood setters to keep tension elevated, then drop focused shock triggers
-                to punch fear upward—the combination drives the biggest overall lift without overusing any
-                single cue.
+                <strong>Main lesson:</strong> the heaviest hitters pair
+                widespread ambience with select spikes. Use familiar mood
+                setters to keep tension elevated, then drop focused shock
+                triggers to punch fear upward—the combination drives the biggest
+                overall lift without overusing any single cue.
               </p>
             </div>
           </div>
@@ -637,7 +679,7 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           </p>
         </div>
         <div class="section-content">
-          <div class="viz-wrapper stacked" style="width: 100%;">
+          <div class="viz-wrapper stacked" style="width: 100%">
             <div class="controls">
               <label for="drip-sort">Sort by:</label>
               <select id="drip-sort">
@@ -645,7 +687,11 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
                 <option value="name">Name (A–Z)</option>
               </select>
             </div>
-            <div id="viz-drip" class="viz" style="width: 100%; min-height: 500px;"></div>
+            <div
+              id="viz-drip"
+              class="viz"
+              style="width: 100%; min-height: 500px"
+            ></div>
           </div>
           <div
             class="scene5-drip-insight-full drip-theme"
@@ -661,15 +707,56 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               color: #ffe5e5;
             "
           >
-            <h3 style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 16px; color: #ff1f6b; text-shadow: 0 0 12px rgba(255, 31, 107, 0.8), 0 0 6px rgba(255, 31, 107, 0.6);">
+            <h3
+              style="
+                text-align: center;
+                font-family: 'Nosifer', cursive;
+                font-size: 22px;
+                margin-bottom: 16px;
+                color: #ff1f6b;
+                text-shadow: 0 0 12px rgba(255, 31, 107, 0.8),
+                  0 0 6px rgba(255, 31, 107, 0.6);
+              "
+            >
               Read the Ranking
             </h3>
-            <div style="max-width: 860px; margin: 0 auto; font-size: 14px; line-height: 1.6;">
+            <div
+              style="
+                max-width: 860px;
+                margin: 0 auto;
+                font-size: 14px;
+                line-height: 1.6;
+              "
+            >
               <p>
-                This strip uses impact scores from our effectiveness dataset. We sort the signals by your selection, trace a smooth ribbon through their impact values, and hang stylized drips to show how quickly the influence trails off after the heavy hitters.
+                This strip uses impact scores from our effectiveness dataset. We
+                sort the signals by your selection, trace a smooth ribbon
+                through their impact values, and hang stylized drips to show how
+                quickly the influence trails off after the heavy hitters.
               </p>
               <p>
-                Choose A–Z to compare lexicon coverage or stick with impact to see the steep drop from elite signals (anything above <strong style="color: #ff1f6b;">0.50</strong>) to background atmosphere. Hover over any signal to see its detailed impact score. The visualization complements the bubble chart by emphasizing order and falloff instead of spatial clustering.
+                Choose A–Z to compare lexicon coverage or stick with impact to
+                see the steep drop from elite signals (anything above
+                <strong style="color: #ff1f6b">0.50</strong>) to background
+                atmosphere. Hover over any signal to see its detailed impact
+                score. The visualization complements the bubble chart by
+                emphasizing order and falloff instead of spatial clustering.
+              </p>
+              <p>
+                <strong>Main lesson:</strong> the impact distribution reveals a
+                power law where a small elite of signals (typically 5 to 10
+                terms) drive the majority of fear and tension, while the long
+                tail of atmospheric cues provides essential context but minimal
+                direct impact. This ranking shows why horror relies on strategic
+                repetition of proven triggers rather than scattering dozens of
+                weak signals. The steep falloff after the top performers
+                demonstrates that quality beats quantity: a few well placed
+                <strong style="color: #ff1f6b">scream</strong> or
+                <strong style="color: #ff1f6b">blood</strong> moments outperform
+                hundreds of generic <em>night</em> or <em>dark</em> references.
+                Effective horror scripts identify their elite signals and deploy
+                them at key moments, using the background lexicon to maintain
+                atmosphere without diluting the impact of the heavy hitters.
               </p>
             </div>
           </div>
@@ -689,12 +776,16 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
           </p>
         </div>
         <div class="section-content">
-          <div class="viz-wrapper stacked" style="width: 100%;">
+          <div class="viz-wrapper stacked" style="width: 100%">
             <div class="controls">
               <label for="radar-film-select">Film:</label>
               <select id="radar-film-select"></select>
             </div>
-            <div id="viz-radar" class="viz" style="width: 100%; min-height: 600px;"></div>
+            <div
+              id="viz-radar"
+              class="viz"
+              style="width: 100%; min-height: 600px"
+            ></div>
             <p class="section-note">
               We group raw signals into 6 families (Audio, Visual, Pace, Threat,
               Setting, Psyche) and show balance (0–1) per film.
@@ -715,11 +806,30 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               color: #e0ffe0;
             "
           >
-            <h3 style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 8px; color: #39ff14; text-shadow: 0 0 12px rgba(57, 255, 20, 0.8), 0 0 6px rgba(57, 255, 20, 0.6);">
+            <h3
+              style="
+                text-align: center;
+                font-family: 'Nosifer', cursive;
+                font-size: 22px;
+                margin-bottom: 8px;
+                color: #39ff14;
+                text-shadow: 0 0 12px rgba(57, 255, 20, 0.8),
+                  0 0 6px rgba(57, 255, 20, 0.6);
+              "
+            >
               🎯 Find Your Perfect Horror Match
             </h3>
-            <p style="text-align: center; font-size: 12px; color: #b0ffb0; margin-bottom: 24px; opacity: 0.9;">
-              Adjust the sliders to set your horror preferences. We'll recommend films that match your taste.
+            <p
+              style="
+                text-align: center;
+                font-size: 12px;
+                color: #b0ffb0;
+                margin-bottom: 24px;
+                opacity: 0.9;
+              "
+            >
+              Adjust the sliders to set your horror preferences. We'll recommend
+              films that match your taste.
             </p>
           </div>
           <div
@@ -736,20 +846,94 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
               color: #e0ffe0;
             "
           >
-            <h3 style="text-align: center; font-family: 'Nosifer', cursive; font-size: 22px; margin-bottom: 16px; color: #39ff14; text-shadow: 0 0 12px rgba(57, 255, 20, 0.8), 0 0 6px rgba(57, 255, 20, 0.6);">
+            <h3
+              style="
+                text-align: center;
+                font-family: 'Nosifer', cursive;
+                font-size: 22px;
+                margin-bottom: 16px;
+                color: #39ff14;
+                text-shadow: 0 0 12px rgba(57, 255, 20, 0.8),
+                  0 0 6px rgba(57, 255, 20, 0.6);
+              "
+            >
               Compare the Recipe
             </h3>
-            <div style="max-width: 860px; margin: 0 auto; font-size: 14px; line-height: 1.6;">
+            <div
+              style="
+                max-width: 860px;
+                margin: 0 auto;
+                font-size: 14px;
+                line-height: 1.6;
+              "
+            >
               <p>
-                We analyzed all horror signals from our AI dataset and grouped them into six sensory families: Audio, Visual, Pace, Threat, Setting, and Psyche. Each film's signals are counted and normalized, so a value of <strong style="color: #ff224e;">1.0</strong> means that family is the dominant ingredient in that film's horror recipe.
+                We analyzed all horror signals from our AI dataset and grouped
+                them into six sensory families: Audio, Visual, Pace, Threat,
+                Setting, and Psyche. Each film's signals are counted and
+                normalized, so a value of
+                <strong style="color: #ff224e">1.0</strong> means that family is
+                the dominant ingredient in that film's horror recipe.
               </p>
               <p>
-                Use the dropdown above to explore different films and see their unique horror fingerprints. Supernatural stories typically emphasize Psyche and Setting, creature features focus on Threat, and fast paced slashers highlight Pace. The radar chart makes these patterns visible at a glance.
+                Use the dropdown above to explore different films and see their
+                unique horror fingerprints. Supernatural stories typically
+                emphasize Psyche and Setting, creature features focus on Threat,
+                and fast paced slashers highlight Pace. The radar chart makes
+                these patterns visible at a glance.
               </p>
               <p>
-                Below, you can set your own horror preferences using the sliders. Adjust each scale to match your taste, and we'll recommend films that align with your preferences. The recommendation system looks for films with similar signal balances, not exact matches, so you'll discover movies that share your horror style.
+                Below, you can set your own horror preferences using the
+                sliders. Adjust each scale to match your taste, and we'll
+                recommend films that align with your preferences. The
+                recommendation system looks for films with similar signal
+                balances, not exact matches, so you'll discover movies that
+                share your horror style.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-movie-gallery" class="viz-section">
+        <div class="section-header">
+          <h3 class="section-chapter">Final Act — The Horror Archives</h3>
+          <h2 class="section-title">Film Dossiers</h2>
+          <p class="section-description">
+            Use the filters to discover your next nightmare or scroll through
+            the archives. Hover over a poster to see it come alive, and click to
+            open a detailed dossier.
+          </p>
+        </div>
+        <!-- The section-content is now rebuilt for filters and horizontal scrolling -->
+        <div class="section-content">
+          <!-- 1. Filter Controls -->
+          <div class="gallery-controls">
+            <div class="filter-group">
+              <label for="genre-filter">Genre:</label>
+              <select id="genre-filter" class="spooky-select"></select>
+            </div>
+            <div class="filter-group">
+              <label for="decade-filter">Decade:</label>
+              <select id="decade-filter" class="spooky-select"></select>
+            </div>
+            <div class="filter-group">
+              <label for="rating-filter">Min. Rating:</label>
+              <select id="rating-filter" class="spooky-select"></select>
+            </div>
+            <button id="reset-filters" class="spooky-button">Reset</button>
+          </div>
+
+          <!-- 2. Scrollable Gallery Wrapper -->
+          <div class="gallery-wrapper">
+            <button class="scroll-arrow left" id="scroll-left">‹</button>
+            <div
+              id="viz-movie-gallery"
+              class="visualization-gallery-horizontal"
+            >
+              <!-- Movie posters will be loaded here by D3 -->
+            </div>
+            <button class="scroll-arrow right" id="scroll-right">›</button>
           </div>
         </div>
       </section>
@@ -793,7 +977,6 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
       </section>
     </main>
 
-   
     <footer>
       <div class="footer-content">
         <h3>About This Project</h3>
@@ -819,8 +1002,8 @@ INT. ABANDONED ASYLUM - THIRD WARD - CONTINUOUS
     <script src="js/effectivenessViz.js"></script>
     <script src="js/radarBalanceViz.js"></script>
     <script src="js/dripImpactViz.js"></script>
-    <script src="js/movieGalleryViz.js"></script> 
-    <script src="js/heartbeatScroll.js"></script> 
+    <script src="js/movieGalleryViz.js"></script>
+    <script src="js/heartbeatScroll.js"></script>
 
     <script src="js/main.js"></script>
     <script src="js/scrollAnimations.js"></script>
