@@ -37,13 +37,23 @@
     document.querySelectorAll(".blood-bubble[data-target]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const target = btn.getAttribute("data-target");
-        const el = document.querySelector(target);
-        if (el) {
-          const headerOffset = 60;
-          const elementPosition = el.offsetTop;
-          const offsetPosition = elementPosition - headerOffset;
+        const section = document.querySelector(target);
+        if (section) {
+          // Try to find the section-header within the section first
+          const sectionHeader = section.querySelector(".section-header");
+          const targetElement = sectionHeader || section;
+
+          // Use getBoundingClientRect for more accurate positioning
+          const elementRect = targetElement.getBoundingClientRect();
+          const scrollTop =
+            window.pageYOffset || document.documentElement.scrollTop;
+
+          // Fixed header height (60px) + some visual spacing (20px)
+          const headerOffset = 80;
+          const offsetPosition = elementRect.top + scrollTop - headerOffset;
+
           window.scrollTo({
-            top: offsetPosition,
+            top: Math.max(0, offsetPosition),
             behavior: "smooth",
           });
         } else {
