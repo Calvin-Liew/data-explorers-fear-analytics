@@ -1,5 +1,3 @@
-console.log("⚡ spikesViz.js LOADED!");
-
 function createSpikesViz(
   selector,
   fearJourneyData,
@@ -9,19 +7,6 @@ function createSpikesViz(
 ) {
   "use strict";
 
-  console.log(
-    "⚡ Spikes init:",
-    selector,
-    "fear journey:",
-    fearJourneyData,
-    "tension journey:",
-    tensionJourneyData,
-    "fear raw:",
-    fearRawData,
-    "tension raw:",
-    tensionRawData
-  );
-
   const container = d3.select(selector);
   const containerNode = container.node();
 
@@ -29,8 +14,6 @@ function createSpikesViz(
     console.error("❌ Container not found:", selector);
     return;
   }
-
-  console.log("✅ Container found:", containerNode);
   const margin = { top: 60, right: 180, bottom: 80, left: 180 };
   const width = containerNode.clientWidth - margin.left - margin.right;
   const height = 600 - margin.top - margin.bottom;
@@ -111,7 +94,7 @@ function createSpikesViz(
     containerNode.parentElement &&
     containerNode.parentElement.querySelector(".viz-controls");
 
-  const MAX_ACTIVE_FILMS = 12;
+  const MAX_ACTIVE_FILMS = 5;
   let nightMode = false;
   const selectedMoments = [];
 
@@ -245,14 +228,14 @@ function createSpikesViz(
       .style("flex", "1")
       .text(
         (d) =>
-          `${d.film} — ${d.type === "fear" ? "Fear" : "Tension"} at ${d.position.toFixed(
+          `${d.film} - ${d.type === "fear" ? "Fear" : "Tension"} at ${d.position.toFixed(
             1
           )}%`
       );
 
     enter.merge(items).select(".trail-text").text(
       (d) =>
-        `${d.film} — ${d.type === "fear" ? "Fear" : "Tension"} at ${d.position.toFixed(
+        `${d.film} - ${d.type === "fear" ? "Fear" : "Tension"} at ${d.position.toFixed(
           1
         )}%`
     );
@@ -269,14 +252,14 @@ function createSpikesViz(
   const tensionRawKeyMap = buildRawKeyMap(tensionRawData || []);
 
   const curatedFilms = [
-    "Alien",
+    "Scream",
+    "Psycho",
+    "Halloween",
     "Friday the 13th",
     "Get Out",
-    "Halloween",
     "Jaws",
-    "Psycho",
     "Saw",
-    "Scream",
+    "Alien",
   ].filter(
     (film) =>
       fearSeriesByFilm.has(film) || tensionSeriesByFilm.has(film)
@@ -309,8 +292,8 @@ function createSpikesViz(
   }
 
   const defaultFilms = curatedFilms.length
-    ? curatedFilms.slice()
-    : Array.from(fearSeriesByFilm.keys()).slice(0, 8);
+    ? curatedFilms.slice(0, 5)
+    : Array.from(fearSeriesByFilm.keys()).slice(0, 5);
   let activeFilms = defaultFilms.slice();
   let highlightFilm = null;
   const allFilms = Array.from(new Set(fearSeriesByFilm.keys())).sort();
@@ -660,7 +643,7 @@ function createSpikesViz(
 
     ghost
       .transition()
-      .duration(8000 + Math.random() * 4000)
+      .duration(6000 + Math.random() * 2000)
       .ease(d3.easeLinear)
       .attr("y", height + 50)
       .attr("x", Math.random() * width)
@@ -674,7 +657,7 @@ function createSpikesViz(
   
   let ghostInterval = null;
   let ghostCount = 0;
-  const MAX_GHOSTS = 2; 
+  const MAX_GHOSTS = 1; 
   
   function startGhostAnimation() {
     if (ghostInterval) return; 
@@ -684,7 +667,7 @@ function createSpikesViz(
         ghostCount++;
         setTimeout(() => ghostCount--, 12000); 
       }
-    }, 8000); 
+    }, 15000); 
   }
   
   
@@ -721,7 +704,7 @@ function createSpikesViz(
 
   
   let fireflyCount = 0;
-  const MAX_FIREFLIES = 3; 
+  const MAX_FIREFLIES = 1; 
   
   function spawnFirefly() {
     if (fireflyCount >= MAX_FIREFLIES) return; 
@@ -977,7 +960,6 @@ function createSpikesViz(
 
     const renderFilms = activeFilms.slice(0, MAX_ACTIVE_FILMS);
     yScale.domain(renderFilms);
-    console.log("⚰️ Spikes active films:", renderFilms);
 
     const groundLines = g.selectAll(".ground-line").data(renderFilms, (d) => d);
 
@@ -1088,8 +1070,8 @@ function createSpikesViz(
 
           tombstone
             .transition()
-            .duration(1000)
-            .delay(i * 150)
+            .duration(600)
+            .delay(Math.min(i * 100, 500))
             .style("opacity", 1)
             .attr(
               "transform",
@@ -1178,7 +1160,7 @@ function createSpikesViz(
       }
 
       if (showTension && tensionPeaks.length) {
-        if (tensionPeaks.length > 1) {
+        if (tensionPeaks.length > 1 && tensionPeaks.length <= 20) {
           const ropeBaseY = yScale(film) + yScale.bandwidth() - 18;
           const ropeLine = d3
             .line()
@@ -1268,8 +1250,8 @@ function createSpikesViz(
 
           warningSign
             .transition()
-            .duration(1000)
-            .delay(i * 150 + 200)
+            .duration(600)
+            .delay(Math.min(i * 100 + 100, 600))
             .style("opacity", 0.85)
             .on("end", function () {
               d3.select(this).call(pulseWarning);
@@ -1325,7 +1307,7 @@ function createSpikesViz(
       }
     });
 
-    if (Math.random() > 0.5) {
+    if (Math.random() > 0.8) {
       const crow = g
         .append("text")
         .attr("x", -50)
@@ -1336,7 +1318,7 @@ function createSpikesViz(
 
       crow
         .transition()
-        .duration(5000)
+        .duration(4000)
         .ease(d3.easeLinear)
         .attr("x", width + 50)
         .style("opacity", 0)

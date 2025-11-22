@@ -1,5 +1,3 @@
-console.log("💀 effectivenessViz.js LOADED!");
-
 function createEffectivenessViz(selector, rawData) {
   "use strict";
 
@@ -441,7 +439,7 @@ function createEffectivenessViz(selector, rawData) {
     },
     balanced: {
       title: "Twin Threat",
-      copy: "Fear and tension climb together — a dependable signal for balanced, full-spectrum scares.",
+      copy: "Fear and tension climb together - a dependable signal for balanced, full-spectrum scares.",
     },
   };
 
@@ -495,7 +493,7 @@ function createEffectivenessViz(selector, rawData) {
       yTickFormat: ".2f",
       xDomain: [0, 1],
       yClamp: "zeroMin",
-      description: "Common cues hug the right edge — scan how prevalence compares to potency.",
+      description: "Common cues hug the right edge - scan how prevalence compares to potency.",
       showDiagonal: false,
     },
   };

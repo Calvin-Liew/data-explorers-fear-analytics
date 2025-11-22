@@ -1,4 +1,3 @@
-
 (function () {
     const VIZ_SEL = "#viz-rating-impact";
     const EFFECTIVENESS_URL = "data/cleaner_datasets/viz3_horror_effectiveness.csv";
@@ -967,7 +966,8 @@
                 .attr("r", d => d.radius)
                 .attr("fill", d => colorScale(d.data.avgFear))
                 .attr("opacity", 0.4)
-                .style("filter", "url(#star-glow)");
+                .style("filter", "url(#star-glow)")
+                .style("pointer-events", "none");
             
             
             starGroups.append("circle")
@@ -976,8 +976,11 @@
                 .attr("fill", "none")
                 .attr("stroke", d => colorScale(d.data.avgFear))
                 .attr("stroke-width", 1)
-                .attr("opacity", 0.6);
+                .attr("opacity", 0.6)
+                .style("pointer-events", "none");
             
+            
+            let currentlyHoveredCircle = null;
             
             const mainStar = starGroups.append("circle")
                 .attr("class", "main-star")
@@ -987,34 +990,46 @@
                 .attr("stroke-width", 2)
                 .style("filter", "url(#star-glow)")
                 .style("cursor", "pointer")
+                .style("pointer-events", "all")
                 .on("mouseover", function(event, d) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    
+                    // Store previous highlighted film before updating
+                    const prevHighlightedFilm = highlightedFilm;
+                    
+                    if (currentlyHoveredCircle && currentlyHoveredCircle !== this) {
+                        const prevData = d3.select(currentlyHoveredCircle).datum();
+                        const prevCircle = d3.select(currentlyHoveredCircle);
+                        
+                        // Check if the previous circle was clicked/selected (before we change highlightedFilm)
+                        const wasSelected = prevHighlightedFilm === prevData.data;
+                        
+                        // Reset previous circle to exact original size
+                        prevCircle
+                            .interrupt()
+                            .transition()
+                            .duration(200)
+                            .attr("r", sizeScale(prevData.data.rating))
+                            .attr("stroke-width", 2)
+                            .style("filter", "url(#star-glow)");
+                    }
+                    
+                    // Now update the current hovered circle
+                    currentlyHoveredCircle = this;
                     highlightedFilm = d.data;
                     
+                    // Bring this circle to front
+                    d3.select(this.parentNode).raise();
                     
+                    // Enlarge this circle
                     d3.select(this)
+                        .interrupt()
                         .transition()
                         .duration(200)
                         .attr("r", sizeScale(d.data.rating) * 1.5)
                         .attr("stroke-width", 3)
                         .style("filter", "url(#strong-glow)");
-                    
-                    
-                    
-                    
-                    g.selectAll(".star-group").each(function(d2) {
-                        if (d2 !== d) {
-                            const dist = Math.sqrt(
-                                Math.pow(d.x - d2.x, 2) +
-                                Math.pow(d.y - d2.y, 2)
-                            );
-                            if (dist < 100) {
-                                d3.select(this).select(".main-star")
-                                    .transition()
-                                    .duration(200)
-                                    .attr("opacity", 0.6);
-                            }
-                        }
-                    });
 
                     const tooltip = d3.select(".rating-tooltip");
                     tooltip.html(`
@@ -1077,26 +1092,9 @@
                     }
                 })
                 .on("mouseout", function(event, d) {
-                    if (highlightedFilm !== d.data) {
-                        d3.select(this)
-                            .transition()
-                            .duration(200)
-                            .attr("r", sizeScale(d.data.rating))
-                            .attr("stroke-width", 1.5)
-                            .style("filter", "url(#star-glow)");
-                        
-                        
-                        
-                        
-                        g.selectAll(".star-group").each(function(d2) {
-                            if (d2 !== d && highlightedFilm !== d2.data) {
-                                d3.select(this).select(".main-star")
-                                    .transition()
-                                    .duration(200)
-                                    .attr("opacity", 1);
-                            }
-                        });
-                        
+                    event.stopPropagation();
+                    
+                    if (currentlyHoveredCircle === this) {
                         d3.select(".rating-tooltip")
                             .transition()
                             .duration(200)

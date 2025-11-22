@@ -1,5 +1,3 @@
-console.log("🔁 stateMachineViz.js LOADED!");
-
 function createStateMachineViz(selector, fearJourneyRaw) {
     "use strict";
 

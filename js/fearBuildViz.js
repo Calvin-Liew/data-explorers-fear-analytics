@@ -1,9 +1,5 @@
-console.log("👻 fearBuildViz.js LOADED!");
-
 function createFearBuildViz(selector, fearJourneyData) {
   "use strict";
-
-  console.log("👻 Fear Build init:", selector, "data:", fearJourneyData);
 
   const container = d3.select(selector);
   const containerNode = container.node();
@@ -12,8 +8,6 @@ function createFearBuildViz(selector, fearJourneyData) {
     console.error("❌ Container not found:", selector);
     return;
   }
-
-  console.log("✅ Container found:", containerNode);
   const margin = { top: 60, right: 80, bottom: 80, left: 80 };
   const width = containerNode.clientWidth - margin.left - margin.right;
   const height = 600 - margin.top - margin.bottom;

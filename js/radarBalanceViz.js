@@ -1,4 +1,3 @@
-
 (function () {
     const RADAR_SEL = "#viz-radar";
     const CSV_URL = "data/horror_ai_analysis_datasets/horror_signals.csv";
@@ -396,12 +395,12 @@
 
         const sliders = {};
         const descriptions = {
-            Audio: "Screams, whispers, silence, and sound effects that build atmosphere",
-            Visual: "Blood, shadows, darkness, and visual horror elements",
-            Pace: "Chase scenes, running, sudden jumps, and action tempo",
-            Threat: "Monsters, killers, ghosts, weapons, and direct danger",
-            Setting: "Night scenes, forests, houses, basements, and atmospheric locations",
-            Psyche: "Fear, paranoia, madness, supernatural dread, and psychological horror"
+            Audio: "Screams, whispers, silence, music. Sound cues that create atmosphere or shock through auditory elements.",
+            Visual: "Blood, shadows, darkness, mirrors. Visual elements that set mood or show visceral imagery.",
+            Pace: "Chase scenes, running, sudden jumps. Terms that indicate tempo, rhythm, or abrupt changes in pacing.",
+            Threat: "Monsters, killers, ghosts, weapons. Direct dangers, weapons, or explicit threats to characters.",
+            Setting: "Night scenes, forests, abandoned places. Environmental cues that establish location and atmosphere.",
+            Psyche: "Fear, paranoia, madness, dread. Psychological states, emotions, and mental distress."
         };
 
         

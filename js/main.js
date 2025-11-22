@@ -9,24 +9,11 @@
   document.addEventListener("DOMContentLoaded", init);
 
   function init() {
-    console.log("🎃 Initializing Fear Analytics Visualization...");
-
-    console.log("🔍 Checking viz functions:");
-    console.log("  - createSankeyViz:", typeof createSankeyViz);
-    console.log("  - createFearBuildViz:", typeof createFearBuildViz);
-    console.log("  - createSpikesViz:", typeof createSpikesViz);
-    console.log("  - createEffectivenessViz:", typeof createEffectivenessViz);
-
     setTimeout(() => {
-      console.log("🔍 Re-checking after delay:");
-      console.log("  - createEffectivenessViz:", typeof createEffectivenessViz);
-
       loadAllData()
         .then((data) => {
           state.data = data;
           initializeVisualizations(data);
-
-          console.log("✅ Initialization complete!");
         })
         .catch((error) => {
           console.error("❌ Error loading data:", error);
@@ -39,16 +26,13 @@
         const target = btn.getAttribute("data-target");
         const section = document.querySelector(target);
         if (section) {
-          // Try to find the section-header within the section first
           const sectionHeader = section.querySelector(".section-header");
           const targetElement = sectionHeader || section;
 
-          // Use getBoundingClientRect for more accurate positioning
           const elementRect = targetElement.getBoundingClientRect();
           const scrollTop =
             window.pageYOffset || document.documentElement.scrollTop;
 
-          // Fixed header height (60px) + some visual spacing (20px)
           const headerOffset = 80;
           const offsetPosition = elementRect.top + scrollTop - headerOffset;
 
@@ -194,39 +178,28 @@
   }
 
   function initializeVisualizations(data) {
-    console.log("📊 Initializing visualizations with data:", data);
-
-    console.log("🩸 Creating Sankey...", typeof createSankeyViz);
     if (typeof createSankeyViz === "function") {
       try {
         state.visualizations.sankey = createSankeyViz(
           "#viz-sankey",
           data.effectiveness
         );
-        console.log("✅ Sankey created");
       } catch (error) {
         console.error("❌ Sankey error:", error);
       }
-    } else {
-      console.error("❌ createSankeyViz not found!");
     }
 
-    console.log("👻 Creating Fear Build...", typeof createFearBuildViz);
     if (typeof createFearBuildViz === "function") {
       try {
         state.visualizations.fearBuild = createFearBuildViz(
           "#viz-fear-build",
           data.fearJourneyRaw
         );
-        console.log("✅ Fear Build created");
       } catch (error) {
         console.error("❌ Fear Build error:", error);
       }
-    } else {
-      console.error("❌ createFearBuildViz not found!");
     }
 
-    console.log("⚡ Creating Spikes...", typeof createSpikesViz);
     if (typeof createSpikesViz === "function") {
       try {
         state.visualizations.spikes = createSpikesViz(
@@ -236,59 +209,42 @@
           data.fearJourneyRaw,
           data.tensionJourneyRaw
         );
-        console.log("✅ Spikes created");
       } catch (error) {
         console.error("❌ Spikes error:", error);
       }
-    } else {
-      console.error("❌ createSpikesViz not found!");
     }
 
-    console.log(
-      "🔁 Creating Fear State Machine...",
-      typeof createStateMachineViz
-    );
     if (typeof createStateMachineViz === "function") {
       try {
         state.visualizations.stateMachine = createStateMachineViz(
           "#viz-state-machine",
           data.fearJourneyRaw
         );
-        console.log("✅ Fear State Machine created");
       } catch (error) {
         console.error("❌ Fear State Machine error:", error);
       }
-    } else {
-      console.error("❌ createStateMachineViz not found!");
     }
 
-    console.log("💀 Creating Effectiveness...", typeof createEffectivenessViz);
     if (typeof createEffectivenessViz === "function") {
       try {
         state.visualizations.effectiveness = createEffectivenessViz(
           "#viz-effectiveness",
           data.effectiveness
         );
-        console.log("✅ Effectiveness created");
       } catch (error) {
         console.error("❌ Effectiveness error:", error);
       }
-    } else {
-      console.error("❌ createEffectivenessViz not found!");
     }
-    console.log("🎬 Creating Movie Gallery...", typeof createMovieGalleryViz);
+
     if (typeof createMovieGalleryViz === "function") {
       try {
         state.visualizations.movieGallery = createMovieGalleryViz(
           "#viz-movie-gallery",
           data.movieGalleryData
         );
-        console.log("✅ Movie Gallery created");
       } catch (error) {
         console.error("❌ Movie Gallery error:", error);
       }
-    } else {
-      console.error("❌ createMovieGalleryViz not found!");
     }
   }
 

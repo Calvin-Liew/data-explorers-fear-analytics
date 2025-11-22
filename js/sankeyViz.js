@@ -1,5 +1,3 @@
-console.log("🩸 sankeyViz.js LOADED!");
-
 function createSankeyViz(selector, effectivenessData) {
   "use strict";
 
@@ -71,29 +69,6 @@ function createSankeyViz(selector, effectivenessData) {
   let dripCount = 0;
   const MAX_DRIPS = 2;
   let dripInterval = null;
-  
-  
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !dripInterval) {
-        dripInterval = setInterval(() => {
-          if (dripCount < MAX_DRIPS && Math.random() > 0.85) { 
-            createBloodDrip(Math.random() * width, Math.random() * 50);
-            dripCount++;
-            setTimeout(() => dripCount--, 2000); 
-          }
-        }, 2000); 
-      } else if (!entry.isIntersecting && dripInterval) {
-        clearInterval(dripInterval);
-        dripInterval = null;
-        dripCount = 0;
-      }
-    });
-  }, { threshold: 0.1 });
-  
-  if (containerNode) {
-    observer.observe(containerNode);
-  }
 
   function update(threshold = currentThreshold) {
     currentThreshold = threshold;
@@ -273,29 +248,43 @@ function createSankeyViz(selector, effectivenessData) {
     
     linkPaths
       .transition()
-      .duration(1500)
-      .delay((d, i) => i * 100)
+      .duration(800)
+      .delay((d, i) => Math.min(i * 50, 400))
       .style("stroke-opacity", 0.5);
 
     
+    let bloodParticleInterval = null;
+    let activeBloodParticles = 0;
+    const MAX_BLOOD_PARTICLES = 8;
+    
     function animateBloodParticles() {
-      graph.links.forEach((link, linkIndex) => {
-        if (Math.random() > 0.3) return;
+      if (activeBloodParticles >= MAX_BLOOD_PARTICLES) return;
+      
+      const topLinks = [...graph.links]
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 3);
+      
+      topLinks.forEach((link, linkIndex) => {
+        if (Math.random() > 0.5 || activeBloodParticles >= MAX_BLOOD_PARTICLES) return;
 
-        const path = linkPaths.filter((d, i) => i === linkIndex).node();
+        const path = linkPaths.filter((d, i) => {
+          return graph.links[i] === link;
+        }).node();
+        
         if (!path) return;
+        activeBloodParticles++;
 
         const totalLength = path.getTotalLength();
 
         const particle = svg
           .append("circle")
           .attr("class", "blood-particle")
-          .attr("r", Math.random() * 3 + 2)
+          .attr("r", Math.random() * 2 + 1.5)
           .attr("fill", Math.random() > 0.5 ? "#ff0000" : "#8b0000")
-          .style("opacity", 0.8)
-          .style("filter", "blur(1px)");
+          .style("opacity", 0.6)
+          .style("filter", "blur(0.5px)");
 
-        const duration = 2000 + Math.random() * 2000;
+        const duration = 2000 + Math.random() * 1500;
 
         particle
           .transition()
@@ -308,12 +297,47 @@ function createSankeyViz(selector, effectivenessData) {
             };
           })
           .style("opacity", 0)
-          .remove();
+          .on("end", function() {
+            activeBloodParticles--;
+            d3.select(this).remove();
+          });
       });
     }
 
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (!bloodParticleInterval) {
+            bloodParticleInterval = setInterval(animateBloodParticles, 2500);
+          }
+          if (!dripInterval) {
+            dripInterval = setInterval(() => {
+              if (dripCount < MAX_DRIPS && Math.random() > 0.85) { 
+                createBloodDrip(Math.random() * width, Math.random() * 50);
+                dripCount++;
+                setTimeout(() => dripCount--, 2000); 
+              }
+            }, 2000);
+          }
+        } else {
+          if (bloodParticleInterval) {
+            clearInterval(bloodParticleInterval);
+            bloodParticleInterval = null;
+            svg.selectAll(".blood-particle").remove();
+            activeBloodParticles = 0;
+          }
+          if (dripInterval) {
+            clearInterval(dripInterval);
+            dripInterval = null;
+            dripCount = 0;
+          }
+        }
+      });
+    }, { threshold: 0.1 });
     
-    setInterval(animateBloodParticles, 1500);
+    if (containerNode) {
+      observer.observe(containerNode);
+    }
 
     
     const node = svg

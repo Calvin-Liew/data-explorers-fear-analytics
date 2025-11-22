@@ -1,4 +1,3 @@
-
 (function () {
     const DRIP_SEL = "#viz-drip";
     const CSV_URL = "data/cleaner_datasets/viz3_horror_effectiveness.csv";
@@ -479,7 +478,7 @@
         d3.csv(CSV_URL, d3.autoType).then(raw => {
             const rows = process(raw);
             const sel = d3.select("#drip-sort");
-            sel.property("value", "impact");
+            sel.property("value", "name");
 
             let isAnimating = false;
             const draw = () => {
