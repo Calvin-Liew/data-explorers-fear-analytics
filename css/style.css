@@ -1099,6 +1099,19 @@ a:hover {
   box-shadow: 0 0 25px rgba(139, 0, 0, 0.8);
 }
 
+.spooky-select option {
+  background-color: #1a0a0a;
+  color: #f6eaea;
+  padding: 8px;
+}
+
+.spooky-select option:hover,
+.spooky-select option:focus,
+.spooky-select option:checked {
+  background-color: #8b0000;
+  color: #ffffff;
+}
+
 .spooky-button {
   background-color: var(--color-dark-gray);
   color: var(--color-text);
@@ -1617,6 +1630,79 @@ footer::before {
   transition: box-shadow 0.2s ease, transform 0.05s ease, border-color 0.2s ease;
   cursor: pointer;
   position: relative;
+}
+
+#radar-film-select option,
+#drip-sort option,
+#sort-select option,
+#film-select option {
+  background-color: #1a0a0a;
+  color: #f6eaea;
+  padding: 8px;
+}
+
+#radar-film-select option:hover,
+#radar-film-select option:focus,
+#radar-film-select option:checked,
+#drip-sort option:hover,
+#drip-sort option:focus,
+#drip-sort option:checked,
+#sort-select option:hover,
+#sort-select option:focus,
+#sort-select option:checked,
+#film-select option:hover,
+#film-select option:focus,
+#film-select option:checked {
+  background-color: #8b0000;
+  color: #ffffff;
+}
+
+.film-add-select {
+  background-color: rgba(15, 0, 5, 0.7) !important;
+  color: #ffe9e9 !important;
+  border: 1px solid rgba(255, 34, 78, 0.4) !important;
+}
+
+.film-add-select option {
+  background-color: #1a0a0a;
+  color: #ffe9e9;
+  padding: 8px;
+}
+
+.film-add-select option:hover,
+.film-add-select option:focus,
+.film-add-select option:checked {
+  background-color: #8b0000;
+  color: #ffffff;
+}
+
+#genre-filter,
+#decade-filter,
+#rating-filter {
+  background-color: var(--color-dark-gray) !important;
+  color: var(--color-text) !important;
+  border: 2px solid var(--color-blood-red) !important;
+}
+
+#genre-filter option,
+#decade-filter option,
+#rating-filter option {
+  background-color: #1a0a0a;
+  color: #f6eaea;
+  padding: 8px;
+}
+
+#genre-filter option:hover,
+#genre-filter option:focus,
+#genre-filter option:checked,
+#decade-filter option:hover,
+#decade-filter option:focus,
+#decade-filter option:checked,
+#rating-filter option:hover,
+#rating-filter option:focus,
+#rating-filter option:checked {
+  background-color: #8b0000;
+  color: #ffffff;
 }
 
 

@@ -292,8 +292,8 @@ function createSpikesViz(
   }
 
   const defaultFilms = curatedFilms.length
-    ? curatedFilms.slice(0, 5)
-    : Array.from(fearSeriesByFilm.keys()).slice(0, 5);
+    ? curatedFilms.filter(f => f !== "Alien").slice(0, 5)
+    : Array.from(fearSeriesByFilm.keys()).filter(f => f !== "Alien").slice(0, 5);
   let activeFilms = defaultFilms.slice();
   let highlightFilm = null;
   const allFilms = Array.from(new Set(fearSeriesByFilm.keys())).sort();
