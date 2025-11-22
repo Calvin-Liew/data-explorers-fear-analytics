@@ -34,7 +34,7 @@
         });
     }, 100);
 
-    document.querySelectorAll(".blood-bubble[data-target]").forEach((btn) => {
+    document.querySelectorAll(".bat-unit[data-target]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const target = btn.getAttribute("data-target");
         const section = document.querySelector(target);
