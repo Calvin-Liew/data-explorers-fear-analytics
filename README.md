@@ -7,9 +7,8 @@ We analyzed 129 horror screenplays and turned them into a single, scrollable exp
 
 ## Where to Find the Project
 
-- **Project website**: `[ADD URL TO LIVE SITE HERE]`
+- **Project website**: `https://calvin-liew.github.io/data-explorers-fear-analytics/`
 - **Short screencast (interface walkthrough)**: `[ADD URL TO MAIN VIDEO HERE]`
-- **Optional deep-dive / methods screencast**: `[ADD URL TO METHODS VIDEO HERE]`
 
 These links are what you should use to mark our project website and videos for grading.
 
