@@ -1,232 +1,335 @@
-# The Anatomy of Fear: Horror Film Analytics
+## The Anatomy of Fear: Horror Film Analytics
 
-A narrative data visualization exploring how horror films engineer terror through pacing, language, and emotional manipulation. Built with D3.js.
+**The Anatomy of Fear** is an interactive story about how horror movies make us scared.  
+We analyzed 129 horror screenplays and turned them into a single, scrollable experience that shows how films use pacing, language, and atmosphere to build dread.
 
-## Overview
+---
 
-This project analyzes 129 horror film screenplays to understand:
+## Where to Find the Project
 
-- How fear builds across scenes within films
-- Which horror signals appear most frequently vs. most effectively
-- The relationship between fear and tension
-- When fear peaks occur across iconic horror films
-- Which types of horror dominate across films
+- **Project website**: `[ADD URL TO LIVE SITE HERE]`
+- **Short screencast (interface walkthrough)**: `[ADD URL TO MAIN VIDEO HERE]`
+- **Optional deep-dive / methods screencast**: `[ADD URL TO METHODS VIDEO HERE]`
 
-## Key Findings
+These links are what you should use to mark our project website and videos for grading.
 
-1. **Fear Builds in Waves**: Horror films orchestrate fear in rhythmic patterns, with peaks typically occurring in the final third.
+---
 
-2. **Quality Over Quantity**: Rare but powerful signals (like "scream") have far stronger emotional impact than common ones (like "night").
+## What You Are Looking At
 
-3. **Tension > Fear**: Most films maintain higher tension than fear scores—the anticipation of terror is more powerful than terror itself.
+### Our Original Work (What We Are Handing In)
 
-4. **Strategic Timing**: The best horror saves its strongest reveals for the end, following consistent patterns across films.
+- **Narrative website**
 
-## Project Structure
+  - `index.html`: The full story structure (intro, “scenes” 1–8, epilogue, and film gallery).
+  - `css/style.css`: Custom horror-themed visual design (colors, typography, layout, animations).
+  - `images/` and `favicon*.png`: Custom visual assets (bats, fog, painting, icons).
+  - `video-from-rawpixel-...mp4`: Ambient video used as part of the atmosphere.
 
+- **Custom interaction and visualization code** (all written by our team)
+
+  - `js/main.js`: Loads data, cleans it, and wires up all the visualizations.
+  - `js/sankeyViz.js`: “Scene 1 – The Blood Flow of Horror” (signal families flowing into specific cues).
+  - `js/fearBuildViz.js`: “Scene 2 – Heartbeat of Terror” (fear over time line chart with BPM counter).
+  - `js/spikesViz.js`: “Scene 3 – Mapping the Spikes” (tombstones and lanterns for fear vs. tension spikes).
+  - `js/stateMachineViz.js`: “Scene 4 – The Ladder of Fear” (Calm → Unease → Panic transition matrix).
+  - `js/effectivenessViz.js`: “Scene 5 – What Actually Works?” (bubble chart of signal frequency vs. impact).
+  - `js/dripImpactViz.js`: “Scene 6 – Impact Dripline” (ranked “drips” of signal potency).
+  - `js/ratingImpactViz.js`: “Scene 7 – Does Scary = Good?” (scatter/constellation of horror impact vs. IMDb rating).
+  - `js/radarBalanceViz.js`: “Scene 8 – The Horror Fingerprint” (radar chart of six signal families per film).
+  - `js/movieGalleryViz.js`: “Film Dossiers” horizontal gallery with filters.
+  - `js/heartbeatScroll.js`, `js/scrollAnimations.js`, `js/heroFX.js`, `js/heartbeat.js`:
+    Custom scroll, heartbeat progress bar, and hero-section effects.
+
+- **Data we prepared for visualization**
+
+  - `data/cleaner_datasets/`
+    - `viz1_horror_signals_by_film.csv`: Aggregate horror signal counts.
+    - `viz2a_tension_journey.csv`, `viz2b_fear_journey.csv`: Fear and tension scores across film runtimes.
+    - `viz3_horror_effectiveness.csv`: Per-signal effectiveness metrics.
+    - `viz4_film_comparison.csv`: Film-level fear/tension/lexicon summaries.
+    - `viz5_horror_categories.csv`: Category-level horror lexicon breakdowns.
+  - `data/horror_ai_analysis_datasets/`
+    - Structured outputs from our AI analysis step (scene-level emotional scores, signals, etc.).
+  - `data/horror_screenplays/`
+    - 129 raw screenplay text files plus one JSON metadata file used as our primary source material.
+  - `data/imbd-movies-dataset/`
+    - IMDb-based movie dataset used for ratings and metadata.
+
+- **Parsing + analysis pipeline**
+  - **`hybrid_horror_parser`** (separate codebase):  
+    Custom Python pipeline that:
+    - Reads raw scripts from `data/horror_screenplays/`.
+    - Splits them into scenes.
+    - Sends scenes to GPT‑4o with structured prompts.
+    - Collects JSON outputs and aggregates them into the CSVs under `data/horror_ai_analysis_datasets/` and `data/cleaner_datasets/`.
+  - If you want to inspect or reuse the parsing pipeline itself, it lives in:  
+    `[ADD REPO OR URL FOR hybrid_horror_parser HERE]`.
+
+### External libraries and resources (not written by us)
+
+- **D3.js v7** – main visualization library, loaded from CDN.
+- **d3-sankey** – used only for the Sankey diagram in Scene 1 (signal flows).
+- **Browser features** – standard DOM APIs, CSS Grid and Flexbox.
+- **Stock assets** – some base imagery and video adapted from royalty-free sources and then styled to match our theme.
+
+Everything in `js/`, `css/`, and our `data/` folders is part of our submission, aside from the D3/d3-sankey scripts that are loaded from external CDNs.
+
+---
+
+## How to Experience the Site (General Audience)
+
+You can think of the site as a single “film” broken into scenes:
+
+- **Landing screen**
+
+  - A **title card** introduces “The Anatomy of Fear”.
+  - A **heartbeat bar** at the very top quietly tracks your scroll progress down the page.
+  - A **swarm of bats** each represents a different scene (1–9). Hover to see a label, click to jump straight to that section.
+
+- **Prologue – Project Snapshot**
+
+  - Cards show the scale of our study: number of scripts, scenes, signals, and lexicon terms.
+  - A short explanation of what a “signal” is and how we grouped them into families (Audio, Visual, Pace, Threat, Setting, Psyche).
+
+- **Scene 1 – “The Blood Flow of Horror” (Sankey)**
+
+  - Left: three big sources (**THE VOID**, **THE VIOLENCE**, **THE SCREAM**).
+  - Right: individual signals like “night”, “blood”, “scream”.
+  - A **slider** lets you hide low-frequency signals so only the biggest “veins” of horror remain.
+
+- **Scene 2 – “Heartbeat of Terror” (Fear Journey)**
+
+  - A line plot shows how fear rises and falls across a film (0 at the start, 1 at the end).
+  - A **dropdown** lets you choose a specific film or view the average pattern.
+  - A **BPM-style counter** converts average fear into a “pulse rate”.
+
+- **Scene 3 – “Mapping the Spikes” (Graveyard)**
+
+  - Each row is a film; **tombstones** mark fear spikes and **lanterns** mark tension spikes.
+  - **Buttons** let you toggle fear-only, tension-only, or both, and reset the zoom.
+
+- **Scene 4 – “The Ladder of Fear” (State Machine)**
+
+  - A grid shows how likely scenes are to move from Calm → Unease → Panic.
+  - Darker squares mean more common transitions; hovering shows exact probabilities.
+
+- **Scene 5 – “What Actually Works?” (Bubble Chart)**
+
+  - Each bubble is a horror signal; size = how often it appears, position = how much impact it has.
+  - A **view mode dropdown** lets you switch between overall impact, fear, tension, or pure frequency.
+  - Clicking a bubble opens a more detailed “dossier” about that signal.
+
+- **Scene 6 – “Impact Dripline” (Ranked Drips)**
+
+  - Each vertical “drip” is a signal ranked by impact.
+  - A **sort menu** switches between alphabetical order and “most to least potent”.
+
+- **Scene 7 – “Does Scary = Good?” (Ratings vs. Impact)**
+
+  - Each dot is a film, placed by horror impact (x-axis) and IMDb rating (y-axis).
+  - It visually asks whether being scarier actually means being better liked.
+
+- **Scene 8 – “The Horror Fingerprint” (Radar Recipes)**
+
+  - Radar chart shows a film’s balance across six signal families (Audio, Visual, Pace, Threat, Setting, Psyche).
+  - A **film dropdown** changes the shape.
+  - Underneath, sliders let you set your preferred mix and get suggested films that match your “horror recipe”.
+
+- **Final Act – Film Dossiers (Gallery)**
+
+  - A horizontal gallery of all 129 films with mini “posters”.
+  - Filters for **genre**, **decade**, and **minimum rating**, plus left/right arrows to scroll through the archive.
+
+- **Epilogue – “What the Data Whispers”**
+  - A summary of the three main ideas: elite signals vs. atmospheric background, the grammar of pacing, and horror “recipes” rather than a single formula.
+
+---
+
+## Non‑Obvious Interface Features
+
+- **Bats as navigation shortcuts**
+
+  - Hovering over a bat reveals which scene it represents.
+  - Clicking a bat scrolls you smoothly down to that exact section.
+
+- **Heartbeat scroll bar**
+
+  - The thin heartbeat line at the very top is a **scroll progress indicator**: it “beats” and fills as you move down the story.
+
+- **Interactive “How to Read This” panels**
+
+  - Many scenes have a styled explainer box under the main graphic.
+  - These are not static captions: they walk users step‑by‑step through how to interpret the visualization and what takeaway to look for.
+
+- **Flexible filters, toggles, and sliders**
+
+  - Several views (Sankey, drips, spikes, radar, gallery) include subtle controls:
+    - Sliders adjust thresholds (e.g., which signals are shown).
+    - Toggles show/hide fear vs. tension markers.
+    - Dropdowns change the metric being shown or which film is being highlighted.
+  - These controls allow both a guided story and open-ended exploration.
+
+- **Film recommendation via radar preferences**
+  - In Scene 8, the preference sliders under the radar chart are a **simple recommender**:
+    you can set how much you like each type of horror (e.g., more “Setting”, less “Threat”) and get film suggestions that best match that pattern.
+
+---
+
+## Data and Methods (High‑Level Explanation)
+
+- We collected **129 horror screenplays** and split them into **9,760 scenes**.
+- Using a custom Python pipeline called **`hybrid_horror_parser`**, we:
+  - Broke scripts into scenes using headings and context.
+  - Sent each scene to an AI model (GPT‑4o) with structured prompts.
+  - Received back JSON with:
+    - Fear, tension, and sentiment scores on a 0–1 scale.
+    - Which of our **207 horror lexicon terms** appear in the scene.
+    - Basic dialogue vs. action statistics and metadata.
+- From these scene‑level JSON outputs, `hybrid_horror_parser` then:
+  - Aggregated to **per‑film** summaries (used in the heartbeat, spikes, and radar views).
+  - Calculated **per‑signal impact scores** (used in the bubble chart and impact dripline).
+  - Joined with **IMDb ratings and metadata** to create film‑level comparison tables.
+- All of the CSV files in `data/cleaner_datasets/` and `data/horror_ai_analysis_datasets/` are the cleaned outputs of this pipeline, specifically prepared for visualization.
+
+If you want to inspect or reuse the parsing pipeline itself, it lives in our separate codebase **`hybrid_horror_parser`** (`[ADD REPO OR URL HERE]`).
+
+---
+
+## AI Parser: Example Input and Output
+
+To make the `hybrid_horror_parser` process concrete, here is a simplified example.
+
+### Example screenplay input (one scene)
+
+```text
+INT. ASYLUM HALLWAY - NIGHT
+
+The lights flicker. SARAH walks alone, her footsteps echoing.
+A distant SCREAM cuts through the silence.
+
+She freezes, breathing fast, scanning the darkness ahead.
+Something moves in the shadows, just out of sight.
 ```
-data-explorers-fear-analytics/
-├── index.html              # Main HTML file with narrative structure
-├── css/
-│   └── style.css          # Horror-themed styling
-├── js/
-│   ├── main.js            # Main controller and data loading
-│   ├── fearJourney.js     # Fear progression line chart
-│   ├── effectiveness.js   # Frequency vs. impact bubble chart
-│   ├── filmComparison.js  # Fear vs. tension scatter plot
-│   ├── categories.js      # Category comparison bar chart
-│   └── signalGrid.js      # Interactive signal cards
-└── data/
-    └── cleaner_datasets/
-        ├── viz1_horror_signals_by_film.csv
-        ├── viz2a_tension_journey.csv
-        ├── viz2b_fear_journey.csv
-        ├── viz3_horror_effectiveness.csv
-        ├── viz4_film_comparison.csv
-        └── viz5_horror_categories.csv
+
+### Example prompt style (simplified for illustration)
+
+```text
+You are analyzing a horror movie scene.
+
+1. Read the scene text.
+2. Identify horror "signals" from these families: Audio, Visual, Pace, Threat, Setting, Psyche.
+3. Score the scene from 0 to 1 for:
+   - fear
+   - tension
+   - sentiment (1 = very positive, 0 = very negative)
+
+Return ONLY valid JSON in this format:
+
+{
+  "heading": "...",
+  "signals": {
+    "audio": [...],
+    "visual": [...],
+    "pace": [...],
+    "threat": [...],
+    "setting": [...],
+    "psyche": [...]
+  },
+  "scores": {
+    "fear": 0-1 number,
+    "tension": 0-1 number,
+    "sentiment": 0-1 number
+  }
+}
 ```
 
-## Technologies
+### Example JSON output from the AI (what `hybrid_horror_parser` saves)
 
-- **D3.js v7**: Data visualization and DOM manipulation
-- **Scrollama**: Scroll-driven storytelling interactions
-- **Vanilla JavaScript**: No framework dependencies
-- **CSS Grid & Flexbox**: Responsive layout
+```json
+{
+  "heading": "INT. ASYLUM HALLWAY - NIGHT",
+  "signals": {
+    "audio": ["scream", "silence", "echo"],
+    "visual": ["dark", "flicker", "shadows"],
+    "pace": ["sudden"],
+    "threat": [],
+    "setting": ["asylum", "hallway", "night"],
+    "psyche": ["fear", "panic"]
+  },
+  "scores": {
+    "fear": 0.85,
+    "tension": 0.78,
+    "sentiment": 0.22
+  }
+}
+```
 
-## Features
+`hybrid_horror_parser` repeats this process for every scene in every script, then stacks and aggregates these JSON records into the CSV datasets that drive our visualizations.
 
-### 1. Scrollytelling Narrative
+---
 
-Interactive scroll-driven story that guides users through insights about horror film patterns.
+### Data Sources
 
-### 2. Five Main Visualizations
+- **Screenplays (primary text corpus)**  
+  129 horror film scripts collected from online screenplay archives (e.g., IMSDb and similar public sources).  
+  Stored in `data/horror_screenplays/` and read by `hybrid_horror_parser`.
 
-#### Fear Journey (Hook)
+- **AI‑generated analysis tables**  
+  Scene‑level and film‑level JSON/CSV outputs from our `hybrid_horror_parser` + GPT‑4o pipeline:
 
-Multi-line chart showing how fear intensity changes across eight iconic horror films (Alien, Friday the 13th, Get Out, Halloween, Jaws, Psycho, Saw, Scream). Highlights early hooks, quiet middles, and final crescendos.
+  - `data/horror_ai_analysis_datasets/`
+  - `data/cleaner_datasets/` (final tidy CSVs used directly by the visualizations)
 
-#### Signal Effectiveness (Rising Insight 1)
+- **IMDb metadata and ratings**  
+  Movie metadata and ratings derived from:
+  - `data/imbd-movies-dataset/imdb_movies_dataset.csv` (original dataset)
+  - `data/imbd-movies-dataset/imdb_179_horror.csv` (our filtered subset for horror titles)
 
-Bubble chart comparing frequency vs. emotional impact of horror signals. Demonstrates that "scream" (1,187 occurrences) has 2.3x the impact of "night" (3,694 occurrences).
+Together, these sources feed into the interactive visuals you see on the website.
 
-#### Film Comparison (Rising Insight 2)
+---
 
-Scatter plot showing relationship between average fear and tension across films. Bubble size represents horror signal count, color shows dialogue ratio.
+## Running the Site (for Instructors / Developers)
 
-#### Horror Categories (Main Message)
+You can simply use the live link above. If you need to run it locally:
 
-Bar chart showing five categories of horror elements:
+1. **Download or clone the repository.**
+2. **Start a simple local server** from the project folder (D3 needs HTTP to load CSV files):
 
-- **Atmospheric** (night, dark, shadow): Most frequent, moderate impact
-- **Violence** (blood, knife, death): High impact
-- **Emotional** (fear, scream, panic): Highest impact per occurrence
-- **Supernatural** (ghost, demon, curse): Lower frequency
-- **Sound** (scream, creak, whisper): High impact, low frequency
-
-#### Signal Grid (Explore Section)
-
-Interactive card grid showing detailed statistics for top 10 horror signals, including impact scores, occurrences, and mini-charts.
-
-### 3. Interactive Features
-
-- Hover tooltips with detailed statistics
-- Animated transitions during scroll
-- Dynamic highlighting based on narrative context
-- Responsive design for all screen sizes
-
-## Setup & Usage
-
-### Local Development
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/calvinliew/data-explorers-fear-analytics.git
-   cd data-explorers-fear-analytics
-   ```
-
-2. **Start a local server**
-
-   Using Python 3:
+   - Python 3:
 
    ```bash
    python -m http.server 8000
    ```
 
-   Using Node.js:
+   - Node:
 
    ```bash
    npx http-server
    ```
 
-   Using PHP:
+   - PHP:
 
    ```bash
    php -S localhost:8000
    ```
 
-3. **Open in browser**
-   ```
-   http://localhost:8000
-   ```
+3. **Open** `http://localhost:8000` in your browser.
 
-**Note**: You must use a local server (not just opening `index.html` directly) because D3.js needs to load CSV files via HTTP requests.
-
-### GitHub Pages Deployment
-
-1. Push to GitHub
-2. Go to repository Settings > Pages
-3. Select branch `main` and folder `/root`
-4. Your site will be published at `https://[username].github.io/data-explorers-fear-analytics/`
-
-## Data Sources
-
-### Original Data
-
-- **Raw Screenplays**: 129 horror film scripts from IMDb
-- **AI Analysis**: Scene-level analysis using structured prompts to extract:
-  - Dialogue and action statistics
-  - Emotional intensity (fear, tension, sentiment)
-  - Horror vocabulary (207 tracked terms)
-
-### Processed Datasets
-
-1. **viz2b_fear_journey.csv**: Fear levels at 10% intervals for 8 films
-2. **viz3_horror_effectiveness.csv**: Impact scores for each horror signal
-3. **viz4_film_comparison.csv**: Aggregate statistics per film
-4. **viz5_horror_categories.csv**: Category-level totals
-
-Full data processing pipeline documented in project materials.
-
-## Team
-
-- **Calvin Liew** (Team Leader, Data Visualist)
-- **Yichen Fan** (Data Transformer)
-- **Yansong Zhu** (Data Transformer)
-- **Olivia Doerrstein** (Data Visualist)
-- **Mehmet Gunenc** (Data Transformer)
-- **Fanke Qin** (Data Visualist)
-
-**Course**: CSC316 - Data Visualization  
-**Institution**: University of Toronto  
-**Year**: 2024-2025
-
-## Design Decisions
-
-### Visual Encoding
-
-- **Color**: Red/blood color palette for horror theme, sequential scales for intensity
-- **Size**: Bubble size represents frequency or scene count
-- **Position**: X/Y axes encode primary quantitative variables
-- **Animation**: Scroll-triggered transitions guide attention
-
-### Narrative Structure
-
-Follows the four-act data storytelling framework:
-
-1. **Hook**: Immediate engagement with fear journey
-2. **Rising Insights**: Challenge assumptions about frequency
-3. **Main Message**: Reveal universal patterns
-4. **Solution**: Actionable framework for understanding horror
-
-### Accessibility
-
-- High contrast text (WCAG AA compliant)
-- Hover tooltips for detailed information
-- Responsive breakpoints for mobile/tablet/desktop
-- Semantic HTML structure
-
-## Browser Compatibility
-
-- Chrome 90+ ✅
-- Firefox 88+ ✅
-- Safari 14+ ✅
-- Edge 90+ ✅
-
-Requires JavaScript enabled and modern CSS support (Grid, Flexbox).
-
-## Future Enhancements
-
-- [ ] Add film selection dropdown for fear journey
-- [ ] Implement data filtering by decade/subgenre
-- [ ] Add sound design to complement visuals
-- [ ] Export visualizations as PNG/SVG
-- [ ] Mobile gesture controls for scrollytelling
-- [ ] Comparative view across multiple films simultaneously
-
-## License
-
-This project is for educational purposes as part of CSC316 coursework.
-
-## Acknowledgments
-
-- D3.js community for excellent documentation
-- Scrollama.js for scroll interaction framework
-- IMDb for screenplay sources
-- Course staff and TAs for guidance
+The site is a static HTML + CSS + JavaScript project; there is no backend server or database.
 
 ---
 
-**Contact**: calvin.liew@mail.utoronto.ca
+## Team
 
-**Live Demo**: [Coming soon]
+- **Calvin Liew** – Team Lead, Visualization Design
+- **Yichen Fan** – Data Preparation & Analysis
+- **Yansong Zhu** – Data Preparation & Analysis
+- **Olivia Doerrstein** – Visualization & Narrative Design
+- **Mehmet Gunenc** – Data Preparation & Analysis
+- **Fanke Qin** – Visualization & Interaction Design
+
+**Course**: CSC316 – Data Visualization  
+**Institution**: University of Toronto  
+**Year**: 2024–2025
