@@ -7,8 +7,8 @@ We analyzed 129 horror screenplays and turned them into a single, scrollable exp
 
 ## Where to Find the Project
 
-- **Project website**: `https://calvin-liew.github.io/data-explorers-fear-analytics/`
-- **Short screencast (interface walkthrough)**: `[ADD URL TO MAIN VIDEO HERE]`
+- **Project website**: [The Anatomy of Fear live site](https://calvin-liew.github.io/data-explorers-fear-analytics/)
+- **Short screencast (interface walkthrough)**: [YouTube screencast](https://www.youtube.com/watch?v=SE_CLwrHt_0)
 
 These links are what you should use to mark our project website and videos for grading.
 
@@ -28,7 +28,7 @@ These links are what you should use to mark our project website and videos for g
 - **Custom interaction and visualization code** (all written by our team)
 
   - `js/main.js`: Loads data, cleans it, and wires up all the visualizations.
-  - `js/sankeyViz.js`: “Scene 1 – The Blood Flow of Horror” (signal families flowing into specific cues).
+  - `js/sankeyViz.js`: “Scene 1 - The Blood Flow of Horror” (signal families flowing into specific cues).
   - `js/fearBuildViz.js`: “Scene 2 – Heartbeat of Terror” (fear over time line chart with BPM counter).
   - `js/spikesViz.js`: “Scene 3 – Mapping the Spikes” (tombstones and lanterns for fear vs. tension spikes).
   - `js/stateMachineViz.js`: “Scene 4 – The Ladder of Fear” (Calm → Unease → Panic transition matrix).
@@ -63,7 +63,7 @@ These links are what you should use to mark our project website and videos for g
     - Sends scenes to GPT‑4o with structured prompts.
     - Collects JSON outputs and aggregates them into the CSVs under `data/horror_ai_analysis_datasets/` and `data/cleaner_datasets/`.
   - If you want to inspect or reuse the parsing pipeline itself, it lives in:  
-    `[ADD REPO OR URL FOR hybrid_horror_parser HERE]`.
+    [hybrid_horror_parser repository](ADD_REPO_OR_URL_FOR_HYBRID_HORROR_PARSER_HERE).
 
 ### External libraries and resources (not written by us)
 
