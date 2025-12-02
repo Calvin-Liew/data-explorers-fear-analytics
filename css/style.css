@@ -2731,3 +2731,37 @@ footer::before {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.05); }
 }
+
+/* Tüm korkunç select'lerin içindeki OPTION'lar */
+.spooky-select option,
+#film-select option,
+#sort-select option,
+#drip-sort option,
+#radar-film-select option {
+    background-color: #0f0606;   /* koyu arka plan */
+    color: #f6eaea;              /* açık yazı */
+}
+
+/* Seçili / üzerine gelinen option */
+.spooky-select option:checked,
+.spooky-select option:hover,
+#film-select option:checked,
+#film-select option:hover,
+#sort-select option:checked,
+#sort-select option:hover,
+#drip-sort option:checked,
+#drip-sort option:hover,
+#radar-film-select option:checked,
+#radar-film-select option:hover {
+    background-color: #ff4444;   /* kırmızı highlight */
+    color: #ffffff;              /* beyaz yazı */
+}
+/* Header / alt başlık gibi gözüken option'lar */
+.spooky-select option:disabled,
+.spooky-select option[disabled],
+.spooky-select optgroup {
+    background-color: #160000;   /* koyu kırmızımsı arka plan */
+    color: #ffbfbf;              /* açık ama okunur yazı */
+    font-weight: 700;
+    font-style: italic;
+}
