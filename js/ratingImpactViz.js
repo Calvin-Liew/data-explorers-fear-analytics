@@ -995,17 +995,17 @@
                     event.stopPropagation();
                     event.preventDefault();
                     
-                    // Store previous highlighted film before updating
+
                     const prevHighlightedFilm = highlightedFilm;
                     
                     if (currentlyHoveredCircle && currentlyHoveredCircle !== this) {
                         const prevData = d3.select(currentlyHoveredCircle).datum();
                         const prevCircle = d3.select(currentlyHoveredCircle);
                         
-                        // Check if the previous circle was clicked/selected (before we change highlightedFilm)
+
                         const wasSelected = prevHighlightedFilm === prevData.data;
                         
-                        // Reset previous circle to exact original size
+
                         prevCircle
                             .interrupt()
                             .transition()
@@ -1015,14 +1015,14 @@
                             .style("filter", "url(#star-glow)");
                     }
                     
-                    // Now update the current hovered circle
+
                     currentlyHoveredCircle = this;
                     highlightedFilm = d.data;
                     
-                    // Bring this circle to front
+
                     d3.select(this.parentNode).raise();
                     
-                    // Enlarge this circle
+
                     d3.select(this)
                         .interrupt()
                         .transition()
