@@ -191,8 +191,6 @@ You can think of the site as a single “film” broken into scenes:
   - Joined with **IMDb ratings and metadata** to create film‑level comparison tables.
 - All of the CSV files in `data/cleaner_datasets/` and `data/horror_ai_analysis_datasets/` are the cleaned outputs of this pipeline, specifically prepared for visualization.
 
-If you want to inspect or reuse the parsing pipeline itself, it lives in our separate codebase **`hybrid_horror_parser`** (`[ADD REPO OR URL HERE]`).
-
 ---
 
 ## AI Parser: Example Input and Output
