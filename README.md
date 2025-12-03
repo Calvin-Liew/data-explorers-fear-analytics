@@ -331,4 +331,4 @@ The site is a static HTML + CSS + JavaScript project; there is no backend server
 
 **Course**: CSC316 – Data Visualization  
 **Institution**: University of Toronto  
-**Year**: 2024–2025
+**Year**: 2025–2026
