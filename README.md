@@ -54,6 +54,45 @@ interactive story.
 `-- scripts/                           # Utility scripts, including screenshots
 ```
 
+## Python AI Pipeline
+
+The Python pipeline in `analysis/` is the data engine behind the project. It
+does not need to run for the website to work because the generated CSVs are
+already committed, but it documents how the analysis was produced.
+
+Core flow:
+
+1. Read raw screenplay text files from `data/horror_screenplays/`.
+2. Split scripts into scenes using screenplay markers such as `INT.`, `EXT.`,
+   `FADE IN`, `CUT TO`, and `DISSOLVE TO`.
+3. Batch scenes into small chunks and send them to the OpenAI API.
+4. Use `gpt-4o-mini` first, then retry failed chunks with `gpt-4o`.
+5. Validate model output against a JSON schema before writing CSV rows.
+6. Export scene-level tables for emotions, dialogue/action, horror signals, and
+   run summary metrics.
+7. Clean those outputs into smaller visualization-ready CSVs under
+   `data/cleaner_datasets/`.
+
+For each scene, the AI extracts:
+
+- scene heading, location, time of day, and characters
+- dialogue lines, dialogue words, action words, and question/exclamation rates
+- `tension_score`, `fear_emotion`, and `sentiment`
+- horror-signal counts such as `hs_night`, `hs_blood`, `hs_scream`, and
+  `hs_shadow`
+- a short scene summary
+
+The main generated outputs live in `data/horror_ai_analysis_datasets/`:
+
+- `scenes_detailed.csv`
+- `horror_signals.csv`
+- `emotional_analysis.csv`
+- `dialogue_analysis.csv`
+- `analysis_summary.csv`
+
+Read the full technical explanation in
+[Python pipeline details](docs/python-pipeline.md).
+
 ## Visual Story
 
 1. **Blood Flow of Horror** shows which horror cues dominate the corpus.
