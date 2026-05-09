@@ -82,6 +82,42 @@ For each scene, the AI extracts:
   `hs_shadow`
 - a short scene summary
 
+Example scene-level AI extraction:
+
+```json
+{
+  "heading": "INT. BASEMENT - NIGHT",
+  "location": "BASEMENT",
+  "time_of_day": "NIGHT",
+  "characters": ["LAURIE", "MICHAEL"],
+  "dialogue_stats": {
+    "lines": 12,
+    "words": 140,
+    "question_rate": 0.25,
+    "exclamation_rate": 0.08
+  },
+  "action_stats": {
+    "words": 210,
+    "stage_directions": 9
+  },
+  "horror_signals": {
+    "night": 1,
+    "dark": 2,
+    "blood": 0,
+    "scream": 1,
+    "shadow": 3
+  },
+  "tension_score": 0.82,
+  "fear_emotion": 0.74,
+  "sentiment": -0.63,
+  "scene_summary": "A character moves through a dark basement while an unseen threat closes in."
+}
+```
+
+The `scene_summary` is the AI-provided plain-language explanation of what is
+happening in that scene. The numeric scores and `horror_signals` fields are the
+structured values later used for the charts.
+
 The main generated outputs live in `data/horror_ai_analysis_datasets/`:
 
 - `scenes_detailed.csv`
