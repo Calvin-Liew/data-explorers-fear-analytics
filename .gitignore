@@ -1,1 +1,26 @@
-/.idea/
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local environments and secrets
+.env
+config.env
+*.env
+!*.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+analysis/full_analysis_results/
+analysis/out_hybrid/
+
+# Node / tooling
+node_modules/
+npm-debug.log*
+playwright-report/
+test-results/

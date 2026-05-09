@@ -1,7 +1,7 @@
 (function () {
     const RADAR_SEL = "#viz-radar";
     const CSV_URL = "data/horror_ai_analysis_datasets/horror_signals.csv";
-    const IMDB_CSV_URL = "data/imbd-movies-dataset/imdb_179_horror.csv";
+    const IMDB_CSV_URL = "data/imdb-movies-dataset/imdb_179_horror.csv";
 
     
     let imdbRatings = new Map();

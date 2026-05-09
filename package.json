@@ -1,0 +1,13 @@
+{
+  "name": "data-explorers-fear-analytics",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive D3 portfolio project analyzing horror screenplay fear signals.",
+  "scripts": {
+    "serve": "python -m http.server 8000",
+    "screenshots": "node scripts/capture-screenshots.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.59.1"
+  }
+}

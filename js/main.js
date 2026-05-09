@@ -62,7 +62,7 @@
         d3.csv("data/cleaner_datasets/viz2a_tension_journey.csv"),
         d3.csv("data/cleaner_datasets/viz3_horror_effectiveness.csv"),
         d3.csv("data/cleaner_datasets/viz4_film_comparison.csv"),
-        d3.csv("data/imbd-movies-dataset/imdb_179_horror.csv"),
+        d3.csv("data/imdb-movies-dataset/imdb_179_horror.csv"),
       ]);
       const brokenPosterIDs = [
         "MV5BYWM1YTgxNjMtNzY2NC00YjVmLWE1ODUtNTdiYTI4YjZhODMwXkEyXkFqcGdeQXVyMTUzMTg2ODkz",

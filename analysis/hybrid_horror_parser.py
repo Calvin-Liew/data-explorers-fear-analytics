@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 """
 Hybrid horror screenplay parser: GPT-4o-mini for bulk + GPT-4o for failed chunks
 """
@@ -9,6 +9,7 @@ import time
 import json
 import re
 import argparse
+from pathlib import Path
 from typing import List, Dict, Any, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import pandas as pd
@@ -16,15 +17,15 @@ import numpy as np
 from openai import OpenAI
 import jsonschema
 
-
+# Load environment variables from config file
 def load_env_config():
     """Load environment variables from config.env file"""
-    config_file = "config.env"
-    if os.path.exists(config_file):
-        with open(config_file, 'r') as f:
+    config_file = Path(__file__).resolve().with_name("config.env")
+    if config_file.exists():
+        with config_file.open("r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
-                if line and not line.lstrip().startswith("#"):
+                if line and not line.startswith('#') and '=' in line:
                     key, value = line.split('=', 1)
                     os.environ[key] = value
         print(f"Loaded configuration from {config_file}")
@@ -33,57 +34,57 @@ def load_env_config():
 
 load_env_config()
 
-
+# Initialize OpenAI client
 client = OpenAI()
 
-
+# Optimized horror lexicon
 HORROR_LEXICON = [
-    
+    # Top Used Terms
     "night","dark","blood","scream","fear","death","shadow","creepy","silent","knife",
     "gun","moan","darkness","creak","skull","terror","gasp","cry","weapon","footsteps",
     "whisper","isolated","scary","frightening","grave","slaughter","startled","hell",
     "devil","evil","possessed","quiet","afraid","mirror","scared","bang","witch",
     "paranoid","hunting","demon","monster","secret","screaming","trapped","dead",
     
-    
+    # Essential Horror Terms
     "alone","follow","following","followed","unseen","hidden","mysterious","strange",
     "weird","odd","unusual","bizarre","sinister","dangerous","threatening","menacing",
     "spooky","haunting","eerie","ominous","fog","foggy","dim","silence","heartbeat",
     "thud","crash","screech","clank","rustle","howl","wail","sob","gasping","shriek",
     "whispering","moaning","groaning","crying","screaming","shrieking",
     
-    
+    # Weapons & Violence
     "blade","blades","chainsaw","axe","rope","noose","guns","weapons","sharp","cut",
     "cutting","stab","stabbing","slice","slicing","attack","attacking","threaten",
     "threatening","menace","menacing","violent","brutal","aggressive","hostile",
     
-    
+    # Supernatural & Psychological
     "ghost","ghosts","spirit","spirits","witches","cult","cults","ritual","rituals",
     "curse","cursed","haunted","possession","supernatural","paranormal","satan",
     "hellish","monsters","demons","spirits","witches","cults","rituals","cursed",
     
-    
+    # Locations & Atmosphere
     "basement","attic","asylum","cabin","woods","forest","cemetery","graveyard",
     "abandoned","empty","deserted","remote","underground","tunnel","tunnels",
     "doll","dolls","mask","masks","costume","costumes","mirrors","windows",
     
-    
+    # Emotions & States
     "panic","panicking","terrified","fearful","dread","dreadful","uneasy","anxious",
     "nervous","worried","disturbed","disturbing","horrifying","terrifying","shocking",
     "shocked","surprised","alarmed","terror","fear","afraid","scared","paranoid",
     
-    
+    # Actions & Movement
     "chase","chasing","hunt","stalk","stalking","pursue","pursuing","lurk","lurking",
     "hide","hiding","escape","escaping","run","running","flee","fleeing","caught",
     "capture","trapped","follow","following","followed","unseen","hidden","mysterious"
 ]
 
-
+# Scene splitting patterns
 SCENE_HDR_RE = re.compile(r"^(INT\.|EXT\.|FADE IN|FADE OUT|CUT TO|DISSOLVE TO)", re.IGNORECASE)
 SCENE_NUM_RE = re.compile(r"^\s*\d+\s*$")
 SCENE_CONTINUED_RE = re.compile(r"^\s*\d+\s+CONTINUED:?\s*$", re.IGNORECASE)
 
-
+# JSON Schema
 SCENE_SCHEMA = {
     "type": "object",
     "required": ["scene_index","heading","location","time_of_day","characters",
@@ -136,7 +137,7 @@ BATCH_SCHEMA = {
     "additionalProperties": False
 }
 
-
+# System prompts
 SYSTEM_PROMPT_MINI = """Parse screenplay scenes into JSON. Extract:
 - heading, location, time_of_day, characters
 - dialogue_stats: lines, words, question_rate, exclamation_rate, avg_line_words
@@ -174,24 +175,24 @@ def split_scenes_heuristic(text: str, max_scene_length: int = 2000) -> List[str]
         if not line:
             continue
             
-        
+        # Check if this is a scene header
         if SCENE_HDR_RE.match(line) or SCENE_NUM_RE.match(line) or SCENE_CONTINUED_RE.match(line):
-            
+            # Save previous scene if it has content
             if current_scene:
                 scene_text = "\n".join(current_scene)
-                if len(scene_text.split()) > 50:  
+                if len(scene_text.split()) > 50:  # Minimum scene length
                     scenes.append(scene_text)
             current_scene = [line]
         else:
             current_scene.append(line)
     
-    
+    # Add final scene
     if current_scene:
         scene_text = "\n".join(current_scene)
         if len(scene_text.split()) > 50:
             scenes.append(scene_text)
     
-    
+    # Truncate very long scenes
     final_scenes = []
     for scene in scenes:
         words = scene.split()
@@ -210,7 +211,7 @@ def preprocess_scene_chunk(scenes: List[str], max_chunk_size: int = 4) -> List[L
     current_tokens = 0
     
     for scene in scenes:
-        
+        # Estimate tokens (rough: 1 token ≈ 4 characters)
         scene_tokens = len(scene) // 4
         
         if current_tokens + scene_tokens > 2000 or len(current_chunk) >= max_chunk_size:
@@ -243,10 +244,10 @@ def call_gpt_with_retry(system_prompt: str, user_prompt: str, schema: dict,
                 temperature=0.0
             )
             
-            
+            # Clean up the JSON response
             content = response.choices[0].message.content.strip()
             
-            
+            # Try to fix common JSON issues
             if not content.startswith('{'):
                 start_idx = content.find('{')
                 if start_idx != -1:
@@ -319,7 +320,7 @@ Scenes:
 """
     
     for i, scene in enumerate(scenes):
-        
+        # Truncate scene to 300 words max to prevent token overflow
         words = scene.split()
         if len(words) > 300:
             scene = " ".join(words[:300]) + "... [TRUNCATED]"
@@ -355,11 +356,11 @@ def process_scene_chunk_hybrid(film_title: str, scenes: List[str], chunk_index: 
     try:
         user_prompt = build_chunk_prompt(film_title, scenes)
         
-        
+        # Try GPT-4o-mini first (fast and cheap)
         try:
             result = call_gpt_with_retry(SYSTEM_PROMPT_MINI, user_prompt, BATCH_SCHEMA, "gpt-4o-mini", 2)
             
-            
+            # Fix scene indices
             for scene in result["scenes"]:
                 scene["film_title"] = film_title
                 scene["scene_index"] = scene.get("scene_index", 0) + (chunk_index * 4)
@@ -370,11 +371,11 @@ def process_scene_chunk_hybrid(film_title: str, scenes: List[str], chunk_index: 
         except Exception as e:
             print(f"⚠️  gpt-4o-mini failed for chunk {chunk_index + 1}, trying gpt-4o: {e}")
             
-            
+            # Fallback to GPT-4o (more reliable but expensive)
             try:
                 result = call_gpt_with_retry(SYSTEM_PROMPT_4O, user_prompt, BATCH_SCHEMA, "gpt-4o", 2)
                 
-                
+                # Fix scene indices
                 for scene in result["scenes"]:
                     scene["film_title"] = film_title
                     scene["scene_index"] = scene.get("scene_index", 0) + (chunk_index * 4)
@@ -384,7 +385,7 @@ def process_scene_chunk_hybrid(film_title: str, scenes: List[str], chunk_index: 
                 
             except Exception as e2:
                 print(f"❌ Both models failed for chunk {chunk_index + 1}: {e2}")
-                
+                # Create fallback data
                 fallback_result = create_fallback_result(user_prompt)
                 for scene in fallback_result["scenes"]:
                     scene["film_title"] = film_title
@@ -417,7 +418,7 @@ def flatten_scene_row(scene: Dict[str, Any]) -> Dict[str, Any]:
         "scene_summary": scene.get("scene_summary", "")
     }
     
-    
+    # Add horror signals
     signals = scene.get("horror_signals", {})
     for term in HORROR_LEXICON:
         base[f"hs_{term}"] = int(signals.get(term, 0))
@@ -441,12 +442,12 @@ def process_script_hybrid(script_path: str) -> Tuple[List[Dict[str, Any]], Dict[
             print(f"[WARN] No scenes found: {script_path}")
             return [], stats
         
-        
+        # Preprocess into chunks
         chunks = preprocess_scene_chunk(scenes, max_chunk_size=4)
         print(f"Split into {len(chunks)} chunks")
         stats["total_chunks"] = len(chunks)
         
-        
+        # Process chunks in parallel
         all_scenes = []
         with ThreadPoolExecutor(max_workers=3) as executor:
             future_to_chunk = {
@@ -477,7 +478,7 @@ def main(scripts_dir: str, out_dir: str, max_workers: int = 4):
     """Main processing function with hybrid approach"""
     os.makedirs(out_dir, exist_ok=True)
     
-    
+    # Collect script files
     script_files = []
     for root, _, files in os.walk(scripts_dir):
         for file in files:
@@ -492,7 +493,7 @@ def main(scripts_dir: str, out_dir: str, max_workers: int = 4):
     print(f"Using {max_workers} parallel workers")
     print("🚀 Hybrid approach: gpt-4o-mini → gpt-4o → fallback")
     
-    
+    # Process scripts in parallel
     all_scene_rows = []
     total_stats = {"mini_success": 0, "4o_success": 0, "fallback": 0, "total_chunks": 0}
     
@@ -509,7 +510,7 @@ def main(scripts_dir: str, out_dir: str, max_workers: int = 4):
                 rows, stats = future.result()
                 all_scene_rows.extend(rows)
                 
-                
+                # Aggregate stats
                 for key in total_stats:
                     total_stats[key] += stats[key]
                 
@@ -522,48 +523,48 @@ def main(scripts_dir: str, out_dir: str, max_workers: int = 4):
         print("No scenes parsed. Check your inputs.")
         return
     
-    
+    # Print processing stats
     print(f"\n📊 Processing Statistics:")
     print(f"   Total chunks: {total_stats['total_chunks']}")
     print(f"   gpt-4o-mini success: {total_stats['mini_success']} ({total_stats['mini_success']/total_stats['total_chunks']*100:.1f}%)")
     print(f"   gpt-4o fallback: {total_stats['4o_success']} ({total_stats['4o_success']/total_stats['total_chunks']*100:.1f}%)")
     print(f"   Fallback data: {total_stats['fallback']} ({total_stats['fallback']/total_stats['total_chunks']*100:.1f}%)")
     
-    
+    # Create structured output
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     structured_dir = os.path.join(out_dir, f"analysis_{timestamp}")
     os.makedirs(structured_dir, exist_ok=True)
     
-    
+    # Save results
     scenes_df = pd.DataFrame(all_scene_rows).sort_values(["film_title","scene_index"])
     
-    
+    # Save detailed scene data
     scenes_csv = os.path.join(structured_dir, "scenes_detailed.csv")
     scenes_df.to_csv(scenes_csv, index=False)
     print(f"💾 Wrote {scenes_csv} ({len(scenes_df)} rows)")
     
-    
+    # Save horror signals
     horror_cols = [col for col in scenes_df.columns if col.startswith('hs_')]
     horror_df = scenes_df[['film_title', 'scene_index', 'heading'] + horror_cols].copy()
     horror_csv = os.path.join(structured_dir, "horror_signals.csv")
     horror_df.to_csv(horror_csv, index=False)
     print(f"💾 Wrote {horror_csv}")
     
-    
+    # Save emotional analysis
     emotion_cols = ['film_title', 'scene_index', 'heading', 'tension_score', 'fear_emotion', 'sentiment', 'scene_summary']
     emotion_df = scenes_df[emotion_cols].copy()
     emotion_csv = os.path.join(structured_dir, "emotional_analysis.csv")
     emotion_df.to_csv(emotion_csv, index=False)
     print(f"💾 Wrote {emotion_csv}")
     
-    
+    # Save dialogue analysis
     dialogue_cols = ['film_title', 'scene_index', 'heading', 'characters', 'dialogue_lines', 'dialogue_words', 'dialogue_q_rate', 'dialogue_excl_rate']
     dialogue_df = scenes_df[dialogue_cols].copy()
     dialogue_csv = os.path.join(structured_dir, "dialogue_analysis.csv")
     dialogue_df.to_csv(dialogue_csv, index=False)
     print(f"💾 Wrote {dialogue_csv}")
     
-    
+    # Create summary
     summary_data = {
         'analysis_timestamp': timestamp,
         'total_films': scenes_df['film_title'].nunique(),

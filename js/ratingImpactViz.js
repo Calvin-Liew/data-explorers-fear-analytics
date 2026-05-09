@@ -2,7 +2,7 @@
     const VIZ_SEL = "#viz-rating-impact";
     const EFFECTIVENESS_URL = "data/cleaner_datasets/viz3_horror_effectiveness.csv";
     const FILM_COMPARISON_URL = "data/cleaner_datasets/viz4_film_comparison.csv";
-    const IMDB_URL = "data/imbd-movies-dataset/imdb_179_horror.csv";
+    const IMDB_URL = "data/imdb-movies-dataset/imdb_179_horror.csv";
     const HORROR_SIGNALS_URL = "data/horror_ai_analysis_datasets/horror_signals.csv";
     const FEAR_JOURNEY_URL = "data/cleaner_datasets/viz2b_fear_journey.csv";
 
