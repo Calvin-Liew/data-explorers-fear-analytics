@@ -2,7 +2,7 @@
 
 Interactive horror film analytics built with D3.js.
 
-[Live site](https://calvin-liew.github.io/data-explorers-fear-analytics/) | [Methodology](docs/methodology.md) | [Data guide](docs/data-guide.md)
+[Live site](https://calvin-liew.github.io/data-explorers-fear-analytics/) | [Methodology](docs/methodology.md) | [Data guide](docs/data-guide.md) | [Python pipeline](docs/python-pipeline.md)
 
 ## Overview
 
@@ -41,17 +41,17 @@ interactive story.
 
 ```text
 .
-├── index.html                         # Single-page interactive story
-├── css/                               # Visual design and layout
-├── js/                                # D3 visualization modules
-├── data/
-│   ├── cleaner_datasets/              # CSVs used directly by the site
-│   ├── horror_ai_analysis_datasets/   # Scene-level AI analysis outputs
-│   ├── horror_screenplays/            # Raw screenplay text files
-│   └── imdb-movies-dataset/           # Movie metadata and ratings
-├── analysis/                          # Original Python analysis pipeline
-├── docs/                              # Simplified methodology and data docs
-└── scripts/                           # Utility scripts, including screenshots
+|-- index.html                         # Single-page interactive story
+|-- css/                               # Visual design and layout
+|-- js/                                # D3 visualization modules
+|-- data/
+|   |-- cleaner_datasets/              # CSVs used directly by the site
+|   |-- horror_ai_analysis_datasets/   # Scene-level AI analysis outputs
+|   |-- horror_screenplays/            # Raw screenplay text files
+|   `-- imdb-movies-dataset/           # Movie metadata and ratings
+|-- analysis/                          # Original Python analysis pipeline
+|-- docs/                              # Simplified methodology and data docs
+`-- scripts/                           # Utility scripts, including screenshots
 ```
 
 ## Visual Story
@@ -117,11 +117,13 @@ python run_full_analysis.py
 ```
 
 The full run uses the OpenAI API and asks for confirmation before starting.
+For a deeper end-to-end explanation, see the [Python pipeline details](docs/python-pipeline.md).
 
 ## Documentation
 
 - [Methodology](docs/methodology.md): how screenplays became structured data
 - [Data guide](docs/data-guide.md): what each CSV contains
+- [Python pipeline details](docs/python-pipeline.md): end-to-end parser flow and output meaning
 - [Analysis pipeline](analysis/README.md): how to rerun the Python parser
 
 ## Tech Stack
